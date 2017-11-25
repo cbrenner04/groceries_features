@@ -1,0 +1,4 @@
+.DS_Store
+spec/examples.txt
+spec/screenshots/
+spec/output/
