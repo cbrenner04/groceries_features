@@ -7,10 +7,10 @@ module Models
   class User
     attr_reader :email, :password
 
-    def initialize
+    def initialize(create: true)
       @email = "test#{Time.now.to_i}@example.com"
       @password = SecureRandom.hex(32)
-      create_user
+      create_user if create
     end
 
     private
