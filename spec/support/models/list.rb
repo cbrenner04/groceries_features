@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+module Models
+  # a user of the application
+  class List
+    attr_reader :id, :name, :type, :completed
+    attr_writer :name
+
+    def initialize(type:, completed: false, create_list: true)
+      @name = SecureRandom.hex(16)
+      @type = type
+      @completed = completed
+      @id = create if create_list
+    end
+
+    def create
+      DB[:lists].insert(
+        name: name, type: type, completed: completed, created_at: Time.now,
+        updated_at: Time.now
+      )
+    end
+  end
+end

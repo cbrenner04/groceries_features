@@ -7,7 +7,7 @@ require 'capybara/poltergeist'
 require 'capybara-screenshot/rspec'
 require 'selenium-webdriver'
 require 'site_prism'
-require 'pg'
+require 'sequel'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
@@ -21,10 +21,25 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.profile_examples = 10
   config.include Helpers::Authentication
-  config.before(:suite) { DB = PG.connect(dbname: 'Groceries_development') }
+  config.before(:suite) do
+    DB = Sequel.connect('postgresql://localhost:5432/Groceries_development')
+  end
   config.after(:suite) do
-    DB.exec("DELETE FROM users WHERE is_test_account = 'true'")
-    DB.close
+    users = DB[:users].where(is_test_account: true)
+    user_ids = users.map { |user| user[:id] }
+    users_lists = DB[:users_lists].where(user_id: user_ids)
+    list_ids = users_lists.map { |list| list[:list_id] }
+    lists = DB[:lists].where(id: list_ids)
+    tables = %i[book_list_items grocery_list_items music_list_items
+                to_do_list_items]
+    user_ids.each do |id|
+      tables.each do |table|
+        DB[table].where(user_id: id).delete
+      end
+    end
+    users_lists.delete
+    lists.delete
+    users.delete
   end
 end
 
