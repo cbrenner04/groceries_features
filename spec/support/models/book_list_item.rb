@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # an item on a book list
   class BookListItem
     attr_reader :id, :user_id, :book_list_id, :author, :title, :purchased, :read
 
@@ -15,6 +15,8 @@ module Models
       @read = read
       @id = create if create_item
     end
+
+    private
 
     def create
       DB[:book_list_items].insert(

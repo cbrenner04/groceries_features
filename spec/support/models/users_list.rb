@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # relates a user and a list
   class UsersList
     attr_reader :id, :user_id, :list_id, :has_accepted, :responded
 
@@ -13,6 +13,8 @@ module Models
       @responded = responded
       @id = create if create_list
     end
+
+    private
 
     def create
       DB[:users_lists].insert(

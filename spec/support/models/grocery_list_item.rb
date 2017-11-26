@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # an item on a grocery list
   class GroceryListItem
     attr_reader :id, :user_id, :grocery_list_id, :name, :quantity,
                 :quantity_name, :purchased, :refreshed
@@ -17,6 +17,8 @@ module Models
       @refreshed = refreshed
       @id = create if create_item
     end
+
+    private
 
     def create
       DB[:grocery_list_items].insert(

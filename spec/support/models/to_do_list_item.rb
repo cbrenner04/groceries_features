@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # an item on a to do list
   class ToDoListItem
     attr_reader :id, :user_id, :to_do_list_id, :name, :assignee_id,
                 :due_by, :completed, :refreshed
@@ -17,6 +17,8 @@ module Models
       @refreshed = refreshed
       @id = create if create_item
     end
+
+    private
 
     def create
       DB[:to_do_list_items].insert(

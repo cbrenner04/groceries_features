@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # a list, not related to a user, holds items
   class List
     attr_reader :id, :name, :type, :completed
     attr_writer :name
@@ -12,6 +12,8 @@ module Models
       @completed = completed
       @id = create if create_list
     end
+
+    private
 
     def create
       DB[:lists].insert(

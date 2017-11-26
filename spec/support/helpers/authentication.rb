@@ -15,12 +15,12 @@ module Helpers
 
     private
 
-    def login_page
-      @login_page ||= Pages::Login.new
-    end
-
     def home_page
       @home_page ||= Pages::Home.new
+    end
+
+    def login_page
+      @login_page ||= Pages::Login.new
     end
   end
 end

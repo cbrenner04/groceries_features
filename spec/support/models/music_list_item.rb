@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Models
-  # a user of the application
+  # an item on a music list
   class MusicListItem
     attr_reader :id, :user_id, :music_list_id, :title, :artist,
                 :album, :purchased
@@ -16,6 +16,8 @@ module Models
       @purchased = purchased
       @id = create if create_item
     end
+
+    private
 
     def create
       DB[:music_list_items].insert(

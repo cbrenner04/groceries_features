@@ -7,15 +7,15 @@ module Models
   class User
     attr_reader :id, :email, :password
 
-    def initialize(create: true)
+    def initialize(create_user: true)
       @email = "test#{Time.now.to_i}@example.com"
       @password = SecureRandom.hex(32)
-      @id = create_user if create
+      @id = create if create_user
     end
 
     private
 
-    def create_user
+    def create
       DB[:users].insert(
         email: email, encrypted_password: BCrypt::Password.create(password),
         is_test_account: true, created_at: Time.now, updated_at: Time.now

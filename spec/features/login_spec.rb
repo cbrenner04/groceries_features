@@ -29,7 +29,7 @@ RSpec.feature 'Login' do
   end
 
   context 'when user does not exist' do
-    let(:user) { Models::User.new(create: false) }
+    let(:user) { Models::User.new(create_user: false) }
 
     it 'is not able to log in' do
       login user, expect_success: false
