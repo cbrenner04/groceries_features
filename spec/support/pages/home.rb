@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Pages
-  # app home page, displayed after log in, displays lists, includes edit page
+  # app home page, displayed after log in, displays lists
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
