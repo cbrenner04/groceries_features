@@ -11,6 +11,7 @@ end
 
 RSpec.feature 'Grocery Lists' do
   let(:home_page) { Pages::Home.new }
+  let(:edit_list_page) { Pages::EditList.new }
   let(:user) { Models::User.new }
 
   before { login user }
@@ -35,8 +36,10 @@ RSpec.feature 'Grocery Lists' do
 
     list.name = SecureRandom.hex(16)
 
-    home_page.name.set list.name
-    home_page.submit.click
+    edit_list_page.loaded?
+    edit_list_page.name.set ''
+    edit_list_page.name.set list.name
+    edit_list_page.submit.click
 
     home_page.wait_for_incomplete_lists
     expect(home_page.incomplete_list_names.map(&:text)).to include list.name

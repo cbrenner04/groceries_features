@@ -2,3 +2,6 @@
 spec/examples.txt
 spec/screenshots/
 spec/output/
+
+# Don't check in credentials 
+config/env.yml

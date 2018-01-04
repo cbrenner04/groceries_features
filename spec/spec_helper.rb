@@ -8,8 +8,11 @@ require 'capybara-screenshot/rspec'
 require 'selenium-webdriver'
 require 'site_prism'
 require 'sequel'
+require 'envyable'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
+
+Envyable.load('config/env.yml', ENV['ENV'])
 
 # RSpec configuration options
 RSpec.configure do |config|
@@ -22,7 +25,7 @@ RSpec.configure do |config|
   config.profile_examples = 10
   config.include Helpers::Authentication
   config.before(:suite) do
-    DB = Sequel.connect('postgresql://localhost:5432/Groceries_development')
+    DB = Sequel.connect(ENV['DATABASE_URL'])
   end
   config.after(:suite) do
     users = DB[:users].where(is_test_account: true)
@@ -51,13 +54,13 @@ Capybara.register_driver :poltergeist do |app|
   options = { js: true, js_errors: false, window_size: [1280, 743] }
   Capybara::Poltergeist::Driver.new(app, options)
 end
-# set `driver=poltergeist` on the command line when you want to run headless
-Capybara.default_driver = ENV['driver'].nil? ? :selenium : ENV['driver'].to_sym
-unless ENV['driver'] == 'poltergeist'
+# set `DRIVER=poltergeist` on the command line when you want to run headless
+Capybara.default_driver = ENV['DRIVER'].nil? ? :selenium : ENV['DRIVER'].to_sym
+unless ENV['DRIVER'] == 'poltergeist'
   Capybara.page.driver.browser.manage.window.resize_to(1280, 743)
 end
 Capybara.save_path = 'spec/screenshots/'
-Capybara.app_host = 'localhost:3000'
+Capybara.app_host = ENV['HOST']
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
@@ -65,3 +68,7 @@ Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
 end
 Capybara::Screenshot.autosave_on_failure = true
 Capybara::Screenshot.prune_strategy = :keep_last_run
+
+SitePrism.configure do |config|
+  config.use_implicit_waits = true
+end
