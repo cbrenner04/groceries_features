@@ -12,7 +12,7 @@ require 'envyable'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
-Envyable.load('config/env.yml', ENV['ENV'])
+Envyable.load('config/env.yml', ENV['ENV'] || 'development')
 
 # RSpec configuration options
 RSpec.configure do |config|

@@ -5,6 +5,7 @@ module Pages
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
+    DELETE_BUTTON = '.fa.fa-trash'
 
     set_url '/'
 
@@ -21,10 +22,18 @@ module Pages
     elements :incomplete_lists, INCOMPLETE_LIST
     elements :incomplete_list_names, "#{INCOMPLETE_LIST} h5"
 
+    def select_incomplete_list(list_name)
+      click_on list_name
+    end
+
     def complete(list_name)
       find(INCOMPLETE_LIST, text: list_name)
         .find('.fa.fa-check-square-o')
         .click
+    end
+
+    def share(list_name)
+      find(INCOMPLETE_LIST, text: list_name).find('.fa.fa-users').click
     end
 
     def edit(list_name)
@@ -33,8 +42,20 @@ module Pages
         .click
     end
 
+    def delete_incomplete_list(list_name)
+      find(INCOMPLETE_LIST, text: list_name).find(DELETE_BUTTON).click
+    end
+
+    def select_completed_list(list_name)
+      click_on list_name
+    end
+
     def refresh(list_name)
       find(COMPLETE_LIST, text: list_name).find('.fa.fa-refresh').click
+    end
+
+    def delete_complete_list(list_name)
+      find(COMPLETE_LIST, text: list_name).find(DELETE_BUTTON).click
     end
   end
 end

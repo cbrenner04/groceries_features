@@ -8,7 +8,7 @@ module Models
     attr_reader :id, :email, :password
 
     def initialize(create_user: true)
-      @email = "test#{Time.now.to_i}@example.com"
+      @email = "test#{SecureRandom.hex(16)}@example.com"
       @password = SecureRandom.hex(32)
       @id = create if create_user
     end
