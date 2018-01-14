@@ -18,6 +18,10 @@ module Models
       @id = create if create_item
     end
 
+    def pretty_title
+      [quantity, quantity_name, name].join(' ')
+    end
+
     private
 
     def create

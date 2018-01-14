@@ -31,7 +31,7 @@ RSpec.feature 'A book list' do
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include "\"#{list_item.title}\" #{list_item.author}"
+        .to include list_item.pretty_title
     end
 
     it 'is completed' do
@@ -148,7 +148,7 @@ RSpec.feature 'A book list' do
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include "\"#{list_item.title}\" #{list_item.author}"
+        .to include list_item.pretty_title
     end
 
     it 'is refreshed' do

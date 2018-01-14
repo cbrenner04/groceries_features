@@ -30,11 +30,8 @@ RSpec.feature 'A grocery list' do
       home_page.select_incomplete_list list.name
       list_page.wait_for_purchased_items
 
-      list_item_text = [
-        list_item.quantity, list_item.quantity_name, list_item.name
-      ].join(' ')
-
-      expect(list_page.purchased_items.map(&:text)).to include list_item_text
+      expect(list_page.purchased_items.map(&:text))
+        .to include list_item.pretty_title
     end
 
     it 'is completed' do
@@ -150,11 +147,8 @@ RSpec.feature 'A grocery list' do
       home_page.select_completed_list list.name
       list_page.wait_for_purchased_items
 
-      list_item_text = [
-        list_item.quantity, list_item.quantity_name, list_item.name
-      ].join(' ')
-
-      expect(list_page.purchased_items.map(&:text)).to include list_item_text
+      expect(list_page.purchased_items.map(&:text))
+        .to include list_item.pretty_title
     end
 
     it 'is refreshed' do
