@@ -18,6 +18,10 @@ module Models
       @id = create if create_item
     end
 
+    def pretty_title
+      "#{name} Due By: #{due_by.strftime('%B %-d, %Y')}"
+    end
+
     private
 
     def create
