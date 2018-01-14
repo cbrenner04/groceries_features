@@ -29,7 +29,7 @@ RSpec.feature 'A to-do list' do
       login user
       home_page.select_incomplete_list list.name
       list_page.wait_for_purchased_items
-      require 'pry'; binding.pry
+
       expect(list_page.purchased_items.map(&:text))
         .to include list_item.pretty_title
     end
@@ -109,7 +109,7 @@ RSpec.feature 'A to-do list' do
       list.name = SecureRandom.hex(16)
 
       # TODO: need to find a better solution
-      # In production, the name input text not clearing before new name is entered
+      # In production, name input text not clearing before new name is entered
       # Therefore the old and new name are being concatenated upon submission
       # This results in a false negative
       edit_list_page.loaded?

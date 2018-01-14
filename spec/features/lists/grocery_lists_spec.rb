@@ -109,7 +109,7 @@ RSpec.feature 'A grocery list' do
       list.name = SecureRandom.hex(16)
 
       # TODO: need to find a better solution
-      # In production, the name input text not clearing before new name is entered
+      # In production, name input text not clearing before new name is entered
       # Therefore the old and new name are being concatenated upon submission
       # This results in a false negative
       edit_list_page.loaded?
