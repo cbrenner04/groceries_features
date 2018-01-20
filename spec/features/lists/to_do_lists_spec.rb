@@ -60,7 +60,7 @@ RSpec.feature 'A to-do list' do
 
       home_page.wait_for_incomplete_lists
       expect(DB[:users].count).to eq before_creation_user_count + 1
-      expect(DB[:users].all.last[:email]).to eq new_user_email
+      expect(DB[:users].where(email: new_user_email).count).to eq 1
 
       # for clean up purposes
       DB[:users].where(email: new_user_email).update(is_test_account: true)
