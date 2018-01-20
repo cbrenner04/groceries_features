@@ -141,7 +141,14 @@ RSpec.feature 'A grocery list' do
 
       home_page.wait_for_incomplete_lists
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
-      # TODO: check if items are refreshed
+
+      home_page.select_list list.name
+      list_page.wait_for_not_purchased_items
+
+      expect(list_page.not_purchased_items.map(&:text))
+        .to include @list_items.first.pretty_title
+      expect(list_page.not_purchased_items.map(&:text))
+        .to include @list_items.last.pretty_title
     end
 
     it 'is deleted' do
