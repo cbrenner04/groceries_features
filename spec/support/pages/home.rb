@@ -22,7 +22,7 @@ module Pages
     elements :incomplete_lists, INCOMPLETE_LIST
     elements :incomplete_list_names, "#{INCOMPLETE_LIST} h5"
 
-    def select_incomplete_list(list_name)
+    def select_list(list_name)
       click_on list_name
     end
 
@@ -42,20 +42,13 @@ module Pages
         .click
     end
 
-    def delete_incomplete_list(list_name)
-      find(INCOMPLETE_LIST, text: list_name).find(DELETE_BUTTON).click
-    end
-
-    def select_completed_list(list_name)
-      click_on list_name
+    def delete(list_name, complete: false)
+      list_css = complete ? COMPLETE_LIST : INCOMPLETE_LIST
+      find(list_css, text: list_name).find(DELETE_BUTTON).click
     end
 
     def refresh(list_name)
       find(COMPLETE_LIST, text: list_name).find('.fa.fa-refresh').click
-    end
-
-    def delete_complete_list(list_name)
-      find(COMPLETE_LIST, text: list_name).find(DELETE_BUTTON).click
     end
   end
 end

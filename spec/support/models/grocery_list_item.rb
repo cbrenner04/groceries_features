@@ -5,6 +5,7 @@ module Models
   class GroceryListItem
     attr_reader :id, :user_id, :grocery_list_id, :name, :quantity,
                 :quantity_name, :purchased, :refreshed
+    attr_writer :name
 
     def initialize(user_id:, grocery_list_id:, purchased: false,
                    refreshed: false, create_item: true)

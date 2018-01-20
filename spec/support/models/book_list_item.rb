@@ -4,6 +4,7 @@ module Models
   # an item on a book list
   class BookListItem
     attr_reader :id, :user_id, :book_list_id, :author, :title, :purchased, :read
+    attr_writer :title
 
     def initialize(user_id:, book_list_id:, purchased: false, read: false,
                    create_item: true)
