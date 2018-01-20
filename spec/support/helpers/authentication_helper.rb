@@ -2,7 +2,7 @@
 
 module Helpers
   # helpers for authenticating as a user
-  module Authentication
+  module AuthenticationHelper
     # rubocop:disable AbcSize
     def login(user, expect_success: true)
       login_page.load

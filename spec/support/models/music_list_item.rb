@@ -3,8 +3,9 @@
 module Models
   # an item on a music list
   class MusicListItem
-    attr_reader :id, :user_id, :music_list_id, :title, :artist,
-                :album, :purchased
+    attr_reader :id, :user_id, :music_list_id, :title, :artist, :album,
+                :purchased
+    attr_writer :title
 
     def initialize(user_id:, music_list_id:, purchased: false,
                    create_item: true)

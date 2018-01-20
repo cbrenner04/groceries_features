@@ -9,6 +9,7 @@ module Models
 
     attr_reader :id, :user_id, :to_do_list_id, :name, :assignee_id,
                 :due_by, :completed, :refreshed
+    attr_writer :name, :due_by
 
     def initialize(user_id:, to_do_list_id:, assignee_id: nil, completed: false,
                    refreshed: false, create_item: true)

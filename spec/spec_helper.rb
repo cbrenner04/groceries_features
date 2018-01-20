@@ -23,7 +23,9 @@ RSpec.configure do |config|
   config.example_status_persistence_file_path = 'spec/examples.txt'
   config.run_all_when_everything_filtered = true
   config.profile_examples = 10
-  config.include Helpers::Authentication
+  config.include Helpers::AuthenticationHelper
+  config.include Helpers::DataHelper
+  config.include Helpers::WaitHelper
   config.before(:suite) do
     DB = Sequel.connect(ENV['DATABASE_URL'])
   end

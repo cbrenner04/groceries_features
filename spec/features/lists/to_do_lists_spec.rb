@@ -25,17 +25,17 @@ RSpec.feature 'A to-do list' do
     let(:list) { Models::List.new(type: 'ToDoList') }
 
     before do
-      @list_item = create_associated_list_objects(user, list)
+      @list_items = create_associated_list_objects(user, list)
 
       login user
     end
 
     it 'is viewed' do
-      home_page.select_incomplete_list list.name
+      home_page.select_list list.name
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include @list_item.pretty_title
+        .to include @list_items.last.pretty_title
     end
 
     it 'is completed' do
@@ -97,15 +97,11 @@ RSpec.feature 'A to-do list' do
 
       list.name = SecureRandom.hex(16)
 
-      # TODO: need to find a better solution
-      # In production, name input text not clearing before new name is entered
-      # Therefore the old and new name are being concatenated upon submission
-      # This results in a false negative
-      edit_list_page.loaded?
-      edit_list_page.name.set ''
-      # TODO: end
+      wait_for do
+        edit_list_page.name.set list.name
+        edit_list_page.name.value == list.name
+      end
 
-      edit_list_page.name.set list.name
       edit_list_page.submit.click
 
       home_page.wait_for_incomplete_lists
@@ -114,7 +110,7 @@ RSpec.feature 'A to-do list' do
 
     it 'is deleted' do
       home_page.accept_alert do
-        home_page.delete_incomplete_list list.name
+        home_page.delete list.name
       end
 
       home_page.wait_for_incomplete_lists
@@ -127,17 +123,17 @@ RSpec.feature 'A to-do list' do
     let(:list) { Models::List.new(type: 'ToDoList', completed: true) }
 
     before do
-      @list_item = create_associated_list_objects(user, list)
+      @list_items = create_associated_list_objects(user, list)
 
       login user
     end
 
     it 'is viewed' do
-      home_page.select_completed_list list.name
+      home_page.select_list list.name
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include @list_item.pretty_title
+        .to include @list_items.last.pretty_title
     end
 
     it 'is refreshed' do
@@ -150,7 +146,7 @@ RSpec.feature 'A to-do list' do
 
     it 'is deleted' do
       home_page.accept_alert do
-        home_page.delete_complete_list list.name
+        home_page.delete list.name, complete: true
       end
 
       home_page.wait_for_incomplete_lists
