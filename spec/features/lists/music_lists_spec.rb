@@ -9,36 +9,36 @@ RSpec.feature 'A music list' do
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
 
+  it 'is created' do
+    list = Models::List.new(type: 'MusicList', create_list: false)
+
+    login user
+    home_page.name.set list.name
+    home_page.music_list.click
+    home_page.submit.click
+
+    home_page.wait_for_incomplete_lists
+    expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+  end
+
   describe 'that is incomplete' do
-    it 'is created' do
-      list = Models::List.new(type: 'MusicList', create_list: false)
+    let(:list) { Models::List.new(type: 'MusicList') }
+
+    before do
+      @list_item = create_associated_list_objects(user, list)
 
       login user
-      home_page.name.set list.name
-      home_page.music_list.click
-      home_page.submit.click
-
-      home_page.wait_for_incomplete_lists
-      expect(home_page.incomplete_list_names.map(&:text)).to include list.name
     end
 
     it 'is viewed' do
-      list = Models::List.new(type: 'MusicList')
-      list_item = create_associated_list_objects(user, list)
-
-      login user
       home_page.select_incomplete_list list.name
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include list_item.pretty_title
+        .to include @list_item.pretty_title
     end
 
     it 'is completed' do
-      list = Models::List.new(type: 'MusicList')
-      create_associated_list_objects(user, list)
-
-      login user
       home_page.complete list.name
 
       home_page.wait_for_complete_lists
@@ -46,12 +46,8 @@ RSpec.feature 'A music list' do
     end
 
     it 'is shared with a new user' do
-      list = Models::List.new(type: 'MusicList')
-      create_associated_list_objects(user, list)
-
       before_creation_user_count = DB[:users].count
 
-      login user
       home_page.share list.name
 
       new_user_email = "share-new-user-test-#{Time.now.to_i}@example.com"
@@ -67,14 +63,11 @@ RSpec.feature 'A music list' do
     end
 
     it 'is shared with a previously shared with user' do
-      list = Models::List.new(type: 'MusicList')
-      create_associated_list_objects(user, list)
       other_user = Models::User.new
       other_list = Models::List.new(type: 'MusicList')
       create_associated_list_objects(user, other_list)
       Models::UsersList.new(user_id: other_user.id, list_id: other_list.id)
 
-      login user
       home_page.share list.name
 
       other_user_list_count_before_share = DB[:users_lists]
@@ -100,10 +93,6 @@ RSpec.feature 'A music list' do
     end
 
     it 'is edited' do
-      list = Models::List.new(type: 'MusicList')
-      create_associated_list_objects(user, list)
-
-      login user
       home_page.edit list.name
 
       list.name = SecureRandom.hex(16)
@@ -124,10 +113,6 @@ RSpec.feature 'A music list' do
     end
 
     it 'is deleted' do
-      list = Models::List.new(type: 'MusicList')
-      create_associated_list_objects(user, list)
-
-      login user
       home_page.accept_alert do
         home_page.delete_incomplete_list list.name
       end
@@ -139,34 +124,31 @@ RSpec.feature 'A music list' do
   end
 
   describe 'that is complete' do
-    it 'is viewed' do
-      list = Models::List.new(type: 'MusicList', completed: true)
-      list_item = create_associated_list_objects(user, list)
+    let(:list) { Models::List.new(type: 'MusicList', completed: true) }
+
+    before do
+      @list_item = create_associated_list_objects(user, list)
 
       login user
+    end
+
+    it 'is viewed' do
       home_page.select_completed_list list.name
       list_page.wait_for_purchased_items
 
       expect(list_page.purchased_items.map(&:text))
-        .to include list_item.pretty_title
+        .to include @list_item.pretty_title
     end
 
     it 'is refreshed' do
-      list = Models::List.new(type: 'MusicList', completed: true)
-      create_associated_list_objects(user, list)
-
-      login user
       home_page.refresh list.name
 
       home_page.wait_for_incomplete_lists
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+      # TODO: check if items are refreshed
     end
 
     it 'is deleted' do
-      list = Models::List.new(type: 'MusicList', completed: true)
-      create_associated_list_objects(user, list)
-
-      login user
       home_page.accept_alert do
         home_page.delete_complete_list list.name
       end
