@@ -17,6 +17,10 @@ module Models
       @id = create if create_item
     end
 
+    def pretty_title
+      "\"#{title}\" #{artist} - #{album}"
+    end
+
     private
 
     def create

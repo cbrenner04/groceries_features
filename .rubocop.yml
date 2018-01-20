@@ -3,7 +3,7 @@ AllCops:
   TargetRubyVersion: 2.4
 
 Metrics/BlockLength:
-  Max: 50
+  Enabled: False
 
 Metrics/ParameterLists:
   Max: 8

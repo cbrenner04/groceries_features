@@ -3,6 +3,10 @@
 module Models
   # an item on a to do list
   class ToDoListItem
+    ONE_MINUTE = 60
+    ONE_HOUR = ONE_MINUTE * 60
+    ONE_DAY = ONE_HOUR * 24
+
     attr_reader :id, :user_id, :to_do_list_id, :name, :assignee_id,
                 :due_by, :completed, :refreshed
 
@@ -12,10 +16,14 @@ module Models
       @to_do_list_id = to_do_list_id
       @name = SecureRandom.hex(16)
       @assignee_id = assignee_id
-      @due_by = Date.today + rand(180)
+      @due_by = Time.now + (rand(180) * ONE_DAY)
       @completed = completed
       @refreshed = refreshed
       @id = create if create_item
+    end
+
+    def pretty_title
+      "#{name} Due By: #{due_by.strftime('%B %-d, %Y')}"
     end
 
     private
