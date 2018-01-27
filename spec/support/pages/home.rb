@@ -16,6 +16,8 @@ module Pages
     element :name, "input[name='name']"
     element :submit, "input[type='submit']"
     element :to_do_list, '#listType-ToDoList'
+    element :invite, '#invite-link'
+    element :log_out, '#log-out-link'
 
     elements :complete_lists, COMPLETE_LIST
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
