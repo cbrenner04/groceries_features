@@ -3,17 +3,27 @@
 module Helpers
   # helpers for authenticating as a user
   module AuthenticationHelper
-    # rubocop:disable AbcSize
     def login(user, expect_success: true)
       login_page.load
-      login_page.email.set user.email
+      enter_email
       login_page.password.set user.password
       login_page.submit.click
       home_page.wait_for_header if expect_success
     end
-    # rubocop:enable AbcSize
+
+    def logout
+      home_page.log_out.click
+      login_page.wait_for_email
+    end
 
     private
+
+    def enter_email
+      login_page.email.set user.email
+    rescue Capybara::ElementNotFound
+      logout if page.has_text? 'You are already signed in'
+      retry
+    end
 
     def home_page
       @home_page ||= Pages::Home.new
