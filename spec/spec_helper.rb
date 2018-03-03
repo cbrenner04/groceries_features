@@ -30,21 +30,7 @@ RSpec.configure do |config|
     DB = Sequel.connect(ENV['DATABASE_URL'])
   end
   config.after(:suite) do
-    users = DB[:users].where(is_test_account: true)
-    user_ids = users.map { |user| user[:id] }
-    users_lists = DB[:users_lists].where(user_id: user_ids)
-    list_ids = users_lists.map { |list| list[:list_id] }
-    lists = DB[:lists].where(id: list_ids)
-    tables = %i[book_list_items grocery_list_items music_list_items
-                to_do_list_items]
-    user_ids.each do |id|
-      tables.each do |table|
-        DB[table].where(user_id: id).delete
-      end
-    end
-    users_lists.delete
-    lists.delete
-    users.delete
+    Helpers::DataCleanUpHelper.new(DB).remove_test_data
   end
 end
 
