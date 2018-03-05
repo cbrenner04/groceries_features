@@ -68,7 +68,8 @@ module Helpers
         feature_id: feature_id,
         duration: Time.now - @spec.execution_result.started_at,
         exception: @spec.exception&.to_s,
-        passed: @spec.exception.nil?
+        passed: @spec.exception.nil?,
+        environment: @environment
       }
     end
 
