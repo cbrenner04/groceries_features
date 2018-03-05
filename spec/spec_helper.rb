@@ -32,6 +32,15 @@ RSpec.configure do |config|
   config.after(:suite) do
     Helpers::DataCleanUpHelper.new(DB).remove_test_data
   end
+  config.append_after(:each) do |spec|
+    Helpers::ResultsHelper.new(
+      ENV['ENV'],
+      ENV['RESULTS_USER'],
+      ENV['RESULTS_PASSWORD'],
+      ENV['RESULTS_URL'],
+      spec
+    ).create_results
+  end
 end
 
 # Capybara configuration options
