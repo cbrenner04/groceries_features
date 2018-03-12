@@ -13,7 +13,7 @@ module Pages
     element :grocery_list, '#listType-GroceryList'
     element :header, 'h1', text: 'Lists'
     element :music_list, '#listType-MusicList'
-    element :name, "input[name='name']"
+    element :name, "input[name='listName']"
     element :submit, "input[type='submit']"
     element :to_do_list, '#listType-ToDoList'
     element :invite, '#invite-link'

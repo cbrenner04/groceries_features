@@ -19,7 +19,7 @@ module Pages
     element :quantity_name, "input[name='quantityName']"
     element :artist, "input[name='artist']"
     element :album, "input[name='album']"
-    element :name, "input[name='name']"
+    element :name, "input[name='itemName']"
     element :submit, "input[type='submit']"
 
     def read(item_name, purchased: false)
