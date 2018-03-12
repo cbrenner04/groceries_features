@@ -25,40 +25,31 @@ module Helpers
       return @auth_token if @auth_token
       response = RestClient.post(
         "#{@url}/sign-in.json",
-        user_login: {
-          email: @user,
-          password: @password
-        }
+        user_login: { email: @user, password: @password }
       )
       @auth_token = JSON.parse(response.body)['auth_token']
     end
 
     def feature_id
+      return @feature_id if @feature_id
       response = RestClient::Request.execute(
         method: :post,
         url: "#{@url}/features.json",
-        payload: {
-          feature: feature_payload
-        },
+        payload: { feature: feature_payload },
         headers: { 'Authorization' => "Token token=#{auth_token}" }
       )
-      @feature_id ||= JSON.parse(response.body)['feature_id']
+      @feature_id = JSON.parse(response.body)['feature_id']
     end
 
     def feature_payload
-      {
-        rspec_id: @spec.id,
-        description: @spec.full_description
-      }
+      { rspec_id: @spec.id, description: @spec.full_description }
     end
 
     def post_results
       RestClient::Request.execute(
         method: :post,
         url: "#{@url}/results.json",
-        payload: {
-          result: result_payload
-        },
+        payload: { result: result_payload },
         headers: { 'Authorization' => "Token token=#{auth_token}" }
       )
     end
