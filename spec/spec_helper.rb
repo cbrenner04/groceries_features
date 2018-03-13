@@ -28,6 +28,7 @@ RSpec.configure do |config|
   config.include Helpers::WaitHelper
   config.before(:suite) do
     DB = Sequel.connect(ENV['DATABASE_URL'])
+    TEST_RUN = Time.now.to_i
   end
   config.after(:suite) do
     Helpers::DataCleanUpHelper.new(DB).remove_test_data
@@ -38,7 +39,8 @@ RSpec.configure do |config|
       ENV['RESULTS_USER'],
       ENV['RESULTS_PASSWORD'],
       ENV['RESULTS_URL'],
-      spec
+      spec,
+      TEST_RUN
     ).create_results
   end
 end

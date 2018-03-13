@@ -6,12 +6,13 @@ require 'json'
 module Helpers
   # helpers for post results
   class ResultsHelper
-    def initialize(environment, user, password, url, spec)
+    def initialize(environment, user, password, url, spec, test_run)
       @environment = environment || 'development'
       @user = user
       @password = password
       @url = url
       @spec = spec
+      @test_run = test_run
     end
 
     def create_results
@@ -60,7 +61,8 @@ module Helpers
         duration: Time.now - @spec.execution_result.started_at,
         exception: @spec.exception&.to_s,
         passed: @spec.exception.nil?,
-        environment: @environment
+        environment: @environment,
+        test_run: @test_run
       }
     end
 
