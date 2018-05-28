@@ -6,6 +6,6 @@ module Pages
     set_url '/lists/{id}/edit'
 
     element :name, "input[name='listName']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
   end
 end

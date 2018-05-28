@@ -11,6 +11,6 @@ module Pages
     element :password, "input[name='password']"
     element :password_confirmation, "input[name='passwordConfirmation']"
     element :sign_up, "a[href='/users']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
   end
 end

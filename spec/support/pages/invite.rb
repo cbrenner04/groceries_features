@@ -6,6 +6,6 @@ module Pages
     set_url '/users/invitation/new'
 
     element :email, "input[name='newEmail']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
   end
 end
