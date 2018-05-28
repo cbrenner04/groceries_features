@@ -14,8 +14,8 @@ To run against a running local instance of Groceries
 rspec
 ```
 
-To run against production
+To run against staging
 
 ```
-ENV=production rspec
+ENV=staging rspec
 ```

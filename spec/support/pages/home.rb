@@ -5,10 +5,18 @@ module Pages
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
+    COMPLETE_BUTTON = '.fa.fa-check-square-o'
     DELETE_BUTTON = '.fa.fa-trash'
+    SHARE_BUTTON = '.fa.fa-users'
+    EDIT_BUTTON = '.fa.fa-pencil-square-o'
+    REFRESH_BUTTON = '.fa.fa-refresh'
 
     set_url '/'
 
+    element :signed_in_alert, '.alert', text: 'Signed in successfully'
+    element :list_deleted_alert,
+            '.alert',
+            text: 'Your list was successfully deleted'
     element :book_list, '#listType-BookList'
     element :grocery_list, '#listType-GroceryList'
     element :header, 'h1', text: 'Lists'
@@ -30,17 +38,17 @@ module Pages
 
     def complete(list_name)
       find(INCOMPLETE_LIST, text: list_name)
-        .find('.fa.fa-check-square-o')
+        .find(COMPLETE_BUTTON)
         .click
     end
 
     def share(list_name)
-      find(INCOMPLETE_LIST, text: list_name).find('.fa.fa-users').click
+      find(INCOMPLETE_LIST, text: list_name).find(SHARE_BUTTON).click
     end
 
     def edit(list_name)
       find(INCOMPLETE_LIST, text: list_name)
-        .find('.fa.fa-pencil-square-o')
+        .find(EDIT_BUTTON)
         .click
     end
 
@@ -50,7 +58,7 @@ module Pages
     end
 
     def refresh(list_name)
-      find(COMPLETE_LIST, text: list_name).find('.fa.fa-refresh').click
+      find(COMPLETE_LIST, text: list_name).find(REFRESH_BUTTON).click
     end
   end
 end
