@@ -12,6 +12,7 @@ RSpec.feature 'Invite' do
   it 'invites a user' do
     before_creation_user_count = DB[:users].count
 
+    home_page.wait_for_signed_in_alert
     home_page.invite.click
 
     new_user_email = "invite-new-user-test-#{Time.now.to_i}@example.com"

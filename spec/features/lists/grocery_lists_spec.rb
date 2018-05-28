@@ -8,9 +8,10 @@ RSpec.feature 'A grocery list' do
   let(:share_list_page) { Pages::ShareList.new }
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
+  let(:list_type) { 'GroceryList' }
 
   it 'is created' do
-    list = Models::List.new(type: 'GroceryList', create_list: false)
+    list = Models::List.new(type: list_type, create_list: false)
 
     login user
     home_page.name.set list.name
@@ -22,7 +23,7 @@ RSpec.feature 'A grocery list' do
   end
 
   describe 'that is incomplete' do
-    let(:list) { Models::List.new(type: 'GroceryList') }
+    let(:list) { Models::List.new(type: list_type) }
 
     before do
       @list_items = create_associated_list_objects(user, list)
@@ -64,7 +65,7 @@ RSpec.feature 'A grocery list' do
 
     it 'is shared with a previously shared with user' do
       other_user = Models::User.new
-      other_list = Models::List.new(type: 'GroceryList')
+      other_list = Models::List.new(type: list_type)
       create_associated_list_objects(user, other_list)
       Models::UsersList.new(user_id: other_user.id, list_id: other_list.id)
 
@@ -114,13 +115,14 @@ RSpec.feature 'A grocery list' do
       end
 
       home_page.wait_for_incomplete_lists
+      home_page.wait_for_list_deleted_alert
       expect(home_page.incomplete_list_names.map(&:text))
         .to_not include list.name
     end
   end
 
   describe 'that is complete' do
-    let(:list) { Models::List.new(type: 'GroceryList', completed: true) }
+    let(:list) { Models::List.new(type: list_type, completed: true) }
 
     before do
       @list_items = create_associated_list_objects(user, list)
