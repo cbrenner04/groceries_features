@@ -34,24 +34,12 @@ RSpec.feature 'Login' do
     it 'is not able to log in' do
       login user, expect_success: false
 
-      expect(home_page).to_not have_header
+      expect(home_page).to have_no_header
     end
 
-    it 'is able to sign up' do
+    it 'is not able to sign up' do
       login_page.load
-      login_page.sign_up.click
-
-      login_page.wait_for_log_in
-      login_page.email.set user.email
-      login_page.password.set user.password
-      login_page.password_confirmation.set user.password
-      login_page.submit.click
-
-      home_page.wait_for_header
-      expect(home_page).to have_header
-
-      # clean up sign up user
-      DB[:users].where(email: user.email).delete
+      expect(login_page).to have_no_sign_up
     end
   end
 end
