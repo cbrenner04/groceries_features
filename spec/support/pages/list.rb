@@ -27,7 +27,7 @@ module Pages
     element :artist, "input[name='artist']"
     element :album, "input[name='album']"
     element :name, "input[name='itemName']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
 
     def read(item_name, purchased: false)
       item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM

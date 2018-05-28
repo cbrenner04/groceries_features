@@ -7,6 +7,6 @@ module Pages
 
     element :title, "input[name='itemTitle']"
     element :name, "input[name='itemName']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
   end
 end

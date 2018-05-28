@@ -8,7 +8,7 @@ module Pages
     set_url '/lists/{id}/users_lists/new'
 
     element :email, "input[name='newEmail']"
-    element :submit, "input[type='submit']"
+    element :submit, "button[type='submit']"
 
     def share_list_with(user_email)
       find(LIST_GROUP_ITEM_CLASS, text: user_email).click
