@@ -15,7 +15,7 @@ RSpec.feature 'A book list' do
 
     login user
     home_page.name.set list.name
-    home_page.book_list.click
+    home_page.list_type.select 'books'
     home_page.submit.click
 
     home_page.wait_for_incomplete_lists

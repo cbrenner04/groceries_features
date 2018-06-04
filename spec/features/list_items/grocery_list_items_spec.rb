@@ -21,7 +21,6 @@ RSpec.feature 'A grocery list item' do
                                                 create_item: false)
 
     list_page.quantity.set new_list_item.quantity
-    list_page.quantity_name.set new_list_item.quantity_name
     list_page.name.set new_list_item.name
     list_page.submit.click
 

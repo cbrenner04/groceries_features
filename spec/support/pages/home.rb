@@ -17,13 +17,10 @@ module Pages
     element :list_deleted_alert,
             '.alert',
             text: 'Your list was successfully deleted'
-    element :book_list, '#listType-BookList'
-    element :grocery_list, '#listType-GroceryList'
+    element :list_type, "select[name='listType']"
     element :header, 'h1', text: 'Lists'
-    element :music_list, '#listType-MusicList'
     element :name, "input[name='listName']"
     element :submit, "button[type='submit']"
-    element :to_do_list, '#listType-ToDoList'
     element :invite, '#invite-link'
     element :log_out, '#log-out-link'
 
