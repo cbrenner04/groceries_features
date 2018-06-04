@@ -15,7 +15,7 @@ RSpec.feature 'A grocery list' do
 
     login user
     home_page.name.set list.name
-    home_page.grocery_list.click
+    home_page.list_type.select 'groceries'
     home_page.submit.click
 
     home_page.wait_for_incomplete_lists

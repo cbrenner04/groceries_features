@@ -15,7 +15,7 @@ RSpec.feature 'A to-do list' do
 
     login user
     home_page.name.set list.name
-    home_page.to_do_list.click
+    home_page.list_type.select 'to-do'
     home_page.submit.click
 
     home_page.wait_for_incomplete_lists

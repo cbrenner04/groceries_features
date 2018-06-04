@@ -15,7 +15,7 @@ RSpec.feature 'A music list' do
 
     login user
     home_page.name.set list.name
-    home_page.music_list.click
+    home_page.list_type.select 'music'
     home_page.submit.click
 
     home_page.wait_for_incomplete_lists

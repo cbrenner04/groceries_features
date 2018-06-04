@@ -20,12 +20,11 @@ module Pages
     element :item_deleted_alert,
             '.alert',
             text: 'Your item was successfully deleted'
-    element :author, "input[name='author']"
-    element :title, "input[name='title']"
-    element :quantity, "input[name='quantity']"
-    element :quantity_name, "input[name='quantityName']"
-    element :artist, "input[name='artist']"
-    element :album, "input[name='album']"
+    element :author, "input[name='itemAuthor']"
+    element :title, "input[name='itemTitle']"
+    element :quantity, "input[name='itemQuantity']"
+    element :artist, "input[name='itemArtist']"
+    element :album, "input[name='itemAlbum']"
     element :name, "input[name='itemName']"
     element :submit, "button[type='submit']"
 
