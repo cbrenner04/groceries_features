@@ -10,12 +10,12 @@ Add a `env.yml` file under `config/` that follows `env.yml.example`.
 
 To run against a running local instance of Groceries
 
-```
+```bash
 rspec
 ```
 
 To run against staging
 
-```
+```bash
 ENV=staging rspec
 ```

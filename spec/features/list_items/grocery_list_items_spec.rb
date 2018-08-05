@@ -21,7 +21,7 @@ RSpec.feature 'A grocery list item' do
                                                 create_item: false)
 
     list_page.quantity.set new_list_item.quantity
-    list_page.name.set new_list_item.name
+    list_page.product.set new_list_item.product
     list_page.submit.click
 
     wait_for do
@@ -50,11 +50,11 @@ RSpec.feature 'A grocery list item' do
 
       list_page.edit item.pretty_title
 
-      item.name = SecureRandom.hex(16)
+      item.product = SecureRandom.hex(16)
 
       wait_for do
-        edit_list_item_page.name.set item.name
-        edit_list_item_page.name.value == item.name
+        edit_list_item_page.product.set item.product
+        edit_list_item_page.product.value == item.product
       end
 
       edit_list_item_page.submit.click
