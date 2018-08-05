@@ -3,8 +3,8 @@
 module Models
   # an item on a grocery list
   class GroceryListItem
-    attr_reader :id, :user_id, :grocery_list_id, :product, :quantity, :purchased,
-                :refreshed
+    attr_reader :id, :user_id, :grocery_list_id, :product, :quantity,
+                :purchased, :refreshed
     attr_writer :product
 
     def initialize(user_id:, grocery_list_id:, purchased: false,
