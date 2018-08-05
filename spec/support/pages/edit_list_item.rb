@@ -6,7 +6,8 @@ module Pages
     set_url 'lists/{list_id}/{list_item_type}/{id}/edit'
 
     element :title, "input[name='itemTitle']"
-    element :name, "input[name='itemName']"
+    element :task, "input[name='task']"
+    element :product, "input[name='product']"
     element :submit, "button[type='submit']"
   end
 end

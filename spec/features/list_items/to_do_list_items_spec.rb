@@ -22,8 +22,8 @@ RSpec.feature 'A to do list item' do
     new_list_item.due_by = Time.now
 
     wait_for do
-      list_page.name.set new_list_item.name
-      list_page.name.value == new_list_item.name
+      list_page.task.set new_list_item.task
+      list_page.task.value == new_list_item.task
     end
 
     list_page.submit.click
@@ -54,11 +54,11 @@ RSpec.feature 'A to do list item' do
 
       list_page.edit item.pretty_title
 
-      item.name = SecureRandom.hex(16)
+      item.task = SecureRandom.hex(16)
 
       wait_for do
-        edit_list_item_page.name.set item.name
-        edit_list_item_page.name.value == item.name
+        edit_list_item_page.task.set item.task
+        edit_list_item_page.task.value == item.task
       end
 
       edit_list_item_page.submit.click
