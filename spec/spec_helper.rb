@@ -9,6 +9,7 @@ require 'selenium-webdriver'
 require 'site_prism'
 require 'sequel'
 require 'envyable'
+require 'chromedriver-helper'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
@@ -56,6 +57,7 @@ end
 # set `DRIVER=poltergeist` on the command line when you want to run headless
 Capybara.default_driver = ENV['DRIVER'].nil? ? :selenium : ENV['DRIVER'].to_sym
 unless ENV['DRIVER'] == 'poltergeist'
+  Capybara.javascript_driver = :chrome
   Capybara.page.driver.browser.manage.window.resize_to(1280, 743)
 end
 Capybara.save_path = 'spec/screenshots/'
