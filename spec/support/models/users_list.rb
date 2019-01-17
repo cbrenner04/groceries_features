@@ -3,24 +3,20 @@
 module Models
   # relates a user and a list
   class UsersList
-    attr_reader :id, :user_id, :list_id, :has_accepted, :responded
+    attr_reader :id, :user_id, :list_id, :has_accepted
 
-    def initialize(user_id:, list_id:, has_accepted: true, responded: true,
-                   create_list: true)
+    def initialize(user_id:, list_id:, has_accepted: true, create_list: true)
       @user_id = user_id
       @list_id = list_id
       @has_accepted = has_accepted
-      @responded = responded
       @id = create if create_list
     end
 
     private
 
     def create
-      DB[:users_lists].insert(
-        user_id: user_id, list_id: list_id, has_accepted: has_accepted,
-        responded: responded
-      )
+      DB[:users_lists]
+        .insert(user_id: user_id, list_id: list_id, has_accepted: has_accepted)
     end
   end
 end
