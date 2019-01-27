@@ -11,7 +11,8 @@ RSpec.feature 'A to-do list' do
   let(:list_type) { 'ToDoList' }
 
   it 'is created' do
-    list = Models::List.new(type: list_type, create_list: false)
+    list =
+      Models::List.new(type: list_type, create_list: false, owner_id: user.id)
 
     login user
     home_page.name.set list.name
@@ -23,7 +24,7 @@ RSpec.feature 'A to-do list' do
   end
 
   describe 'that is incomplete' do
-    let(:list) { Models::List.new(type: list_type) }
+    let(:list) { Models::List.new(type: list_type, owner_id: user.id) }
 
     before do
       @list_items = create_associated_list_objects(user, list)
@@ -65,7 +66,7 @@ RSpec.feature 'A to-do list' do
 
     it 'is shared with a previously shared with user' do
       other_user = Models::User.new
-      other_list = Models::List.new(type: list_type)
+      other_list = Models::List.new(type: list_type, owner_id: other_user.id)
       create_associated_list_objects(user, other_list)
       Models::UsersList.new(user_id: other_user.id, list_id: other_list.id)
 
@@ -122,7 +123,9 @@ RSpec.feature 'A to-do list' do
   end
 
   describe 'that is complete' do
-    let(:list) { Models::List.new(type: list_type, completed: true) }
+    let(:list) do
+      Models::List.new(type: list_type, completed: true, owner_id: user.id)
+    end
 
     before do
       @list_items = create_associated_list_objects(user, list)

@@ -6,7 +6,7 @@ RSpec.feature 'A book list item' do
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: 'BookList') }
+  let(:list) { Models::List.new(type: 'BookList', owner_id: user.id) }
 
   before do
     @list_items = create_associated_list_objects(user, list)
