@@ -3,15 +3,21 @@
 module Pages
   # edit list page
   class ShareList < SitePrism::Page
-    LIST_GROUP_ITEM_CLASS = '.list-group-item'
+    SHARE_LIST_ID = '#invite-user'
 
     set_url '/lists/{id}/users_lists/new'
 
     element :email, "input[name='newEmail']"
     element :submit, "button[type='submit']"
+    element :write_badge, '#perm-write'
+    element :read_badge, '#perm-read'
 
-    def share_list_with(user_email)
-      find(LIST_GROUP_ITEM_CLASS, text: user_email).click
+    def share_list_with(user_id)
+      find("#{SHARE_LIST_ID}-#{user_id}").click
+    end
+
+    def toggle_permissions(shared_state: 'accepted', user_id:)
+      find("##{shared_state}-user-#{user_id}").click
     end
   end
 end

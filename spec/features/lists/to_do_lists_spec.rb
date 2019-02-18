@@ -76,7 +76,7 @@ RSpec.feature 'A to-do list' do
                                            .where(user_id: other_user.id)
                                            .count
 
-      share_list_page.share_list_with other_user.email
+      share_list_page.share_list_with other_user.id
 
       home_page.wait_for_incomplete_lists
 
@@ -119,6 +119,57 @@ RSpec.feature 'A to-do list' do
       home_page.wait_for_list_deleted_alert
       expect(home_page.incomplete_list_names.map(&:text))
         .to_not include list.name
+    end
+
+    describe 'that is shared' do
+      describe 'with write access' do
+        it 'can be edited, completed or deleted' do
+          expect(home_page).to have_complete_button
+          expect(home_page).to have_delete_button
+          expect(home_page).to have_edit_button
+        end
+
+        it 'is updated to change sharee permissions' do
+          other_user = Models::User.new
+          create_associated_list_objects(other_user, list)
+
+          home_page.share list.name
+
+          share_list_page.toggle_permissions(user_id: other_user.id)
+
+          expect(share_list_page).to have_read_badge
+
+          share_list_page.toggle_permissions(user_id: other_user.id)
+
+          expect(share_list_page).to have_write_badge
+        end
+      end
+
+      describe 'with read access' do
+        before do
+          DB[:users_lists]
+            .where(user_id: user.id, list_id: list.id)
+            .update(permissions: 'read')
+        end
+
+        it 'cannot be edited, completed or deleted' do
+          home_page.load
+          sleep 3
+          expect(home_page).to have_no_complete_button
+          expect(home_page).to have_no_delete_button
+          expect(home_page).to have_no_edit_button
+        end
+
+        it 'cannot be updated to change sharee permissions' do
+          other_user = Models::User.new
+          create_associated_list_objects(other_user, list)
+
+          home_page.share list.name
+          share_list_page.wait_for_email
+
+          expect(share_list_page).to have_no_write_badge
+        end
+      end
     end
   end
 
@@ -164,6 +215,28 @@ RSpec.feature 'A to-do list' do
       home_page.wait_for_incomplete_lists
       home_page.wait_for_complete_lists
       expect(home_page.complete_list_names.map(&:text)).to_not include list.name
+    end
+
+    describe 'that is shared' do
+      describe 'with write access' do
+        it 'can be refreshed or deleted' do
+          expect(home_page).to have_refresh_button
+          expect(home_page).to have_delete_button
+        end
+      end
+
+      describe 'with only read access' do
+        before do
+          DB[:users_lists]
+            .where(user_id: user.id, list_id: list.id)
+            .update(permissions: 'read')
+        end
+
+        it 'cannot be refreshed or deleted' do
+          expect(home_page).to have_no_refresh_button
+          expect(home_page).to have_no_delete_button
+        end
+      end
     end
   end
 end

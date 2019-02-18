@@ -23,6 +23,11 @@ module Pages
     element :submit, "button[type='submit']"
     element :invite, '#invite-link'
     element :log_out, '#log-out-link'
+    element :complete_button, COMPLETE_BUTTON
+    element :delete_button, DELETE_BUTTON
+    element :share_button, SHARE_BUTTON
+    element :edit_button, EDIT_BUTTON
+    element :refresh_button, REFRESH_BUTTON
 
     elements :complete_lists, COMPLETE_LIST
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
