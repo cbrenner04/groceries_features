@@ -2,6 +2,7 @@
 spec/examples.txt
 spec/screenshots/
 spec/output/
+.byebug_history
 
-# Don't check in credentials 
+# Don't check in credentials
 config/env.yml
