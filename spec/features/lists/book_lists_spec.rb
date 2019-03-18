@@ -9,6 +9,12 @@ RSpec.feature 'A book list' do
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
   let(:list_type) { 'BookList' }
+  let(:other_user) { Models::User.new }
+  let(:other_list) do
+    Models::List.new(type: list_type, owner_id: other_user.id)
+  end
+
+  before { create_associated_list_objects(user, other_list) }
 
   it 'is created' do
     list =
@@ -65,9 +71,6 @@ RSpec.feature 'A book list' do
     end
 
     it 'is shared with a previously shared with user' do
-      other_user = Models::User.new
-      other_list = Models::List.new(type: list_type, owner_id: other_user.id)
-      create_associated_list_objects(user, other_list)
       Models::UsersList.new(user_id: other_user.id, list_id: other_list.id)
 
       home_page.share list.name
@@ -117,6 +120,10 @@ RSpec.feature 'A book list' do
 
       home_page.wait_for_incomplete_lists
       home_page.wait_for_list_deleted_alert
+      wait_for do
+        !home_page.incomplete_list_names.map(&:text).include?(list.name)
+      end
+
       expect(home_page.incomplete_list_names.map(&:text))
         .to_not include list.name
     end
@@ -130,7 +137,6 @@ RSpec.feature 'A book list' do
         end
 
         it 'is updated to change sharee permissions' do
-          other_user = Models::User.new
           create_associated_list_objects(other_user, list)
 
           home_page.share list.name
@@ -148,26 +154,19 @@ RSpec.feature 'A book list' do
       describe 'with read access' do
         before do
           DB[:users_lists]
-            .where(user_id: user.id, list_id: list.id)
+            .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read')
-        end
-
-        it 'cannot be edited, completed or deleted' do
           home_page.load
-          sleep 3
-          expect(home_page).to have_no_complete_button
-          expect(home_page).to have_no_delete_button
-          expect(home_page).to have_no_edit_button
+          home_page.wait_for_header
         end
 
-        it 'cannot be updated to change sharee permissions' do
-          other_user = Models::User.new
-          create_associated_list_objects(other_user, list)
+        it 'cannot be edited, completed, shared, or deleted' do
+          read_list = home_page.find_incomplete_list(other_list.name)
 
-          home_page.share list.name
-          share_list_page.wait_for_email
-
-          expect(share_list_page).to have_no_write_badge
+          expect(read_list).to have_no_css home_page.complete_button_css
+          expect(read_list).to have_no_css home_page.delete_button_css
+          expect(read_list).to have_no_css home_page.edit_button_css
+          expect(read_list).to have_no_css home_page.share_button_css
         end
       end
     end
@@ -182,6 +181,7 @@ RSpec.feature 'A book list' do
       @list_items = create_associated_list_objects(user, list)
 
       login user
+      home_page.wait_for_incomplete_lists
     end
 
     it 'is viewed' do
@@ -196,6 +196,10 @@ RSpec.feature 'A book list' do
       home_page.refresh list.name
 
       home_page.wait_for_incomplete_lists
+      wait_for do
+        home_page.incomplete_list_names.map(&:text).include? list.name
+      end
+
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
 
       home_page.select_list list.name
@@ -208,33 +212,50 @@ RSpec.feature 'A book list' do
     end
 
     it 'is deleted' do
+      wait_for { home_page.complete_list_names.map(&:text).include? list.name }
+
       home_page.accept_alert do
         home_page.delete list.name, complete: true
       end
 
       home_page.wait_for_incomplete_lists
       home_page.wait_for_complete_lists
+      wait_for do
+        !home_page.complete_list_names.map(&:text).include?(list.name)
+      end
+
       expect(home_page.complete_list_names.map(&:text)).to_not include list.name
     end
 
     describe 'that is shared' do
       describe 'with write access' do
         it 'can be refreshed or deleted' do
-          expect(home_page).to have_refresh_button
-          expect(home_page).to have_delete_button
+          wait_for do
+            home_page.complete_list_names.map(&:text).include? list.name
+          end
+
+          read_list = home_page.find_complete_list(list.name)
+
+          expect(read_list).to have_css home_page.refresh_button_css
+          expect(read_list).to have_css home_page.delete_button_css
         end
       end
 
-      describe 'with only read access' do
+      describe 'with read access' do
         before do
           DB[:users_lists]
-            .where(user_id: user.id, list_id: list.id)
+            .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read')
+          DB[:lists].where(id: other_list.id).update(completed: true)
+          home_page.load
+          home_page.wait_for_header
         end
 
         it 'cannot be refreshed or deleted' do
-          expect(home_page).to have_no_refresh_button
-          expect(home_page).to have_no_delete_button
+          read_list = home_page.find_complete_list(other_list.name)
+
+          expect(read_list).to have_no_css home_page.refresh_button_css
+          expect(read_list).to have_no_css home_page.delete_button_css
         end
       end
     end

@@ -15,6 +15,7 @@ module Helpers
       @user_ids.each do |id|
         TABLES.each { |table| @database[table].where(user_id: id).delete }
       end
+      @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
       @users_lists.delete
       @lists.delete
       @users.delete

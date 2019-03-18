@@ -38,20 +38,44 @@ module Pages
       click_on list_name
     end
 
-    def complete(list_name)
+    def find_incomplete_list(list_name)
       find(INCOMPLETE_LIST, text: list_name)
-        .find(COMPLETE_BUTTON)
-        .click
+    end
+
+    def find_complete_list(list_name)
+      find(COMPLETE_LIST, text: list_name)
+    end
+
+    def complete_button_css
+      COMPLETE_BUTTON
+    end
+
+    def delete_button_css
+      DELETE_BUTTON
+    end
+
+    def edit_button_css
+      EDIT_BUTTON
+    end
+
+    def share_button_css
+      SHARE_BUTTON
+    end
+
+    def refresh_button_css
+      REFRESH_BUTTON
+    end
+
+    def complete(list_name)
+      find_incomplete_list(list_name).find(COMPLETE_BUTTON).click
     end
 
     def share(list_name)
-      find(INCOMPLETE_LIST, text: list_name).find(SHARE_BUTTON).click
+      find_incomplete_list(list_name).find(SHARE_BUTTON).click
     end
 
     def edit(list_name)
-      find(INCOMPLETE_LIST, text: list_name)
-        .find(EDIT_BUTTON)
-        .click
+      find_incomplete_list(list_name).find(EDIT_BUTTON).click
     end
 
     def delete(list_name, complete: false)
@@ -60,7 +84,7 @@ module Pages
     end
 
     def refresh(list_name)
-      find(COMPLETE_LIST, text: list_name).find(REFRESH_BUTTON).click
+      find_complete_list(list_name).find(REFRESH_BUTTON).click
     end
   end
 end
