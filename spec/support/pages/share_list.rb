@@ -16,8 +16,12 @@ module Pages
       find("#{SHARE_LIST_ID}-#{user_id}").click
     end
 
+    def find_shared_user(shared_state: 'pending', user_id:)
+      find("##{shared_state}-user-#{user_id}")
+    end
+
     def toggle_permissions(shared_state: 'accepted', user_id:)
-      find("##{shared_state}-user-#{user_id}").click
+      find_shared_user(shared_state: shared_state, user_id: user_id).click
     end
   end
 end

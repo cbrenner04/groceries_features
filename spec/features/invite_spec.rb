@@ -20,6 +20,8 @@ RSpec.feature 'Invite' do
     invite_page.submit.click
 
     home_page.wait_for_incomplete_lists
+
+    expect(home_page).to have_header
     expect(DB[:users].count).to eq before_creation_user_count + 1
     expect(DB[:users].where(email: new_user_email).count).to eq 1
 

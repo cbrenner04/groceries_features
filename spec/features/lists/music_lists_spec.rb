@@ -61,8 +61,13 @@ RSpec.feature 'A music list' do
       new_user_email = "share-new-user-test-#{Time.now.to_i}@example.com"
       share_list_page.email.set new_user_email
       share_list_page.submit.click
+      share_list_page.wait_for_write_badge
+      new_user_id = DB[:users].where(email: new_user_email).first[:id]
+      shared_user_button =
+        share_list_page
+        .find_shared_user(shared_state: 'pending', user_id: new_user_id)
 
-      home_page.wait_for_incomplete_lists
+      expect(shared_user_button).to have_text new_user_email
       expect(DB[:users].count).to eq before_creation_user_count + 1
       expect(DB[:users].where(email: new_user_email).count).to eq 1
 
@@ -80,8 +85,12 @@ RSpec.feature 'A music list' do
                                            .count
 
       share_list_page.share_list_with other_user.id
+      share_list_page.wait_for_write_badge
+      shared_user_button =
+        share_list_page
+        .find_shared_user(shared_state: 'pending', user_id: other_user.id)
 
-      home_page.wait_for_incomplete_lists
+      expect(shared_user_button).to have_text other_user.email
 
       other_user_list_count_after_share = DB[:users_lists]
                                           .where(user_id: other_user.id)
