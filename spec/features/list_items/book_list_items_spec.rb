@@ -85,7 +85,8 @@ RSpec.feature 'A book list item' do
 
         list_page.wait_for_not_purchased_items
         list_page.wait_for_item_deleted_alert
-        expect(list_page.not_purchased_items.map(&:text)).to_not include item_name
+        expect(list_page.not_purchased_items.map(&:text))
+          .to_not include item_name
       end
     end
 

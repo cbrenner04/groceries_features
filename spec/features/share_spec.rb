@@ -13,8 +13,8 @@ RSpec.feature 'Invite' do
   before { login user }
 
   it 'shows correct users in correct buckets' do
-    list =
-      Models::List.new(type: 'GroceryList', create_list: true, owner_id: user.id)
+    list = Models::List.new(type: 'GroceryList',
+                            create_list: true, owner_id: user.id)
     create_associated_list_objects(user, list)
     Models::UsersList.new(user_id: pending_user.id, list_id: list.id,
                           has_accepted: nil, permissions: 'write')
