@@ -139,24 +139,33 @@ RSpec.feature 'A book list' do
 
     describe 'that is shared' do
       describe 'with write access' do
-        it 'can be edited, completed or deleted' do
-          expect(home_page).to have_complete_button
-          expect(home_page).to have_delete_button
-          expect(home_page).to have_edit_button
+        before do
+          DB[:users_lists]
+            .where(user_id: user.id, list_id: other_list.id)
+            .update(permissions: 'write')
+          home_page.load
+          home_page.wait_for_header
         end
 
-        it 'is updated to change sharee permissions' do
-          create_associated_list_objects(other_user, list)
+        it 'can only be shared' do
+          write_list = home_page.find_incomplete_list(other_list.name)
 
-          home_page.share list.name
+          expect(write_list).to have_css home_page.share_button_css
+          expect(write_list).to have_no_css home_page.complete_button_css
+          expect(write_list).to have_no_css home_page.delete_button_css
+          expect(write_list).to have_no_css home_page.edit_button_css
+        end
 
-          share_list_page.toggle_permissions(user_id: other_user.id)
+        it 'cannot update permissions' do
+          create_associated_list_objects(other_user, other_list)
 
-          expect(share_list_page).to have_read_badge
+          home_page.share other_list.name
 
-          share_list_page.toggle_permissions(user_id: other_user.id)
+          list_user = share_list_page.find_shared_user(shared_state: 'accepted',
+                                                       user_id: other_user.id)
 
-          expect(share_list_page).to have_write_badge
+          expect(list_user).to have_no_css share_list_page.write_badge_css
+          expect(list_user).to have_no_css share_list_page.read_badge_css
         end
       end
 
@@ -238,15 +247,24 @@ RSpec.feature 'A book list' do
 
     describe 'that is shared' do
       describe 'with write access' do
-        it 'can be refreshed or deleted' do
+        before do
+          DB[:users_lists]
+            .where(user_id: user.id, list_id: other_list.id)
+            .update(permissions: 'write')
+          DB[:lists].where(id: other_list.id).update(completed: true)
+          home_page.load
+          home_page.wait_for_header
+        end
+
+        it 'cannot be refreshed or deleted' do
           wait_for do
-            home_page.complete_list_names.map(&:text).include? list.name
+            home_page.complete_list_names.map(&:text).include? other_list.name
           end
 
-          read_list = home_page.find_complete_list(list.name)
+          write_list = home_page.find_complete_list(other_list.name)
 
-          expect(read_list).to have_css home_page.refresh_button_css
-          expect(read_list).to have_css home_page.delete_button_css
+          expect(write_list).to have_no_css home_page.refresh_button_css
+          expect(write_list).to have_no_css home_page.delete_button_css
         end
       end
 

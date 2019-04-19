@@ -20,14 +20,47 @@ module Pages
     element :item_deleted_alert,
             '.alert',
             text: 'Your item was successfully deleted'
-    element :author, "input[name='itemAuthor']"
-    element :title, "input[name='itemTitle']"
-    element :quantity, "input[name='itemQuantity']"
-    element :artist, "input[name='itemArtist']"
-    element :album, "input[name='itemAlbum']"
-    element :task, "input[name='task']"
-    element :product, "input[name='product']"
-    element :submit, "button[type='submit']"
+    element :author_input, "input[name='itemAuthor']"
+    element :title_input, "input[name='itemTitle']"
+    element :quantity_input, "input[name='itemQuantity']"
+    element :artist_input, "input[name='itemArtist']"
+    element :album_input, "input[name='itemAlbum']"
+    element :task_input, "input[name='task']"
+    element :product_input, "input[name='product']"
+    element :submit_button, "button[type='submit']"
+
+    def unread_button_css
+      UNREAD_BUTTON
+    end
+
+    def purchase_button_css
+      PURCHASE_BUTTON
+    end
+
+    def edit_button_css
+      EDIT_BUTTON
+    end
+
+    def delete_button_css
+      DELETE_BUTTON
+    end
+
+    def not_purchased_item_css
+      NOT_PURCHASED_ITEM
+    end
+
+    def purchased_item_css
+      PURCHASED_ITEM
+    end
+
+    def refresh_button_css
+      REFRESH_BUTTON
+    end
+
+    def find_list_item(item_name, purchased: false)
+      item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM
+      find(item_css, text: item_name)
+    end
 
     def read(item_name, purchased: false)
       item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM
@@ -35,8 +68,7 @@ module Pages
     end
 
     def has_read_item?(item_name, purchased: false)
-      item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM
-      item = find(item_css, text: item_name)
+      item = find_list_item(item_name, purchased: purchased)
       item.has_css?(READ_BUTTON) && item.has_no_css?(UNREAD_BUTTON)
     end
 

@@ -5,7 +5,7 @@ module Helpers
   module AuthenticationHelper
     def login(user, expect_success: true)
       login_page.load
-      enter_email
+      enter_email(user)
       login_page.password.set user.password
       login_page.submit.click
       home_page.wait_for_header if expect_success
@@ -18,7 +18,7 @@ module Helpers
 
     private
 
-    def enter_email
+    def enter_email(user)
       login_page.email.set user.email
     rescue Capybara::ElementNotFound
       logout if page.has_text? 'You are already signed in'
