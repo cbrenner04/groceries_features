@@ -202,8 +202,9 @@ RSpec.feature 'A grocery list' do
 
             home_page.share other_list.name
 
-            list_user = share_list_page.find_shared_user(shared_state: 'accepted',
-                                                        user_id: other_user.id)
+            list_user = share_list_page
+                        .find_shared_user(shared_state: 'accepted',
+                                          user_id: other_user.id)
 
             expect(list_user).to have_no_css share_list_page.write_badge_css
             expect(list_user).to have_no_css share_list_page.read_badge_css
