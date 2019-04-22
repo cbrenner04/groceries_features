@@ -138,53 +138,121 @@ RSpec.feature 'A book list' do
     end
 
     describe 'that is shared' do
-      describe 'with write access' do
+      describe 'that is pending' do
         before do
           DB[:users_lists]
             .where(user_id: user.id, list_id: other_list.id)
-            .update(permissions: 'write')
+            .update(permissions: 'read', has_accepted: nil)
           home_page.load
           home_page.wait_for_header
         end
 
-        it 'can only be shared' do
-          write_list = home_page.find_incomplete_list(other_list.name)
+        it 'can only accept or reject' do
+          pending_list = home_page.find_pending_list(other_list.name)
 
-          expect(write_list).to have_css home_page.share_button_css
-          expect(write_list).to have_no_css home_page.complete_button_css
-          expect(write_list).to have_no_css home_page.delete_button_css
-          expect(write_list).to have_no_css home_page.edit_button_css
+          expect(pending_list).to have_no_link other_list.name
+
+          expect(pending_list).to have_css home_page.complete_button_css
+          expect(pending_list).to have_css home_page.delete_button_css
+          expect(pending_list).to have_no_css home_page.share_button_css
+          expect(pending_list).to have_no_css home_page.edit_button_css
         end
 
-        it 'cannot update permissions' do
-          create_associated_list_objects(other_user, other_list)
+        it 'accepts' do
+          home_page.accept other_list.name
+          wait_for do
+            home_page.incomplete_list_names.map(&:text).include? other_list.name
+          end
 
-          home_page.share other_list.name
+          expect(home_page.incomplete_list_names.map(&:text))
+            .to include other_list.name
+        end
 
-          list_user = share_list_page.find_shared_user(shared_state: 'accepted',
-                                                       user_id: other_user.id)
+        it 'rejects' do
+          home_page.accept_alert do
+            home_page.reject other_list.name
+          end
 
-          expect(list_user).to have_no_css share_list_page.write_badge_css
-          expect(list_user).to have_no_css share_list_page.read_badge_css
+          home_page.wait_for_incomplete_lists
+
+          expect(home_page.incomplete_list_names.map(&:text))
+            .to_not include other_list.name
+          expect(home_page.pending_list_names.map(&:text))
+            .to_not include other_list.name
         end
       end
 
-      describe 'with read access' do
+      describe 'that is accepted' do
+        describe 'with write access' do
+          before do
+            DB[:users_lists]
+              .where(user_id: user.id, list_id: other_list.id)
+              .update(permissions: 'write')
+            home_page.load
+            home_page.wait_for_header
+          end
+
+          it 'can only be shared' do
+            write_list = home_page.find_incomplete_list(other_list.name)
+
+            expect(write_list).to have_css home_page.share_button_css
+            expect(write_list).to have_no_css home_page.complete_button_css
+            expect(write_list).to have_no_css home_page.delete_button_css
+            expect(write_list).to have_no_css home_page.edit_button_css
+          end
+
+          it 'cannot update permissions' do
+            create_associated_list_objects(other_user, other_list)
+
+            home_page.share other_list.name
+
+            list_user = share_list_page
+                        .find_shared_user(shared_state: 'accepted',
+                                          user_id: other_user.id)
+
+            expect(list_user).to have_no_css share_list_page.write_badge_css
+            expect(list_user).to have_no_css share_list_page.read_badge_css
+          end
+        end
+
+        describe 'with read access' do
+          before do
+            DB[:users_lists]
+              .where(user_id: user.id, list_id: other_list.id)
+              .update(permissions: 'read')
+            home_page.load
+            home_page.wait_for_header
+          end
+
+          it 'cannot be edited, completed, shared, or deleted' do
+            read_list = home_page.find_incomplete_list(other_list.name)
+
+            expect(read_list).to have_no_css home_page.complete_button_css
+            expect(read_list).to have_no_css home_page.delete_button_css
+            expect(read_list).to have_no_css home_page.edit_button_css
+            expect(read_list).to have_no_css home_page.share_button_css
+          end
+        end
+      end
+
+      describe 'that is refused' do
         before do
           DB[:users_lists]
             .where(user_id: user.id, list_id: other_list.id)
-            .update(permissions: 'read')
+            .update(has_accepted: false)
           home_page.load
           home_page.wait_for_header
         end
 
-        it 'cannot be edited, completed, shared, or deleted' do
-          read_list = home_page.find_incomplete_list(other_list.name)
+        it 'should not be visible' do
+          wait_for do
+            !home_page.pending_list_names.map(&:text).include? other_list.name
+          end
 
-          expect(read_list).to have_no_css home_page.complete_button_css
-          expect(read_list).to have_no_css home_page.delete_button_css
-          expect(read_list).to have_no_css home_page.edit_button_css
-          expect(read_list).to have_no_css home_page.share_button_css
+          expect(home_page.incomplete_list_names.map(&:text))
+            .to_not include other_list.name
+          expect(home_page.pending_list_names.map(&:text))
+            .to_not include other_list.name
         end
       end
     end
