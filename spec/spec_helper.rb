@@ -10,6 +10,7 @@ require 'site_prism'
 require 'sequel'
 require 'envyable'
 require 'chromedriver-helper'
+require 'byebug'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 

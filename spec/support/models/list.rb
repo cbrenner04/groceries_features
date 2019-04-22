@@ -3,13 +3,15 @@
 module Models
   # a list, not related to a user, holds items
   class List
-    attr_reader :id, :name, :type, :completed
+    attr_reader :id, :name, :type, :completed, :owner_id
     attr_writer :name
 
-    def initialize(type:, completed: false, create_list: true)
+    def initialize(type:, completed: false, create_list: true, owner_id:)
       @name = SecureRandom.hex(16)
       @type = type
       @completed = completed
+      @owner_id = owner_id
+      # must be last in order to have access to all attributes
       @id = create if create_list
     end
 
@@ -18,7 +20,7 @@ module Models
     def create
       DB[:lists].insert(
         name: name, type: type, completed: completed, created_at: Time.now,
-        updated_at: Time.now
+        updated_at: Time.now, owner_id: owner_id
       )
     end
   end
