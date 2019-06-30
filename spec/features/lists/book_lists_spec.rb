@@ -25,7 +25,10 @@ RSpec.feature 'A book list' do
     home_page.list_type.select 'books'
     home_page.submit.click
 
-    home_page.wait_for_incomplete_lists
+    wait_for do
+      home_page.incomplete_list_names.map(&:text).include? list.name
+    end
+
     expect(home_page.incomplete_list_names.map(&:text)).to include list.name
   end
 
@@ -40,8 +43,8 @@ RSpec.feature 'A book list' do
 
     it 'is viewed' do
       home_page.select_list list.name
-      list_page.wait_for_purchased_items
 
+      expect(list_page).to have_purchased_items
       expect(list_page.purchased_items.map(&:text))
         .to include @list_items.last.pretty_title
     end
@@ -49,7 +52,7 @@ RSpec.feature 'A book list' do
     it 'is completed' do
       home_page.complete list.name
 
-      home_page.wait_for_complete_lists
+      expect(home_page).to have_complete_lists
       expect(home_page.complete_list_names.map(&:text)).to include list.name
     end
 
@@ -61,7 +64,9 @@ RSpec.feature 'A book list' do
       new_user_email = "share-new-user-test-#{Time.now.to_i}@example.com"
       share_list_page.email.set new_user_email
       share_list_page.submit.click
-      share_list_page.wait_for_write_badge
+
+      expect(share_list_page).to have_write_badge
+
       new_user_id = DB[:users].where(email: new_user_email).first[:id]
       shared_user_button =
         share_list_page
@@ -85,7 +90,9 @@ RSpec.feature 'A book list' do
                                            .count
 
       share_list_page.share_list_with other_user.id
-      share_list_page.wait_for_write_badge
+
+      expect(share_list_page).to have_write_badge
+
       shared_user_button =
         share_list_page
         .find_shared_user(shared_state: 'pending', user_id: other_user.id)
@@ -118,7 +125,7 @@ RSpec.feature 'A book list' do
 
       edit_list_page.submit.click
 
-      home_page.wait_for_incomplete_lists
+      expect(home_page).to have_incomplete_lists
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
     end
 
@@ -127,12 +134,13 @@ RSpec.feature 'A book list' do
         home_page.delete list.name
       end
 
-      home_page.wait_for_incomplete_lists
-      home_page.wait_for_list_deleted_alert
       wait_for do
         !home_page.incomplete_list_names.map(&:text).include?(list.name)
       end
 
+      expect(home_page).to have_incomplete_lists
+      # TODO: currently does not work
+      # expect(home_page).to have_list_deleted_alert
       expect(home_page.incomplete_list_names.map(&:text))
         .to_not include list.name
     end
@@ -144,7 +152,7 @@ RSpec.feature 'A book list' do
             .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read', has_accepted: nil)
           home_page.load
-          home_page.wait_for_header
+          expect(home_page).to have_header
         end
 
         it 'can only accept or reject' do
@@ -173,8 +181,7 @@ RSpec.feature 'A book list' do
             home_page.reject other_list.name
           end
 
-          home_page.wait_for_incomplete_lists
-
+          expect(home_page).to have_incomplete_lists
           expect(home_page.incomplete_list_names.map(&:text))
             .to_not include other_list.name
           expect(home_page.pending_list_names.map(&:text))
@@ -189,7 +196,7 @@ RSpec.feature 'A book list' do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'write')
             home_page.load
-            home_page.wait_for_header
+            expect(home_page).to have_header
           end
 
           it 'can only be shared' do
@@ -221,7 +228,7 @@ RSpec.feature 'A book list' do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'read')
             home_page.load
-            home_page.wait_for_header
+            expect(home_page).to have_header
           end
 
           it 'cannot be edited, completed, shared, or deleted' do
@@ -241,7 +248,7 @@ RSpec.feature 'A book list' do
             .where(user_id: user.id, list_id: other_list.id)
             .update(has_accepted: false)
           home_page.load
-          home_page.wait_for_header
+          expect(home_page).to have_header
         end
 
         it 'should not be visible' do
@@ -267,13 +274,13 @@ RSpec.feature 'A book list' do
       @list_items = create_associated_list_objects(user, list)
 
       login user
-      home_page.wait_for_incomplete_lists
+      expect(home_page).to have_incomplete_lists
     end
 
     it 'is viewed' do
       home_page.select_list list.name
-      list_page.wait_for_purchased_items
 
+      expect(list_page).to have_purchased_items
       expect(list_page.purchased_items.map(&:text))
         .to include @list_items.last.pretty_title
     end
@@ -281,7 +288,6 @@ RSpec.feature 'A book list' do
     it 'is refreshed' do
       home_page.refresh list.name
 
-      home_page.wait_for_incomplete_lists
       wait_for do
         home_page.incomplete_list_names.map(&:text).include? list.name
       end
@@ -289,8 +295,8 @@ RSpec.feature 'A book list' do
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
 
       home_page.select_list list.name
-      list_page.wait_for_not_purchased_items
 
+      expect(list_page).to have_not_purchased_items
       expect(list_page.not_purchased_items.map(&:text))
         .to include @list_items.first.pretty_title
       expect(list_page.not_purchased_items.map(&:text))
@@ -304,8 +310,6 @@ RSpec.feature 'A book list' do
         home_page.delete list.name, complete: true
       end
 
-      home_page.wait_for_incomplete_lists
-      home_page.wait_for_complete_lists
       wait_for do
         !home_page.complete_list_names.map(&:text).include?(list.name)
       end
@@ -321,7 +325,7 @@ RSpec.feature 'A book list' do
             .update(permissions: 'write')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          home_page.wait_for_header
+          expect(home_page).to have_header
         end
 
         it 'cannot be refreshed or deleted' do
@@ -343,7 +347,7 @@ RSpec.feature 'A book list' do
             .update(permissions: 'read')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          home_page.wait_for_header
+          expect(home_page).to have_header
         end
 
         it 'cannot be refreshed or deleted' do

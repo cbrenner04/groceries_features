@@ -9,7 +9,7 @@ require 'selenium-webdriver'
 require 'site_prism'
 require 'sequel'
 require 'envyable'
-require 'chromedriver-helper'
+require 'webdrivers/chromedriver'
 require 'byebug'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
@@ -70,7 +70,3 @@ Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
 end
 Capybara::Screenshot.autosave_on_failure = true
 Capybara::Screenshot.prune_strategy = :keep_last_run
-
-SitePrism.configure do |config|
-  config.use_implicit_waits = true
-end
