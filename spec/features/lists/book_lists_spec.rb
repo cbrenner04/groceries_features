@@ -125,7 +125,10 @@ RSpec.feature 'A book list' do
 
       edit_list_page.submit.click
 
-      expect(home_page).to have_incomplete_lists
+      wait_for do
+        !home_page.incomplete_list_names.map(&:text).include?(list.name)
+      end
+
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
     end
 
@@ -181,7 +184,17 @@ RSpec.feature 'A book list' do
             home_page.reject other_list.name
           end
 
-          expect(home_page).to have_incomplete_lists
+          wait_for do
+            !home_page
+              .incomplete_list_names
+              .map(&:text)
+              .include?(other_list.name) &&
+              !home_page
+                .pending_list_names
+                .map(&:text)
+                .include?(other_list.name)
+          end
+
           expect(home_page.incomplete_list_names.map(&:text))
             .to_not include other_list.name
           expect(home_page.pending_list_names.map(&:text))

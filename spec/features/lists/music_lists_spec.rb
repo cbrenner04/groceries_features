@@ -180,7 +180,17 @@ RSpec.feature 'A music list' do
             home_page.reject other_list.name
           end
 
-          expect(home_page).to have_incomplete_lists
+          wait_for do
+            !home_page
+              .incomplete_list_names
+              .map(&:text)
+              .include?(other_list.name) &&
+              !home_page
+                .pending_list_names
+                .map(&:text)
+                .include?(other_list.name)
+          end
+
           expect(home_page.incomplete_list_names.map(&:text))
             .to_not include other_list.name
           expect(home_page.pending_list_names.map(&:text))

@@ -159,7 +159,6 @@ RSpec.feature 'A to-do list' do
           pending_list = home_page.find_pending_list(other_list.name)
 
           expect(pending_list).to have_no_link other_list.name
-
           expect(pending_list).to have_css home_page.complete_button_css
           expect(pending_list).to have_css home_page.delete_button_css
           expect(pending_list).to have_no_css home_page.share_button_css
@@ -181,7 +180,17 @@ RSpec.feature 'A to-do list' do
             home_page.reject other_list.name
           end
 
-          expect(home_page).to have_incomplete_lists
+          wait_for do
+            !home_page
+              .incomplete_list_names
+              .map(&:text)
+              .include?(other_list.name) &&
+              !home_page
+                .pending_list_names
+                .map(&:text)
+                .include?(other_list.name)
+          end
+
           expect(home_page.incomplete_list_names.map(&:text))
             .to_not include other_list.name
           expect(home_page.pending_list_names.map(&:text))
