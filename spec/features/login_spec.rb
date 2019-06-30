@@ -19,11 +19,9 @@ RSpec.feature 'Login' do
       login_page.load
       login_page.forgot_password.click
 
-      login_page.wait_for_log_in
       login_page.email.set user.email
       login_page.submit.click
 
-      login_page.wait_for_password
       expect(login_page).to have_password
     end
   end
@@ -47,11 +45,9 @@ RSpec.feature 'Login' do
       login_page.load
       login_page.forgot_password.click
 
-      login_page.wait_for_log_in
       login_page.email.set user.email
       login_page.submit.click
 
-      login_page.wait_for_password
       expect(login_page).to have_password
     end
 
