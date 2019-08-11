@@ -74,7 +74,10 @@ RSpec.feature 'A grocery list item' do
           list_page.delete item_name
         end
 
-        expect(list_page).to have_no_purchased_items
+        wait_for do
+          list_page.not_purchased_items.count.zero?
+        end
+
         # TODO: does not currently work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
