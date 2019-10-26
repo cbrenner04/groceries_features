@@ -46,7 +46,6 @@ RSpec.feature 'Completed lists page' do
       .to include @list_items.first.pretty_title
     expect(list_page.not_purchased_items.map(&:text))
       .to include @list_items.last.pretty_title
-
   end
 
   it 'deletes list' do
@@ -63,9 +62,7 @@ RSpec.feature 'Completed lists page' do
     end
 
     expect(home_page.complete_list_names.map(&:text)).to_not include @list.name
-
   end
-
 
   describe 'shared list' do
     it 'does not show refresh or delete' do
