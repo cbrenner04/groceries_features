@@ -36,6 +36,10 @@ module Pages
     elements :incomplete_list_names, "#{INCOMPLETE_LIST} h5"
     elements :pending_list_names, "#{PENDING_LIST} h5"
 
+    def go_to_completed_lists
+      click_on 'See all completed lists here'
+    end
+
     def select_list(list_name)
       click_on list_name
     end
