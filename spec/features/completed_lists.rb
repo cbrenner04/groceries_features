@@ -4,6 +4,7 @@ require 'spec_helper'
 
 RSpec.feature 'Completed lists page' do
   let(:home_page) { Pages::Home.new }
+  let(:completed_lists_page) { Pages::CompletedLists.new }
   let(:edit_list_page) { Pages::EditList.new }
   let(:share_list_page) { Pages::ShareList.new }
   let(:list_page) { Pages::List.new }
@@ -30,12 +31,12 @@ RSpec.feature 'Completed lists page' do
 
   it 'shows correct shit' do
     home_page.go_to_completed_lists
-    owned_list = home_page.find_complete_list(@list.name)
-    shared_list = home_page.find_complete_list(@other_list.name)
+    owned_list = completed_lists_page.find_complete_list(@list.name)
+    shared_list = completed_lists_page.find_complete_list(@other_list.name)
 
-    expect(owned_list).to have_css home_page.refresh_button_css
-    expect(owned_list).to have_css home_page.delete_button_css
-    expect(shared_list).to have_no_css home_page.refresh_button_css
-    expect(shared_list).to have_no_css home_page.delete_button_css
+    expect(owned_list).to have_css completed_lists_page.refresh_button_css
+    expect(owned_list).to have_css completed_lists_page.delete_button_css
+    expect(shared_list).to have_no_css completed_lists_page.refresh_button_css
+    expect(shared_list).to have_no_css completed_lists_page.delete_button_css
   end
 end
