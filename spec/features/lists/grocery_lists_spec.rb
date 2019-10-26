@@ -134,6 +134,8 @@ RSpec.feature 'A grocery list' do
         home_page.delete list.name
       end
 
+      sleep 1 # TODO: figure this out
+
       wait_for do
         !home_page.incomplete_list_names.map(&:text).include?(list.name)
       end
