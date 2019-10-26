@@ -16,28 +16,32 @@ module Helpers
     end
 
     def create_results
+      set_auth_token unless @auth_token
+      return unless @auth_token
+      set_feature_id unless @feature_id
       post_results
       delete_token
     end
 
     private
 
-    def auth_token
-      return @auth_token if @auth_token
+    def set_auth_token
       response = RestClient.post(
         "#{@url}/sign-in.json",
         user_login: { email: @user, password: @password }
       )
       @auth_token = JSON.parse(response.body)['auth_token']
+    rescue Errno::ECONNREFUSED
+      # if can't connect to feature results, auth token doesn't matter
+      @auth_token = nil
     end
 
-    def feature_id
-      return @feature_id if @feature_id
+    def set_feature_id
       response = RestClient::Request.execute(
         method: :post,
         url: "#{@url}/features.json",
         payload: { feature: feature_payload },
-        headers: { 'Authorization' => "Token token=#{auth_token}" }
+        headers: { 'Authorization' => "Token token=#{@auth_token}" }
       )
       @feature_id = JSON.parse(response.body)['feature_id']
     end
@@ -51,13 +55,13 @@ module Helpers
         method: :post,
         url: "#{@url}/results.json",
         payload: { result: result_payload },
-        headers: { 'Authorization' => "Token token=#{auth_token}" }
+        headers: { 'Authorization' => "Token token=#{@auth_token}" }
       )
     end
 
     def result_payload
       {
-        feature_id: feature_id,
+        feature_id: @feature_id,
         duration: Time.now - @spec.execution_result.started_at,
         exception: @spec.exception&.to_s,
         passed: @spec.exception.nil?,
@@ -69,7 +73,7 @@ module Helpers
     def delete_token
       RestClient.delete(
         "#{@url}/sign-out.json",
-        'Authorization' => "Token token=#{auth_token}"
+        'Authorization' => "Token token=#{@auth_token}"
       )
     end
   end
