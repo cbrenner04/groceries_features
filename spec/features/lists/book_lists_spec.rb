@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.feature 'A book list' do
+RSpec.describe 'A book list', type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:edit_list_page) { Pages::EditList.new }
   let(:share_list_page) { Pages::ShareList.new }
@@ -147,7 +147,7 @@ RSpec.feature 'A book list' do
       # TODO: currently does not work
       # expect(home_page).to have_list_deleted_alert
       expect(home_page.incomplete_list_names.map(&:text))
-        .to_not include list.name
+        .not_to include list.name
     end
 
     describe 'that is shared' do
@@ -157,7 +157,9 @@ RSpec.feature 'A book list' do
             .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read', has_accepted: nil)
           home_page.load
-          expect(home_page).to have_header
+          wait_for do
+            home_page.has_header?
+          end
         end
 
         it 'can only accept or reject' do
@@ -198,9 +200,9 @@ RSpec.feature 'A book list' do
           end
 
           expect(home_page.incomplete_list_names.map(&:text))
-            .to_not include other_list.name
+            .not_to include other_list.name
           expect(home_page.pending_list_names.map(&:text))
-            .to_not include other_list.name
+            .not_to include other_list.name
         end
       end
 
@@ -211,7 +213,9 @@ RSpec.feature 'A book list' do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'write')
             home_page.load
-            expect(home_page).to have_header
+            wait_for do
+              home_page.has_header?
+            end
           end
 
           it 'can only be shared' do
@@ -243,7 +247,9 @@ RSpec.feature 'A book list' do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'read')
             home_page.load
-            expect(home_page).to have_header
+            wait_for do
+              home_page.has_header?
+            end
           end
 
           it 'cannot be edited, completed, shared, or deleted' do
@@ -263,18 +269,20 @@ RSpec.feature 'A book list' do
             .where(user_id: user.id, list_id: other_list.id)
             .update(has_accepted: false)
           home_page.load
-          expect(home_page).to have_header
+          wait_for do
+            home_page.has_header?
+          end
         end
 
-        it 'should not be visible' do
+        it 'is not visible' do
           wait_for do
             !home_page.pending_list_names.map(&:text).include? other_list.name
           end
 
           expect(home_page.incomplete_list_names.map(&:text))
-            .to_not include other_list.name
+            .not_to include other_list.name
           expect(home_page.pending_list_names.map(&:text))
-            .to_not include other_list.name
+            .not_to include other_list.name
         end
       end
     end
@@ -289,7 +297,9 @@ RSpec.feature 'A book list' do
       @list_items = create_associated_list_objects(user, list)
 
       login user
-      expect(home_page).to have_incomplete_lists
+      wait_for do
+        home_page.has_incomplete_lists?
+      end
     end
 
     it 'is viewed' do
@@ -329,7 +339,7 @@ RSpec.feature 'A book list' do
         !home_page.complete_list_names.map(&:text).include?(list.name)
       end
 
-      expect(home_page.complete_list_names.map(&:text)).to_not include list.name
+      expect(home_page.complete_list_names.map(&:text)).not_to include list.name
     end
 
     describe 'that is shared' do
@@ -340,7 +350,9 @@ RSpec.feature 'A book list' do
             .update(permissions: 'write')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          expect(home_page).to have_header
+          wait_for do
+            home_page.has_header?
+          end
         end
 
         it 'cannot be refreshed or deleted' do
@@ -362,7 +374,9 @@ RSpec.feature 'A book list' do
             .update(permissions: 'read')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          expect(home_page).to have_header
+          wait_for do
+            home_page.has_header?
+          end
         end
 
         it 'cannot be refreshed or deleted' do

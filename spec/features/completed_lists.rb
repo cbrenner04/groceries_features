@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.feature 'Completed lists page' do
+RSpec.describe 'Completed lists page', type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:completed_lists_page) { Pages::CompletedLists.new }
   let(:edit_list_page) { Pages::EditList.new }
@@ -61,7 +61,7 @@ RSpec.feature 'Completed lists page' do
       !home_page.complete_list_names.map(&:text).include?(@list.name)
     end
 
-    expect(home_page.complete_list_names.map(&:text)).to_not include @list.name
+    expect(home_page.complete_list_names.map(&:text)).not_to include @list.name
   end
 
   describe 'shared list' do

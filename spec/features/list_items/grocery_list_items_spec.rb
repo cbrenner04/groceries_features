@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.feature 'A grocery list item' do
+RSpec.describe 'A grocery list item', type: :feature do
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:user) { Models::User.new }
@@ -84,7 +84,7 @@ RSpec.feature 'A grocery list item' do
         # TODO: does not currently work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
-          .to_not include item_name
+          .not_to include item_name
       end
     end
 
@@ -112,7 +112,7 @@ RSpec.feature 'A grocery list item' do
           list_page.purchased_items.count.zero?
         end
 
-        expect(list_page.purchased_items.map(&:text)).to_not include item_name
+        expect(list_page.purchased_items.map(&:text)).not_to include item_name
       end
     end
   end
