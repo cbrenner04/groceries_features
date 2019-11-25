@@ -75,7 +75,9 @@ RSpec.feature 'A music list item' do
           list_page.delete item_name
         end
 
-        expect(list_page).to have_no_purchased_items
+        sleep 1
+
+        expect(list_page).to have_no_not_purchased_items
         # TODO: does not currently work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
