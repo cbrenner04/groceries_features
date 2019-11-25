@@ -18,13 +18,15 @@ jobs:
           - v1-dependencies-{{ checksum "Gemfile.lock" }}
           - v1-dependencies-
       - run:
-          name: install dependencies
+          name: install ruby dependencies
           command: |
+            gem update --system
+            gem install bundler
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
+          key: v2-ruby-dependencies-{{ checksum "Gemfile.lock" }}
           paths:
             - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
       - run:
           name: run rubocop
           command: bundle exec rubocop
