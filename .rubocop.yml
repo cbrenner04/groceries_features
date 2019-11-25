@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: 2.4
@@ -7,3 +9,15 @@ Metrics/BlockLength:
 
 Metrics/ParameterLists:
   Max: 8
+
+RSpec/NestedGroups:
+  Max: 6
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false

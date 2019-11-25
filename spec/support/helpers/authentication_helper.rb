@@ -21,7 +21,8 @@ module Helpers
     def enter_email(user)
       login_page.email.set user.email
     rescue Capybara::ElementNotFound
-      logout if page.has_text? 'You are already signed in'
+      logout if home_page.has_header?
+      logout if home_page.has_text? 'You are already signed in'
       retry
     end
 

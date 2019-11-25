@@ -18,6 +18,7 @@ module Helpers
     def create_results
       set_auth_token unless @auth_token
       return unless @auth_token
+
       set_feature_id unless @feature_id
       post_results
       delete_token
