@@ -118,6 +118,8 @@ RSpec.describe 'A music list', type: :feature do
 
       list.name = SecureRandom.hex(16)
 
+      sleep 1
+
       wait_for do
         edit_list_page.name.set list.name
         edit_list_page.name.value == list.name
