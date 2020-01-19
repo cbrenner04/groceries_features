@@ -25,6 +25,7 @@ RSpec.describe 'A book list item', type: :feature do
 
       list_page.author_input.set new_list_item.author
       list_page.title_input.set new_list_item.title
+      list_page.number_in_series_input.set new_list_item.number_in_series
       list_page.submit_button.click
 
       wait_for do

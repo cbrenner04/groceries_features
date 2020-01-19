@@ -22,6 +22,7 @@ module Pages
             text: 'Your item was successfully deleted'
     element :author_input, "input[name='itemAuthor']"
     element :title_input, "input[name='itemTitle']"
+    element :number_in_series_input, "input[name='numberInSeries']"
     element :quantity_input, "input[name='itemQuantity']"
     element :artist_input, "input[name='itemArtist']"
     element :album_input, "input[name='itemAlbum']"

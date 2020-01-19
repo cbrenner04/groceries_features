@@ -3,7 +3,14 @@
 module Models
   # an item on a book list
   class BookListItem
-    attr_reader :id, :user_id, :book_list_id, :author, :title, :purchased, :read
+    attr_reader :id,
+                :user_id,
+                :book_list_id,
+                :author,
+                :title,
+                :purchased,
+                :read,
+                :number_in_series
     attr_writer :title
 
     def initialize(user_id:, book_list_id:, purchased: false, read: false,
@@ -14,6 +21,7 @@ module Models
       @title = SecureRandom.hex(16)
       @purchased = purchased
       @read = read
+      @number_in_series = 1
       @id = create if create_item
     end
 
@@ -26,7 +34,8 @@ module Models
     def create
       DB[:book_list_items].insert(
         user_id: user_id, book_list_id: book_list_id, author: author,
-        title: title, purchased: purchased, read: read, created_at: Time.now,
+        title: title, purchased: purchased, read: read,
+        number_in_series: number_in_series, created_at: Time.now,
         updated_at: Time.now
       )
     end
