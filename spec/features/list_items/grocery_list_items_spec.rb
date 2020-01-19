@@ -25,6 +25,7 @@ RSpec.describe 'A grocery list item', type: :feature do
 
       list_page.quantity_input.set new_list_item.quantity
       list_page.product_input.set new_list_item.product
+      list_page.category_input.set new_list_item.category
       list_page.submit_button.click
 
       wait_for do
@@ -33,6 +34,8 @@ RSpec.describe 'A grocery list item', type: :feature do
 
       expect(list_page.not_purchased_items.map(&:text))
         .to include new_list_item.pretty_title
+      expect(list_page.category_header.text)
+        .to eq new_list_item.category.capitalize
     end
 
     describe 'that is not purchased' do

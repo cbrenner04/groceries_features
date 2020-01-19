@@ -4,7 +4,7 @@ module Models
   # an item on a music list
   class MusicListItem
     attr_reader :id, :user_id, :music_list_id, :title, :artist, :album,
-                :purchased
+                :purchased, :category
     attr_writer :title
 
     def initialize(user_id:, music_list_id:, purchased: false,
@@ -15,6 +15,7 @@ module Models
       @artist = SecureRandom.hex(16)
       @album = SecureRandom.hex(8)
       @purchased = purchased
+      @category = SecureRandom.hex(16)
       @id = create if create_item
     end
 
