@@ -8,7 +8,7 @@ module Models
     ONE_DAY = ONE_HOUR * 24
 
     attr_reader :id, :user_id, :to_do_list_id, :task, :assignee_id,
-                :due_by, :completed, :refreshed
+                :due_by, :completed, :refreshed, :category
     attr_writer :task, :due_by
 
     def initialize(user_id:, to_do_list_id:, assignee_id: nil, completed: false,
@@ -20,6 +20,7 @@ module Models
       @due_by = Time.now + (rand(180) * ONE_DAY)
       @completed = completed
       @refreshed = refreshed
+      @category = SecureRandom.hex(16)
       @id = create if create_item
     end
 

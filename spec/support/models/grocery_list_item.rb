@@ -4,7 +4,7 @@ module Models
   # an item on a grocery list
   class GroceryListItem
     attr_reader :id, :user_id, :grocery_list_id, :product, :quantity,
-                :purchased, :refreshed
+                :purchased, :refreshed, :category
     attr_writer :product
 
     def initialize(user_id:, grocery_list_id:, purchased: false,
@@ -15,6 +15,7 @@ module Models
       @quantity = "#{rand(10)} #{SecureRandom.hex(8)}"
       @purchased = purchased
       @refreshed = refreshed
+      @category = SecureRandom.hex(16)
       @id = create if create_item
     end
 
