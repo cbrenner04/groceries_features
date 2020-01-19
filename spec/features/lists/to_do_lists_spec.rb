@@ -314,6 +314,8 @@ RSpec.describe 'A to-do list', type: :feature do
       end
 
       expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+      expect(home_page.complete_list_names.map(&:text))
+        .to include "#{list.name}*"
 
       home_page.select_list list.name
 
