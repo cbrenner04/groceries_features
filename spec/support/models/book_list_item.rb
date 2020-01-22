@@ -8,7 +8,7 @@ module Models
     attr_writer :title
 
     def initialize(user_id:, book_list_id:, purchased: false, read: false,
-                   create_item: true)
+                   category: nil, create_item: true)
       @user_id = user_id
       @book_list_id = book_list_id
       @author = SecureRandom.hex(16)
@@ -16,7 +16,7 @@ module Models
       @purchased = purchased
       @read = read
       @number_in_series = 1
-      @category = SecureRandom.hex(16)
+      @category = category
       @id = create if create_item
     end
 
@@ -31,7 +31,7 @@ module Models
         user_id: user_id, book_list_id: book_list_id, author: author,
         title: title, purchased: purchased, read: read,
         number_in_series: number_in_series, created_at: Time.now,
-        updated_at: Time.now
+        updated_at: Time.now, category: category
       )
     end
   end

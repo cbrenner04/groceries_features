@@ -8,14 +8,14 @@ module Models
     attr_writer :product
 
     def initialize(user_id:, grocery_list_id:, purchased: false,
-                   refreshed: false, create_item: true)
+                   category: nil, refreshed: false, create_item: true)
       @user_id = user_id
       @grocery_list_id = grocery_list_id
       @product = SecureRandom.hex(16)
       @quantity = "#{rand(10)} #{SecureRandom.hex(8)}"
       @purchased = purchased
       @refreshed = refreshed
-      @category = SecureRandom.hex(16)
+      @category = category
       @id = create if create_item
     end
 
@@ -29,7 +29,7 @@ module Models
       DB[:grocery_list_items].insert(
         user_id: user_id, grocery_list_id: grocery_list_id, product: product,
         quantity: quantity, purchased: purchased, refreshed: refreshed,
-        created_at: Time.now, updated_at: Time.now
+        created_at: Time.now, updated_at: Time.now, category: category
       )
     end
   end

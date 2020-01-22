@@ -24,6 +24,8 @@ module Helpers
 
     def create_book_list_items(user, list)
       [
+        Models::BookListItem
+          .new(user_id: user.id, book_list_id: list.id, category: 'foo'),
         Models::BookListItem.new(user_id: user.id, book_list_id: list.id),
         Models::BookListItem
           .new(user_id: user.id, book_list_id: list.id, purchased: true)
@@ -32,6 +34,8 @@ module Helpers
 
     def create_grocery_list_items(user, list)
       [
+        Models::GroceryListItem
+          .new(user_id: user.id, grocery_list_id: list.id, category: 'foo'),
         Models::GroceryListItem.new(user_id: user.id, grocery_list_id: list.id),
         Models::GroceryListItem
           .new(user_id: user.id, grocery_list_id: list.id, purchased: true)
@@ -40,6 +44,8 @@ module Helpers
 
     def create_music_list_items(user, list)
       [
+        Models::MusicListItem
+          .new(user_id: user.id, music_list_id: list.id, category: 'foo'),
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id),
         Models::MusicListItem
           .new(user_id: user.id, music_list_id: list.id, purchased: true)
@@ -48,6 +54,8 @@ module Helpers
 
     def create_todo_list_items(user, list)
       [
+        Models::ToDoListItem
+          .new(user_id: user.id, to_do_list_id: list.id, category: 'foo'),
         Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id),
         Models::ToDoListItem
           .new(user_id: user.id, to_do_list_id: list.id, completed: true)

@@ -31,6 +31,8 @@ module Pages
     element :product_input, "input[name='product']"
     element :submit_button, "button[type='submit']"
     element :category_header, "h5[data-test-class='category-header']"
+    element :filter_button, '#filter-by-category-button'
+    element :clear_filter_button, '#clear-filter-button'
 
     def unread_button_css
       UNREAD_BUTTON
@@ -58,6 +60,10 @@ module Pages
 
     def refresh_button_css
       REFRESH_BUTTON
+    end
+
+    def filter_option(filter_name)
+      find("button[name='#{filter_name}']")
     end
 
     def find_list_item(item_name, purchased: false)

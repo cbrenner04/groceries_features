@@ -12,7 +12,7 @@ module Models
     attr_writer :task, :due_by
 
     def initialize(user_id:, to_do_list_id:, assignee_id: nil, completed: false,
-                   refreshed: false, create_item: true)
+                   category: nil, refreshed: false, create_item: true)
       @user_id = user_id
       @to_do_list_id = to_do_list_id
       @task = SecureRandom.hex(16)
@@ -20,7 +20,7 @@ module Models
       @due_by = Time.now + (rand(180) * ONE_DAY)
       @completed = completed
       @refreshed = refreshed
-      @category = SecureRandom.hex(16)
+      @category = category
       @id = create if create_item
     end
 
@@ -36,7 +36,8 @@ module Models
       DB[:to_do_list_items].insert(
         user_id: user_id, to_do_list_id: to_do_list_id, task: task,
         assignee_id: assignee_id, due_by: due_by, completed: completed,
-        refreshed: refreshed, created_at: Time.now, updated_at: Time.now
+        refreshed: refreshed, created_at: Time.now, updated_at: Time.now,
+        category: category
       )
     end
   end

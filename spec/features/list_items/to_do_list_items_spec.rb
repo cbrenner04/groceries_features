@@ -16,12 +16,14 @@ RSpec.describe 'A to do list item', type: :feature do
     before do
       login user
       list_page.load(id: list.id)
+      @initial_list_item_count = list_page.not_purchased_items.count
     end
 
     it 'is created' do
       new_list_item = Models::ToDoListItem.new(user_id: user.id,
                                                to_do_list_id: list.id,
-                                               create_item: false)
+                                               create_item: false,
+                                               category: 'foo')
       new_list_item.due_by = Time.now
 
       wait_for do
@@ -33,7 +35,7 @@ RSpec.describe 'A to do list item', type: :feature do
       list_page.submit_button.click
 
       wait_for do
-        list_page.not_purchased_items.count == 2
+        list_page.not_purchased_items.count == @initial_list_item_count + 1
       end
 
       expect(list_page.not_purchased_items.map(&:text))
@@ -49,7 +51,7 @@ RSpec.describe 'A to do list item', type: :feature do
         list_page.purchase item_name
 
         wait_for do
-          list_page.purchased_items.count == 2
+          list_page.purchased_items.count == @initial_list_item_count + 1
         end
 
         expect(list_page.purchased_items.map(&:text)).to include item_name
@@ -81,9 +83,12 @@ RSpec.describe 'A to do list item', type: :feature do
           list_page.delete item_name
         end
 
-        sleep 1
+        wait_for do
+          list_page.not_purchased_items.count == @initial_list_item_count - 1
+        end
 
-        expect(list_page).to have_no_not_purchased_items
+        expect(list_page.not_purchased_items.count)
+          .to eq @initial_list_item_count - 1
         # TODO: curently does not work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
@@ -98,13 +103,14 @@ RSpec.describe 'A to do list item', type: :feature do
         list_page.refresh item_name
 
         wait_for do
-          list_page.not_purchased_items.count == 2
+          list_page.not_purchased_items.count == @initial_list_item_count + 1
         end
 
         expect(list_page.not_purchased_items.map(&:text)).to include item_name
       end
 
       it 'is destroyed' do
+        initial_purchased_items_count = list_page.purchased_items.count
         item_name = @list_items.last.pretty_title
 
         list_page.accept_alert do
@@ -112,7 +118,7 @@ RSpec.describe 'A to do list item', type: :feature do
         end
 
         wait_for do
-          list_page.purchased_items.count.zero?
+          list_page.purchased_items.count == initial_purchased_items_count - 1
         end
 
         expect(list_page.purchased_items.map(&:text)).not_to include item_name
