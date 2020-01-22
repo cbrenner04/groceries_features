@@ -8,14 +8,14 @@ module Models
     attr_writer :title
 
     def initialize(user_id:, music_list_id:, purchased: false,
-                   create_item: true)
+                   category: nil, create_item: true)
       @user_id = user_id
       @music_list_id = music_list_id
       @title = SecureRandom.hex(16)
       @artist = SecureRandom.hex(16)
       @album = SecureRandom.hex(8)
       @purchased = purchased
-      @category = SecureRandom.hex(16)
+      @category = category
       @id = create if create_item
     end
 
@@ -29,7 +29,7 @@ module Models
       DB[:music_list_items].insert(
         user_id: user_id, music_list_id: music_list_id, title: title,
         artist: artist, album: album, purchased: purchased,
-        created_at: Time.now, updated_at: Time.now
+        created_at: Time.now, updated_at: Time.now, category: category
       )
     end
   end

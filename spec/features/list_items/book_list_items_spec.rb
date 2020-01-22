@@ -16,12 +16,14 @@ RSpec.describe 'A book list item', type: :feature do
     before do
       login user
       list_page.load(id: list.id)
+      @initial_list_item_count = list_page.not_purchased_items.count
     end
 
     it 'is created' do
       new_list_item = Models::BookListItem.new(user_id: user.id,
                                                book_list_id: list.id,
-                                               create_item: false)
+                                               create_item: false,
+                                               category: 'foo')
 
       list_page.author_input.set new_list_item.author
       list_page.title_input.set new_list_item.title
@@ -30,7 +32,7 @@ RSpec.describe 'A book list item', type: :feature do
       list_page.submit_button.click
 
       wait_for do
-        list_page.not_purchased_items.count == 2
+        list_page.not_purchased_items.count == @initial_list_item_count + 1
       end
 
       expect(list_page.not_purchased_items.map(&:text))
@@ -54,7 +56,7 @@ RSpec.describe 'A book list item', type: :feature do
         list_page.purchase item_name
 
         wait_for do
-          list_page.purchased_items.count == 2
+          list_page.purchased_items.count == @initial_list_item_count + 1
         end
 
         expect(list_page.purchased_items.map(&:text)).to include item_name
@@ -85,9 +87,12 @@ RSpec.describe 'A book list item', type: :feature do
           list_page.delete item_name
         end
 
-        sleep 1
+        wait_for do
+          list_page.not_purchased_items.count == @initial_list_item_count - 1
+        end
 
-        expect(list_page).to have_no_not_purchased_items
+        expect(list_page.not_purchased_items.count)
+          .to eq @initial_list_item_count - 1
         # TODO: currently does not work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
@@ -105,6 +110,7 @@ RSpec.describe 'A book list item', type: :feature do
       end
 
       it 'is destroyed' do
+        initial_purchase_items_count = list_page.purchased_items.count
         item_name = @list_items.last.pretty_title
 
         list_page.accept_alert do
@@ -112,7 +118,7 @@ RSpec.describe 'A book list item', type: :feature do
         end
 
         wait_for do
-          list_page.purchased_items.count.zero?
+          list_page.purchased_items.count == initial_purchase_items_count - 1
         end
 
         expect(list_page.purchased_items.map(&:text)).not_to include item_name

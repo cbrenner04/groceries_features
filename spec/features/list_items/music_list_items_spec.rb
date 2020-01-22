@@ -16,12 +16,14 @@ RSpec.describe 'A music list item', type: :feature do
     before do
       login user
       list_page.load(id: list.id)
+      @initial_list_item_count = list_page.not_purchased_items.count
     end
 
     it 'is created' do
       new_list_item = Models::MusicListItem.new(user_id: user.id,
                                                 music_list_id: list.id,
-                                                create_item: false)
+                                                create_item: false,
+                                                category: 'foo')
 
       list_page.title_input.set new_list_item.title
       list_page.artist_input.set new_list_item.artist
@@ -30,7 +32,7 @@ RSpec.describe 'A music list item', type: :feature do
       list_page.submit_button.click
 
       wait_for do
-        list_page.not_purchased_items.count == 2
+        list_page.not_purchased_items.count == @initial_list_item_count + 1
       end
 
       expect(list_page.not_purchased_items.map(&:text))
@@ -46,7 +48,7 @@ RSpec.describe 'A music list item', type: :feature do
         list_page.purchase item_name
 
         wait_for do
-          list_page.purchased_items.count == 2
+          list_page.purchased_items.count == @initial_list_item_count + 1
         end
 
         expect(list_page.purchased_items.map(&:text)).to include item_name
@@ -78,9 +80,12 @@ RSpec.describe 'A music list item', type: :feature do
           list_page.delete item_name
         end
 
-        sleep 1
+        wait_for do
+          list_page.not_purchased_items.count == @initial_list_item_count - 1
+        end
 
-        expect(list_page).to have_no_not_purchased_items
+        expect(list_page.not_purchased_items.count)
+          .to eq @initial_list_item_count - 1
         # TODO: does not currently work
         # expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))

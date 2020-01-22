@@ -41,12 +41,43 @@ RSpec.describe 'A to-do list', type: :feature do
       login user
     end
 
-    it 'is viewed' do
-      home_page.select_list list.name
+    describe 'that is viewed' do
+      before do
+        home_page.select_list list.name
+      end
 
-      expect(list_page).to have_purchased_items
-      expect(list_page.purchased_items.map(&:text))
-        .to include @list_items.last.pretty_title
+      it 'displays list items' do
+        expect(list_page).to have_not_purchased_items
+        expect(list_page.not_purchased_items.map(&:text))
+          .to include @list_items.first.pretty_title
+        expect(list_page).to have_purchased_items
+        expect(list_page.purchased_items.map(&:text))
+          .to include @list_items.last.pretty_title
+      end
+
+      describe 'that is filtered' do
+        before do
+          list_page.wait_until_purchased_items_visible
+          list_page.filter_button.click
+          list_page.filter_option('Foo').click
+        end
+
+        it 'only shows filtered items' do
+          expect(list_page.not_purchased_items.map(&:text))
+            .to include @list_items.first.pretty_title
+          expect(list_page.not_purchased_items.map(&:text))
+            .not_to include @list_items[1].pretty_title
+        end
+
+        it 'can clear filter' do
+          list_page.clear_filter_button.click
+
+          expect(list_page.not_purchased_items.map(&:text))
+            .to include @list_items.first.pretty_title
+          expect(list_page.not_purchased_items.map(&:text))
+            .to include @list_items[1].pretty_title
+        end
+      end
     end
 
     it 'is completed' do
