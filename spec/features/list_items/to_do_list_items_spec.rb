@@ -95,7 +95,7 @@ RSpec.describe 'A to do list item', type: :feature do
           .not_to include item_name
       end
 
-      describe "when a filter is applied" do
+      describe 'when a filter is applied' do
         before do
           list_page.wait_until_purchased_items_visible
           list_page.filter_button.click
@@ -123,7 +123,7 @@ RSpec.describe 'A to do list item', type: :feature do
             .to include item.pretty_title
         end
 
-        describe "when there is only one item for the selected category" do
+        describe 'when there is only one item for the selected category' do
           it 'is completed' do
             item_name = @list_items.first.pretty_title
 
@@ -148,7 +148,8 @@ RSpec.describe 'A to do list item', type: :feature do
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)
@@ -162,9 +163,10 @@ RSpec.describe 'A to do list item', type: :feature do
           end
         end
 
-        describe "when there are multiple items for the selected category" do
+        describe 'when there are multiple items for the selected category' do
           before do
-            @another_list_item = Models::ToDoListItem
+            @another_list_item =
+              Models::ToDoListItem
               .new(user_id: user.id, to_do_list_id: list.id, category: 'foo')
             @initial_list_item_count += 1
             # due to adding data above we need to reload page and filter again
@@ -199,7 +201,8 @@ RSpec.describe 'A to do list item', type: :feature do
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)

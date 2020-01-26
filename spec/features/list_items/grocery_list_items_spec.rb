@@ -91,7 +91,7 @@ RSpec.describe 'A grocery list item', type: :feature do
           .not_to include item_name
       end
 
-      describe "when a filter is applied" do
+      describe 'when a filter is applied' do
         before do
           list_page.wait_until_purchased_items_visible
           list_page.filter_button.click
@@ -119,7 +119,7 @@ RSpec.describe 'A grocery list item', type: :feature do
             .to include item.pretty_title
         end
 
-        describe "when there is only one item for the selected category" do
+        describe 'when there is only one item for the selected category' do
           it 'is purchased' do
             item_name = @list_items.first.pretty_title
 
@@ -144,7 +144,8 @@ RSpec.describe 'A grocery list item', type: :feature do
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)
@@ -156,12 +157,12 @@ RSpec.describe 'A grocery list item', type: :feature do
             expect(list_page.not_purchased_items.map(&:text))
               .to include @list_items[1].pretty_title
           end
-
         end
 
-        describe "when there are multiple items for the selected category" do
+        describe 'when there are multiple items for the selected category' do
           before do
-            @another_list_item = Models::GroceryListItem
+            @another_list_item =
+              Models::GroceryListItem
               .new(user_id: user.id, grocery_list_id: list.id, category: 'foo')
             @initial_list_item_count += 1
             # due to adding data above we need to reload page and filter again
@@ -196,7 +197,8 @@ RSpec.describe 'A grocery list item', type: :feature do
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)

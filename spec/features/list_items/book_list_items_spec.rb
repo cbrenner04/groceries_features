@@ -135,7 +135,7 @@ RSpec.describe 'A book list item', type: :feature do
             .to include item.pretty_title
         end
 
-        describe "when there is only one item for the selected category" do
+        describe 'when there is only one item for the selected category' do
           it 'is purchased' do
             item_name = @list_items.first.pretty_title
 
@@ -160,7 +160,8 @@ RSpec.describe 'A book list item', type: :feature do
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)
@@ -174,9 +175,10 @@ RSpec.describe 'A book list item', type: :feature do
           end
         end
 
-        describe "when there are multiple items for the selected category" do
+        describe 'when there are multiple items for the selected category' do
           before do
-            @another_list_item = Models::BookListItem
+            @another_list_item =
+              Models::BookListItem
               .new(user_id: user.id, book_list_id: list.id, category: 'foo')
             @initial_list_item_count += 1
             # due to adding data above we need to reload page and filter again
@@ -208,14 +210,13 @@ RSpec.describe 'A book list item', type: :feature do
           xit 'is destroyed' do
             item_name = @list_items.first.pretty_title
 
-            byebug
-
             list_page.accept_alert do
               list_page.delete item_name
             end
 
             wait_for do
-              list_page.not_purchased_items.count == @initial_list_item_count - 1
+              list_page.not_purchased_items.count ==
+                @initial_list_item_count - 1
             end
 
             not_purchased_list_items = list_page.not_purchased_items
