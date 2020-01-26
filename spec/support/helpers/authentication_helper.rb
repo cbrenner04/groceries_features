@@ -3,16 +3,18 @@
 module Helpers
   # helpers for authenticating as a user
   module AuthenticationHelper
+    # rubocop:disable Metrics/AbcSize
     def login(user, expect_success: true)
       login_page.load
       enter_email(user)
       login_page.password.set user.password
       login_page.submit.click
-      if expect_success
-        home_page.wait_until_header_visible
-        expect(home_page).to have_header
-      end
+      return unless expect_success
+
+      home_page.wait_until_header_visible
+      expect(home_page).to have_header
     end
+    # rubocop:enable Metrics/AbcSize
 
     def logout
       home_page.log_out.click
