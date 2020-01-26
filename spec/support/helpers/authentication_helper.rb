@@ -8,7 +8,10 @@ module Helpers
       enter_email(user)
       login_page.password.set user.password
       login_page.submit.click
-      expect(home_page).to have_header if expect_success
+      if expect_success
+        home_page.wait_until_header_visible
+        expect(home_page).to have_header
+      end
     end
 
     def logout

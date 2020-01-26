@@ -363,6 +363,8 @@ RSpec.describe 'A to-do list', type: :feature do
         home_page.delete list.name, complete: true
       end
 
+      sleep 1
+
       wait_for do
         !home_page.complete_list_names.map(&:text).include?(list.name)
       end

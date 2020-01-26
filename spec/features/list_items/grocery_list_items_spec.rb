@@ -143,6 +143,8 @@ RSpec.describe 'A grocery list item', type: :feature do
               list_page.delete item_name
             end
 
+            list_page.wait_until_not_purchased_items_visible
+
             wait_for do
               list_page.not_purchased_items.count ==
                 @initial_list_item_count - 1
@@ -225,6 +227,9 @@ RSpec.describe 'A grocery list item', type: :feature do
         wait_for do
           list_page.not_purchased_items.count == @initial_list_item_count + 1
         end
+
+        list_page.filter_button.click
+        list_page.filter_option('foo').click
 
         expect(list_page.not_purchased_items.map(&:text)).to include item_name
       end

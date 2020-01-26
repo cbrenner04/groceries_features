@@ -27,8 +27,10 @@ module Helpers
         Models::BookListItem
           .new(user_id: user.id, book_list_id: list.id, category: 'foo'),
         Models::BookListItem.new(user_id: user.id, book_list_id: list.id),
-        Models::BookListItem
-          .new(user_id: user.id, book_list_id: list.id, purchased: true)
+        Models::BookListItem.new(user_id: user.id,
+                                 book_list_id: list.id,
+                                 purchased: true,
+                                 category: 'foo')
       ]
     end
 
@@ -37,8 +39,10 @@ module Helpers
         Models::GroceryListItem
           .new(user_id: user.id, grocery_list_id: list.id, category: 'foo'),
         Models::GroceryListItem.new(user_id: user.id, grocery_list_id: list.id),
-        Models::GroceryListItem
-          .new(user_id: user.id, grocery_list_id: list.id, purchased: true)
+        Models::GroceryListItem.new(user_id: user.id,
+                                    grocery_list_id: list.id,
+                                    purchased: true,
+                                    category: 'foo')
       ]
     end
 
@@ -47,8 +51,10 @@ module Helpers
         Models::MusicListItem
           .new(user_id: user.id, music_list_id: list.id, category: 'foo'),
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id),
-        Models::MusicListItem
-          .new(user_id: user.id, music_list_id: list.id, purchased: true)
+        Models::MusicListItem.new(user_id: user.id,
+                                  music_list_id: list.id,
+                                  purchased: true,
+                                  category: 'foo')
       ]
     end
 
@@ -57,8 +63,10 @@ module Helpers
         Models::ToDoListItem
           .new(user_id: user.id, to_do_list_id: list.id, category: 'foo'),
         Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id),
-        Models::ToDoListItem
-          .new(user_id: user.id, to_do_list_id: list.id, completed: true)
+        Models::ToDoListItem.new(user_id: user.id,
+                                 to_do_list_id: list.id,
+                                 completed: true,
+                                 category: 'foo')
       ]
     end
   end
