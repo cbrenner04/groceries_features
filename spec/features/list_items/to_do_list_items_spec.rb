@@ -230,6 +230,9 @@ RSpec.describe 'A to do list item', type: :feature do
           list_page.not_purchased_items.count == @initial_list_item_count + 1
         end
 
+        list_page.filter_button.click
+        list_page.filter_option('foo').click
+
         expect(list_page.not_purchased_items.map(&:text)).to include item_name
       end
 
