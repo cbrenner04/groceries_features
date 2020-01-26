@@ -59,7 +59,7 @@ RSpec.describe 'A grocery list', type: :feature do
         before do
           list_page.wait_until_purchased_items_visible
           list_page.filter_button.click
-          list_page.filter_option('Foo').click
+          list_page.filter_option('foo').click
         end
 
         it 'only shows filtered items' do
