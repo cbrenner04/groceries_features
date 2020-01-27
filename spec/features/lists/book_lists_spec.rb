@@ -198,8 +198,8 @@ RSpec.describe 'A book list', type: :feature do
 
           expect(pending_list).to have_no_link other_list.name
 
-          expect(pending_list).to have_css home_page.complete_button_css
-          expect(pending_list).to have_css home_page.delete_button_css
+          expect(pending_list).to have_css home_page.accept_button_css
+          expect(pending_list).to have_css home_page.reject_button_css
           expect(pending_list).to have_no_css home_page.share_button_css
           expect(pending_list).to have_no_css home_page.edit_button_css
         end
@@ -252,10 +252,14 @@ RSpec.describe 'A book list', type: :feature do
           it 'can only be shared' do
             write_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(write_list).to have_css home_page.share_button_css
-            expect(write_list).to have_no_css home_page.complete_button_css
-            expect(write_list).to have_no_css home_page.delete_button_css
-            expect(write_list).to have_no_css home_page.edit_button_css
+            expect(write_list.find(home_page.share_button_css)[:disabled])
+              .to be_nil
+            expect(write_list.find(home_page.complete_button_css))
+              .to be_disabled
+            expect(write_list.find(home_page.incomplete_delete_button_css))
+              .to be_disabled
+            expect(write_list.find(home_page.edit_button_css)[:disabled])
+              .not_to be_nil
           end
 
           it 'cannot update permissions' do
@@ -286,10 +290,13 @@ RSpec.describe 'A book list', type: :feature do
           it 'cannot be edited, completed, shared, or deleted' do
             read_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(read_list).to have_no_css home_page.complete_button_css
-            expect(read_list).to have_no_css home_page.delete_button_css
-            expect(read_list).to have_no_css home_page.edit_button_css
-            expect(read_list).to have_no_css home_page.share_button_css
+            expect(read_list.find(home_page.share_button_css)[:disabled])
+              .not_to be_nil
+            expect(read_list.find(home_page.complete_button_css)).to be_disabled
+            expect(read_list.find(home_page.incomplete_delete_button_css))
+              .to be_disabled
+            expect(read_list.find(home_page.edit_button_css)[:disabled])
+              .not_to be_nil
           end
         end
       end
@@ -368,6 +375,8 @@ RSpec.describe 'A book list', type: :feature do
         home_page.delete list.name, complete: true
       end
 
+      sleep 1
+
       wait_for do
         !home_page.complete_list_names.map(&:text).include?(list.name)
       end
@@ -395,8 +404,9 @@ RSpec.describe 'A book list', type: :feature do
 
           write_list = home_page.find_complete_list(other_list.name)
 
-          expect(write_list).to have_no_css home_page.refresh_button_css
-          expect(write_list).to have_no_css home_page.delete_button_css
+          expect(write_list.find(home_page.refresh_button_css)).to be_disabled
+          expect(write_list.find(home_page.complete_delete_button_css))
+            .to be_disabled
         end
       end
 
@@ -415,8 +425,9 @@ RSpec.describe 'A book list', type: :feature do
         it 'cannot be refreshed or deleted' do
           read_list = home_page.find_complete_list(other_list.name)
 
-          expect(read_list).to have_no_css home_page.refresh_button_css
-          expect(read_list).to have_no_css home_page.delete_button_css
+          expect(read_list.find(home_page.refresh_button_css)).to be_disabled
+          expect(read_list.find(home_page.complete_delete_button_css))
+            .to be_disabled
         end
       end
     end
