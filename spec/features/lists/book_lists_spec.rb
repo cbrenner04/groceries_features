@@ -252,10 +252,14 @@ RSpec.describe 'A book list', type: :feature do
           it 'can only be shared' do
             write_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(write_list.find(home_page.share_button_css)[:disabled]).to be_nil
-            expect(write_list.find(home_page.complete_button_css)).to be_disabled
-            expect(write_list.find(home_page.incomplete_delete_button_css)).to be_disabled
-            expect(write_list.find(home_page.edit_button_css)[:disabled]).not_to be_nil
+            expect(write_list.find(home_page.share_button_css)[:disabled])
+              .to be_nil
+            expect(write_list.find(home_page.complete_button_css))
+              .to be_disabled
+            expect(write_list.find(home_page.incomplete_delete_button_css))
+              .to be_disabled
+            expect(write_list.find(home_page.edit_button_css)[:disabled])
+              .not_to be_nil
           end
 
           it 'cannot update permissions' do
@@ -286,10 +290,13 @@ RSpec.describe 'A book list', type: :feature do
           it 'cannot be edited, completed, shared, or deleted' do
             read_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(read_list.find(home_page.share_button_css)[:disabled]).not_to be_nil
+            expect(read_list.find(home_page.share_button_css)[:disabled])
+              .not_to be_nil
             expect(read_list.find(home_page.complete_button_css)).to be_disabled
-            expect(read_list.find(home_page.incomplete_delete_button_css)).to be_disabled
-            expect(read_list.find(home_page.edit_button_css)[:disabled]).not_to be_nil
+            expect(read_list.find(home_page.incomplete_delete_button_css))
+              .to be_disabled
+            expect(read_list.find(home_page.edit_button_css)[:disabled])
+              .not_to be_nil
           end
         end
       end
@@ -398,7 +405,8 @@ RSpec.describe 'A book list', type: :feature do
           write_list = home_page.find_complete_list(other_list.name)
 
           expect(write_list.find(home_page.refresh_button_css)).to be_disabled
-          expect(write_list.find(home_page.complete_delete_button_css)).to be_disabled
+          expect(write_list.find(home_page.complete_delete_button_css))
+            .to be_disabled
         end
       end
 
@@ -418,7 +426,8 @@ RSpec.describe 'A book list', type: :feature do
           read_list = home_page.find_complete_list(other_list.name)
 
           expect(read_list.find(home_page.refresh_button_css)).to be_disabled
-          expect(read_list.find(home_page.complete_delete_button_css)).to be_disabled
+          expect(read_list.find(home_page.complete_delete_button_css))
+            .to be_disabled
         end
       end
     end
