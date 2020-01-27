@@ -6,11 +6,14 @@ module Pages
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
     PENDING_LIST = "div[data-test-class='pending-list']"
-    COMPLETE_BUTTON = '.fa.fa-check-square-o'
-    DELETE_BUTTON = '.fa.fa-trash'
-    SHARE_BUTTON = '.fa.fa-users'
-    EDIT_BUTTON = '.fa.fa-pencil-square-o'
-    REFRESH_BUTTON = '.fa.fa-refresh'
+    COMPLETE_BUTTON = 'button[data-test-id="incomplete-list-complete"]'
+    INCOMPLETE_DELETE_BUTTON = 'button[data-test-id="incomplete-list-trash"]'
+    COMPLETE_DELETE_BUTTON = 'button[data-test-id="complete-list-trash"]'
+    SHARE_BUTTON = 'a[data-test-id="incomplete-list-share"]'
+    EDIT_BUTTON = 'a[data-test-id="incomplete-list-edit"]'
+    REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
+    ACCEPT_BUTTON = 'button[data-test-id="pending-list-accept"]'
+    REJECT_BUTTON = 'button[data-test-id="pending-list-trash"]'
 
     set_url '/'
 
@@ -25,7 +28,7 @@ module Pages
     element :invite, '#invite-link'
     element :log_out, '#log-out-link'
     element :complete_button, COMPLETE_BUTTON
-    element :delete_button, DELETE_BUTTON
+    element :incomplete_delete_button, INCOMPLETE_DELETE_BUTTON
     element :share_button, SHARE_BUTTON
     element :edit_button, EDIT_BUTTON
     element :refresh_button, REFRESH_BUTTON
@@ -56,12 +59,24 @@ module Pages
       find(COMPLETE_LIST, text: list_name)
     end
 
+    def accept_button_css
+      ACCEPT_BUTTON
+    end
+
     def complete_button_css
       COMPLETE_BUTTON
     end
 
-    def delete_button_css
-      DELETE_BUTTON
+    def reject_button_css
+      REJECT_BUTTON
+    end
+
+    def incomplete_delete_button_css
+      INCOMPLETE_DELETE_BUTTON
+    end
+
+    def complete_delete_button_css
+      COMPLETE_DELETE_BUTTON
     end
 
     def edit_button_css
@@ -77,11 +92,11 @@ module Pages
     end
 
     def accept(list_name)
-      find_pending_list(list_name).find(COMPLETE_BUTTON).click
+      find_pending_list(list_name).find(ACCEPT_BUTTON).click
     end
 
     def reject(list_name)
-      find_pending_list(list_name).find(DELETE_BUTTON).click
+      find_pending_list(list_name).find(REJECT_BUTTON).click
     end
 
     def complete(list_name)
@@ -98,7 +113,8 @@ module Pages
 
     def delete(list_name, complete: false)
       list_css = complete ? COMPLETE_LIST : INCOMPLETE_LIST
-      find(list_css, text: list_name).find(DELETE_BUTTON).click
+      button_css = complete ? COMPLETE_DELETE_BUTTON : INCOMPLETE_DELETE_BUTTON
+      find(list_css, text: list_name).find(button_css).click
     end
 
     def refresh(list_name)
