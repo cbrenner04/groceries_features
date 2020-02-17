@@ -163,19 +163,20 @@ RSpec.describe 'A music list', type: :feature do
     end
 
     it 'is deleted' do
-      home_page.accept_alert do
-        home_page.delete list.name
-      end
+      home_page.delete list.name
+      home_page.wait_until_confirm_delete_button_visible
 
-      sleep 1 # TODO: figure this out
+      # for some reason if the button is clicked to early it doesn't work
+      sleep 1
+
+      home_page.confirm_delete_button.click
 
       wait_for do
         !home_page.incomplete_list_names.map(&:text).include?(list.name)
       end
 
       expect(home_page).to have_incomplete_lists
-      # TODO: currently not working
-      # expect(home_page).to have_list_deleted_alert
+      expect(home_page).to have_list_deleted_alert
       expect(home_page.incomplete_list_names.map(&:text))
         .not_to include list.name
     end
@@ -214,9 +215,13 @@ RSpec.describe 'A music list', type: :feature do
         end
 
         it 'rejects' do
-          home_page.accept_alert do
-            home_page.reject other_list.name
-          end
+          home_page.reject other_list.name
+          home_page.wait_until_confirm_reject_button_visible
+
+          # for some reason if the button is clicked to early it doesn't work
+          sleep 1
+
+          home_page.confirm_reject_button.click
 
           wait_for do
             !home_page
@@ -369,11 +374,13 @@ RSpec.describe 'A music list', type: :feature do
     it 'is deleted' do
       wait_for { home_page.complete_list_names.map(&:text).include?(list.name) }
 
-      home_page.accept_alert do
-        home_page.delete list.name, complete: true
-      end
+      home_page.delete list.name, complete: true
+      home_page.wait_until_confirm_delete_button_visible
 
+      # for some reason if the button is clicked to early it doesn't work
       sleep 1
+
+      home_page.confirm_delete_button.click
 
       wait_for do
         !home_page.complete_list_names.map(&:text).include?(list.name)

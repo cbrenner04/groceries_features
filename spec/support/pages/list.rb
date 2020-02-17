@@ -19,7 +19,7 @@ module Pages
 
     element :item_deleted_alert,
             '.alert',
-            text: 'Your item was successfully deleted'
+            text: 'Item successfully deleted.'
     element :author_input, "#author"
     element :title_input, "#title"
     element :number_in_series_input, "#number-in-series"
@@ -33,6 +33,7 @@ module Pages
     element :category_header, "h5[data-test-class='category-header']"
     element :filter_button, '#filter-by-category-button'
     element :clear_filter_button, '#clear-filter-button'
+    element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
 
     def unread_button_css
       UNREAD_BUTTON

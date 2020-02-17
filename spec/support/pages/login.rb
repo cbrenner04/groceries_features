@@ -8,7 +8,7 @@ module Pages
     element :email, "#email"
     element :forgot_password, "a[href='/users/password/new']"
     element :log_in, "a[href='/users/sign_in']"
-    element :password, "input[name='password']"
+    element :password, "#password"
     element :password_confirmation, "input[name='passwordConfirmation']"
     element :sign_up, "a[href='/users']"
     element :submit, "button[type='submit']"
