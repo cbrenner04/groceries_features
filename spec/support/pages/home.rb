@@ -21,9 +21,9 @@ module Pages
     element :list_deleted_alert,
             '.alert',
             text: 'List successfully deleted.'
-    element :list_type, "#type"
+    element :list_type, '#type'
     element :header, 'h1', text: 'Lists'
-    element :name, "#name"
+    element :name, '#name'
     element :submit, "button[type='submit']"
     element :invite, '#invite-link'
     element :log_out, '#log-out-link'

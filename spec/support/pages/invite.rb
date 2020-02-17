@@ -5,7 +5,7 @@ module Pages
   class Invite < SitePrism::Page
     set_url '/users/invitation/new'
 
-    element :email, "#email"
+    element :email, '#email'
     element :submit, "button[type='submit']"
   end
 end
