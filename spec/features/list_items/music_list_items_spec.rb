@@ -76,9 +76,13 @@ RSpec.describe 'A music list item', type: :feature do
       it 'is destroyed' do
         item_name = @list_items.first.pretty_title
 
-        list_page.accept_alert do
-          list_page.delete item_name
-        end
+        list_page.delete item_name
+        list_page.wait_until_confirm_delete_button_visible
+
+        # for some reason if the button is clicked to early it doesn't work
+        sleep 1
+
+        list_page.confirm_delete_button.click
 
         wait_for do
           list_page.not_purchased_items.count == @initial_list_item_count - 1
@@ -86,8 +90,7 @@ RSpec.describe 'A music list item', type: :feature do
 
         expect(list_page.not_purchased_items.count)
           .to eq @initial_list_item_count - 1
-        # TODO: does not currently work
-        # expect(list_page).to have_item_deleted_alert
+        expect(list_page).to have_item_deleted_alert
         expect(list_page.not_purchased_items.map(&:text))
           .not_to include item_name
       end
@@ -135,14 +138,16 @@ RSpec.describe 'A music list item', type: :feature do
               .to include @list_items[1].pretty_title
           end
 
-          # TODO: this is technically valid due to the reload on destroy
-          # It should continue to be valid when no reload on destroy
           it 'is destroyed' do
             item_name = @list_items.first.pretty_title
 
-            list_page.accept_alert do
-              list_page.delete item_name
-            end
+            list_page.delete item_name
+            list_page.wait_until_confirm_delete_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            list_page.confirm_delete_button.click
 
             wait_for do
               list_page.not_purchased_items.count ==
@@ -151,12 +156,12 @@ RSpec.describe 'A music list item', type: :feature do
 
             expect(list_page.not_purchased_items.count)
               .to eq @initial_list_item_count - 1
-            # TODO: does not currently work
-            # expect(list_page).to have_item_deleted_alert
+            expect(list_page).to have_item_deleted_alert
             expect(list_page.not_purchased_items.map(&:text))
               .not_to include item_name
+            # still filtered
             expect(list_page.not_purchased_items.map(&:text))
-              .to include @list_items[1].pretty_title
+              .not_to include @list_items[1].pretty_title
           end
         end
 
@@ -189,28 +194,31 @@ RSpec.describe 'A music list item', type: :feature do
               .not_to include @list_items[1].pretty_title
           end
 
-          # TODO: this is not valid at the moment given the reload on destroy
-          xit 'is destroyed' do
+          it 'is destroyed' do
+            initial_list_item_count = list_page.not_purchased_items.count
             item_name = @list_items.first.pretty_title
 
-            list_page.accept_alert do
-              list_page.delete item_name
-            end
+            list_page.delete item_name
+            list_page.wait_until_confirm_delete_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            list_page.confirm_delete_button.click
 
             wait_for do
               list_page.not_purchased_items.count ==
-                @initial_list_item_count - 1
+                initial_list_item_count - 1
             end
 
             expect(list_page.not_purchased_items.count)
-              .to eq @initial_list_item_count - 1
-            # TODO: does not currently work
-            # expect(list_page).to have_item_deleted_alert
+              .to eq initial_list_item_count - 1
+            expect(list_page).to have_item_deleted_alert
             expect(list_page.not_purchased_items.map(&:text))
               .not_to include item_name
-            expect(not_purchased_list_items.map(&:text))
+            expect(list_page.not_purchased_items.map(&:text))
               .to include @another_list_item.pretty_title
-            expect(not_purchased_list_items.map(&:text))
+            expect(list_page.not_purchased_items.map(&:text))
               .not_to include @list_items[1].pretty_title
           end
         end
@@ -221,9 +229,13 @@ RSpec.describe 'A music list item', type: :feature do
       it 'is destroyed' do
         item_name = @list_items.last.pretty_title
 
-        list_page.accept_alert do
-          list_page.delete item_name, purchased: true
-        end
+        list_page.delete item_name, purchased: true
+        list_page.wait_until_confirm_delete_button_visible
+
+        # for some reason if the button is clicked to early it doesn't work
+        sleep 1
+
+        list_page.confirm_delete_button.click
 
         wait_for do
           list_page.purchased_items.count.zero?

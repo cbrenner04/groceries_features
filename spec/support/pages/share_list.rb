@@ -9,7 +9,7 @@ module Pages
 
     set_url '/lists/{id}/users_lists'
 
-    element :email, "input[name='newEmail']"
+    element :email, '#new-email'
     element :submit, "button[type='submit']"
     element :write_badge, WRITE_BADGE
     element :read_badge, READ_BADGE

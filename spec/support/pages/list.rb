@@ -19,20 +19,21 @@ module Pages
 
     element :item_deleted_alert,
             '.alert',
-            text: 'Your item was successfully deleted'
-    element :author_input, "input[name='itemAuthor']"
-    element :title_input, "input[name='itemTitle']"
-    element :number_in_series_input, "input[name='numberInSeries']"
-    element :category_input, "input[name='category']"
-    element :quantity_input, "input[name='itemQuantity']"
-    element :artist_input, "input[name='itemArtist']"
-    element :album_input, "input[name='itemAlbum']"
-    element :task_input, "input[name='task']"
-    element :product_input, "input[name='product']"
+            text: 'Item successfully deleted.'
+    element :author_input, '#author'
+    element :title_input, '#title'
+    element :number_in_series_input, '#number-in-series'
+    element :category_input, '#category'
+    element :quantity_input, '#quantity'
+    element :artist_input, '#artist'
+    element :album_input, '#album'
+    element :task_input, '#task'
+    element :product_input, '#product'
     element :submit_button, "button[type='submit']"
     element :category_header, "h5[data-test-class='category-header']"
     element :filter_button, '#filter-by-category-button'
     element :clear_filter_button, '#clear-filter-button'
+    element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
 
     def unread_button_css
       UNREAD_BUTTON

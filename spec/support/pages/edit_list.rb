@@ -5,7 +5,7 @@ module Pages
   class EditList < SitePrism::Page
     set_url '/lists/{id}/edit'
 
-    element :name, "input[name='listName']"
+    element :name, '#name'
     element :submit, "button[type='submit']"
   end
 end

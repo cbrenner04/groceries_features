@@ -20,10 +20,10 @@ module Pages
     element :signed_in_alert, '.alert', text: 'Signed in successfully'
     element :list_deleted_alert,
             '.alert',
-            text: 'Your list was successfully deleted'
-    element :list_type, "select[name='listType']"
+            text: 'List successfully deleted.'
+    element :list_type, '#type'
     element :header, 'h1', text: 'Lists'
-    element :name, "input[name='list']"
+    element :name, '#name'
     element :submit, "button[type='submit']"
     element :invite, '#invite-link'
     element :log_out, '#log-out-link'
@@ -38,6 +38,8 @@ module Pages
     elements :incomplete_lists, INCOMPLETE_LIST
     elements :incomplete_list_names, "#{INCOMPLETE_LIST} h5"
     elements :pending_list_names, "#{PENDING_LIST} h5"
+    element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
+    element :confirm_reject_button, 'button[data-test-id="confirm-reject"]'
 
     def go_to_completed_lists
       click_on 'See all completed lists here'
