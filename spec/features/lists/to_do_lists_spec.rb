@@ -186,9 +186,7 @@ RSpec.describe 'A to-do list', type: :feature do
             .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read', has_accepted: nil)
           home_page.load
-          wait_for do
-            home_page.has_header?
-          end
+          home_page.wait_until_header_visible
         end
 
         it 'can only accept or reject' do
@@ -246,9 +244,7 @@ RSpec.describe 'A to-do list', type: :feature do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'write')
             home_page.load
-            wait_for do
-              home_page.has_header?
-            end
+            home_page.wait_until_header_visible
           end
 
           it 'can only be shared' do
@@ -284,9 +280,7 @@ RSpec.describe 'A to-do list', type: :feature do
               .where(user_id: user.id, list_id: other_list.id)
               .update(permissions: 'read')
             home_page.load
-            wait_for do
-              home_page.has_header?
-            end
+            home_page.wait_until_header_visible
           end
 
           it 'cannot be edited, completed, shared, or deleted' do
@@ -309,9 +303,7 @@ RSpec.describe 'A to-do list', type: :feature do
             .where(user_id: user.id, list_id: other_list.id)
             .update(has_accepted: false)
           home_page.load
-          wait_for do
-            home_page.has_header?
-          end
+          home_page.wait_until_header_visible
         end
 
         it 'is not visible' do
@@ -337,9 +329,7 @@ RSpec.describe 'A to-do list', type: :feature do
       @list_items = create_associated_list_objects(user, list)
 
       login user
-      wait_for do
-        home_page.has_incomplete_lists?
-      end
+      home_page.wait_until_incomplete_lists_visible
     end
 
     it 'is viewed' do
@@ -395,9 +385,7 @@ RSpec.describe 'A to-do list', type: :feature do
             .update(permissions: 'write')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          wait_for do
-            home_page.has_header?
-          end
+          home_page.wait_until_header_visible
         end
 
         it 'cannot be refreshed or deleted' do
@@ -420,9 +408,7 @@ RSpec.describe 'A to-do list', type: :feature do
             .update(permissions: 'read')
           DB[:lists].where(id: other_list.id).update(completed: true)
           home_page.load
-          wait_for do
-            home_page.has_header?
-          end
+          home_page.wait_until_header_visible
         end
 
         it 'cannot be refreshed or deleted' do
