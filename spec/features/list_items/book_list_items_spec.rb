@@ -186,6 +186,9 @@ RSpec.describe 'A book list item', type: :feature do
               Models::BookListItem
               .new(user_id: user.id, book_list_id: list.id, category: 'foo')
             @initial_list_item_count += 1
+            # need to wait for the item to be added
+            # TODO: do something better
+            sleep 1
             # due to adding data above we need to reload page and filter again
             list_page.load(id: list.id)
             list_page.wait_until_purchased_items_visible
@@ -219,6 +222,7 @@ RSpec.describe 'A book list item', type: :feature do
             list_page.wait_until_confirm_delete_button_visible
 
             # for some reason if the button is clicked to early it doesn't work
+            # TODO: do something better
             sleep 1
 
             list_page.confirm_delete_button.click
