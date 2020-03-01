@@ -185,9 +185,14 @@ RSpec.describe 'A book list', type: :feature do
     describe 'that is shared' do
       describe 'that is pending' do
         before do
+          # make other list pending
           DB[:users_lists]
             .where(user_id: user.id, list_id: other_list.id)
             .update(permissions: 'read', has_accepted: nil)
+          # make other list created at more recent than list
+          DB[:lists]
+            .where(id: other_list.id)
+            .update(created_at: Time.now)
           home_page.load
           home_page.wait_until_header_visible
         end
@@ -210,7 +215,7 @@ RSpec.describe 'A book list', type: :feature do
           end
 
           expect(home_page.incomplete_list_names.map(&:text))
-            .to include other_list.name
+            .to eq [other_list.name, list.name]
         end
 
         it 'rejects' do
@@ -251,6 +256,7 @@ RSpec.describe 'A book list', type: :feature do
           end
 
           it 'can only be shared' do
+            sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
             expect(write_list.find(home_page.share_button_css)[:disabled])
