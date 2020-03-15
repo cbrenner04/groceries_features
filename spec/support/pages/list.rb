@@ -5,12 +5,12 @@ module Pages
   class List < SitePrism::Page
     NOT_PURCHASED_ITEM = "div[data-test-class='non-purchased-item']"
     PURCHASED_ITEM = "div[data-test-class='purchased-item']"
-    UNREAD_BUTTON = '.fa.fa-bookmark-o'
-    READ_BUTTON = '.fa.fa-bookmark'
-    PURCHASE_BUTTON = '.fa.fa-check-square-o'
-    EDIT_BUTTON = '.fa.fa-pencil-square-o'
+    UNREAD_BUTTON = '.far.fa-bookmark'
+    READ_BUTTON = '.fas.fa-bookmark'
+    PURCHASE_BUTTON = '.fa.fa-check'
+    EDIT_BUTTON = '.fa.fa-edit'
     DELETE_BUTTON = '.fa.fa-trash'
-    REFRESH_BUTTON = '.fa.fa-refresh'
+    REFRESH_BUTTON = '.fa.fa-redo'
 
     set_url '/lists/{id}'
 

@@ -11,8 +11,8 @@ module Helpers
       login_page.submit.click
       return unless expect_success
 
-      home_page.wait_until_header_visible
-      expect(home_page).to have_header
+      home_page.wait_until_log_out_visible
+      expect(home_page).to have_log_out
     end
     # rubocop:enable Metrics/AbcSize
 

@@ -232,16 +232,14 @@ RSpec.describe 'A book list item', type: :feature do
                 initial_list_item_count - 1
             end
 
-            not_purchased_list_items = list_page.not_purchased_items
-
             expect(list_page.not_purchased_items.count)
               .to eq initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
             expect(list_page.not_purchased_items.map(&:text))
               .not_to include item_name
-            expect(not_purchased_list_items.map(&:text))
+            expect(list_page.not_purchased_items.map(&:text))
               .to include @another_list_item.pretty_title
-            expect(not_purchased_list_items.map(&:text))
+            expect(list_page.not_purchased_items.map(&:text))
               .not_to include @list_items[1].pretty_title
           end
         end

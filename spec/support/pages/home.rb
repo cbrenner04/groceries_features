@@ -25,8 +25,8 @@ module Pages
     element :header, 'h1', text: 'Lists'
     element :name, '#name'
     element :submit, "button[type='submit']"
-    element :invite, '#invite-link'
-    element :log_out, '#log-out-link'
+    element :invite, 'a[data-test-id="invite-link"]'
+    element :log_out, 'a[data-test-id="log-out-link"]'
     element :complete_button, COMPLETE_BUTTON
     element :incomplete_delete_button, INCOMPLETE_DELETE_BUTTON
     element :share_button, SHARE_BUTTON
