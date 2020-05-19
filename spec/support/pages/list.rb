@@ -22,7 +22,7 @@ module Pages
             text: 'Item successfully deleted.'
     element :author_input, '#author'
     element :title_input, '#title'
-    element :number_in_series_input, '#number-in-series'
+    element :number_in_series_input, '#numberInSeries'
     element :category_input, '#category'
     element :quantity_input, '#quantity'
     element :artist_input, '#artist'
