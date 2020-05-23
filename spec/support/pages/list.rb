@@ -18,7 +18,7 @@ module Pages
     elements :purchased_items, PURCHASED_ITEM
 
     element :item_deleted_alert,
-            '.alert',
+            '.Toastify',
             text: 'Item successfully deleted.'
     element :author_input, '#author'
     element :title_input, '#title'
