@@ -137,6 +137,7 @@ RSpec.describe 'A to do list item', type: :feature do
             end
 
             expect(list_page.purchased_items.map(&:text)).to include item_name
+            # no longer filtered
             expect(list_page.not_purchased_items.map(&:text))
               .to include @list_items[1].pretty_title
           end
@@ -162,9 +163,9 @@ RSpec.describe 'A to do list item', type: :feature do
             expect(list_page).to have_item_deleted_alert
             expect(list_page.not_purchased_items.map(&:text))
               .not_to include item_name
-            # still filtered
+              # no longer filtered
             expect(list_page.not_purchased_items.map(&:text))
-              .not_to include @list_items[1].pretty_title
+              .to include @list_items[1].pretty_title
           end
         end
 

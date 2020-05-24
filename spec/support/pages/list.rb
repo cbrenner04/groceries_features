@@ -32,7 +32,7 @@ module Pages
     element :submit_button, "button[type='submit']"
     element :category_header, "h5[data-test-class='category-header']"
     element :filter_button, '#filter-by-category-button'
-    element :clear_filter_button, '#clear-filter-button'
+    element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
 
     def unread_button_css
