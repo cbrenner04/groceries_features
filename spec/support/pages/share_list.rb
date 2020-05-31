@@ -4,8 +4,8 @@ module Pages
   # edit list page
   class ShareList < SitePrism::Page
     SHARE_LIST_ID = '#invite-user'
-    WRITE_BADGE = '#perm-write'
-    READ_BADGE = '#perm-read'
+    WRITE_BADGE = '[data-test-id="perm-write"]'
+    READ_BADGE = '[data-test-id="perm-read"]'
 
     set_url '/lists/{id}/users_lists'
 
@@ -27,7 +27,7 @@ module Pages
     end
 
     def find_shared_user(shared_state: 'pending', user_id:)
-      find("##{shared_state}-user-#{user_id}")
+      find("[data-test-id='#{shared_state}-user-#{user_id}']")
     end
 
     def toggle_permissions(shared_state: 'accepted', user_id:)
