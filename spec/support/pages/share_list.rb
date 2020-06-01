@@ -3,7 +3,6 @@
 module Pages
   # edit list page
   class ShareList < SitePrism::Page
-    SHARE_LIST_ID = '#invite-user'
     WRITE_BADGE = '[data-test-id="perm-write"]'
     READ_BADGE = '[data-test-id="perm-read"]'
 
@@ -23,7 +22,7 @@ module Pages
     end
 
     def share_list_with(user_id)
-      find("#{SHARE_LIST_ID}-#{user_id}").click
+      find("[data-test-id='invite-user-#{user_id}']").click
     end
 
     def find_shared_user(shared_state: 'pending', user_id:)
