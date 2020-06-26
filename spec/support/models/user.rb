@@ -18,7 +18,8 @@ module Models
     def create
       DB[:users].insert(
         email: email, encrypted_password: BCrypt::Password.create(password),
-        is_test_account: true, created_at: Time.now, updated_at: Time.now
+        is_test_account: true, created_at: Time.now, updated_at: Time.now,
+        uid: email
       )
     end
   end
