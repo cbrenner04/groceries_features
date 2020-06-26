@@ -5,12 +5,12 @@ module Pages
   class List < SitePrism::Page
     NOT_PURCHASED_ITEM = "div[data-test-class='non-purchased-item']"
     PURCHASED_ITEM = "div[data-test-class='purchased-item']"
-    UNREAD_BUTTON = '.fa.fa-bookmark-o'
-    READ_BUTTON = '.fa.fa-bookmark'
-    PURCHASE_BUTTON = '.fa.fa-check-square-o'
-    EDIT_BUTTON = '.fa.fa-pencil-square-o'
+    UNREAD_BUTTON = '.far.fa-bookmark'
+    READ_BUTTON = '.fas.fa-bookmark'
+    PURCHASE_BUTTON = '.fa.fa-check'
+    EDIT_BUTTON = '.fa.fa-edit'
     DELETE_BUTTON = '.fa.fa-trash'
-    REFRESH_BUTTON = '.fa.fa-refresh'
+    REFRESH_BUTTON = '.fa.fa-redo'
 
     set_url '/lists/{id}'
 
@@ -18,11 +18,11 @@ module Pages
     elements :purchased_items, PURCHASED_ITEM
 
     element :item_deleted_alert,
-            '.alert',
+            '.Toastify',
             text: 'Item successfully deleted.'
     element :author_input, '#author'
     element :title_input, '#title'
-    element :number_in_series_input, '#number-in-series'
+    element :number_in_series_input, '#numberInSeries'
     element :category_input, '#category'
     element :quantity_input, '#quantity'
     element :artist_input, '#artist'
@@ -32,7 +32,7 @@ module Pages
     element :submit_button, "button[type='submit']"
     element :category_header, "h5[data-test-class='category-header']"
     element :filter_button, '#filter-by-category-button'
-    element :clear_filter_button, '#clear-filter-button'
+    element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
 
     def unread_button_css

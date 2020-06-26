@@ -16,6 +16,7 @@ module Helpers
     end
 
     def create_results
+      # TODO: this should not fail if it can't post results
       set_auth_token unless @auth_token
       return unless @auth_token
 
