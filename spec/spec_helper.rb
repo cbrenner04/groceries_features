@@ -16,6 +16,8 @@ Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
 Envyable.load('config/env.yml', ENV['ENV'] || 'development')
 
+class DriverJSError < StandardError; end
+
 # RSpec configuration options
 RSpec.configure do |config|
   config.full_backtrace = false
@@ -34,6 +36,19 @@ RSpec.configure do |config|
   end
   config.after(:suite) do
     Helpers::DataCleanUpHelper.new(DB).remove_test_data
+  end
+  config.after(type: :feature) do
+    errors =
+      page.driver.browser.manage.logs.get(:browser)
+          .select do |e|
+            e.level == 'SEVERE' &&
+              !e.message.empty? &&
+              !e.message.include?('Unauthorized') &&
+              !e.message.include?('Not Found')
+          end
+          .map(&:message)
+
+    raise DriverJSError, errors.join("\n\n") if errors.any?
   end
   config.append_after do |spec|
     Helpers::ResultsHelper.new(
