@@ -122,5 +122,9 @@ module Pages
     def refresh(list_name)
       find_complete_list(list_name).find(REFRESH_BUTTON).click
     end
+
+    def expand_list_form
+      find('.btn.btn-link', text: 'Add List').click
+    end
   end
 end

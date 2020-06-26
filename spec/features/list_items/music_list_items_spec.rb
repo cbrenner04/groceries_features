@@ -25,6 +25,7 @@ RSpec.describe 'A music list item', type: :feature do
                                                 create_item: false,
                                                 category: 'foo')
 
+      list_page.expand_list_item_form
       list_page.title_input.set new_list_item.title
       list_page.artist_input.set new_list_item.artist
       list_page.album_input.set new_list_item.album
@@ -265,6 +266,7 @@ RSpec.describe 'A music list item', type: :feature do
       purchased_item = list_page.find_list_item(@list_items.last.title,
                                                 purchased: true)
 
+      list_page.expand_list_item_form
       expect(list_page).to have_title_input
       expect(list_page).to have_artist_input
       expect(list_page).to have_album_input

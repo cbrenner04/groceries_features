@@ -98,5 +98,9 @@ module Pages
     def refresh(item_name)
       find(PURCHASED_ITEM, text: item_name).find(REFRESH_BUTTON).click
     end
+
+    def expand_list_item_form
+      find('.btn.btn-link', text: 'Add Item').click
+    end
   end
 end
