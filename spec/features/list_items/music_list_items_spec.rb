@@ -160,7 +160,7 @@ RSpec.describe 'A music list item', type: :feature do
             expect(list_page).to have_item_deleted_alert
             expect(list_page.not_purchased_items.map(&:text))
               .not_to include item_name
-              # no longer filtered
+            # no longer filtered
             expect(list_page.not_purchased_items.map(&:text))
               .to include @list_items[1].pretty_title
           end
