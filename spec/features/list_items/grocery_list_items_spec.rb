@@ -25,6 +25,7 @@ RSpec.describe 'A grocery list item', type: :feature do
                                                   create_item: false,
                                                   category: 'foo')
 
+      list_page.expand_list_item_form
       list_page.quantity_input.set new_list_item.quantity
       list_page.product_input.set new_list_item.product
       list_page.category_input.set new_list_item.category
@@ -280,6 +281,8 @@ RSpec.describe 'A grocery list item', type: :feature do
       not_purchased_item = list_page.find_list_item(@list_items.first.product)
       purchased_item = list_page.find_list_item(@list_items.last.product,
                                                 purchased: true)
+
+      list_page.expand_list_item_form
 
       expect(list_page).to have_quantity_input
       expect(list_page).to have_product_input

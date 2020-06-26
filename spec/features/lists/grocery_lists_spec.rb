@@ -21,6 +21,8 @@ RSpec.describe 'A grocery list', type: :feature do
       Models::List.new(type: list_type, create_list: false, owner_id: user.id)
 
     login user
+
+    home_page.expand_list_form
     home_page.name.set list.name
     home_page.list_type.select 'groceries'
     home_page.submit.click

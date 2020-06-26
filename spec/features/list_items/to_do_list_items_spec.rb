@@ -24,8 +24,9 @@ RSpec.describe 'A to do list item', type: :feature do
                                                to_do_list_id: list.id,
                                                create_item: false,
                                                category: 'foo')
-      new_list_item.due_by = Time.now
 
+      list_page.expand_list_item_form
+      new_list_item.due_by = Time.now
       wait_for do
         list_page.task_input.set new_list_item.task
         list_page.task_input.value == new_list_item.task
@@ -284,6 +285,7 @@ RSpec.describe 'A to do list item', type: :feature do
       purchased_item = list_page.find_list_item(@list_items.last.task,
                                                 purchased: true)
 
+      list_page.expand_list_item_form
       expect(list_page).to have_task_input
       expect(list_page).to have_submit_button
       expect(not_purchased_item).to have_css list_page.purchase_button_css

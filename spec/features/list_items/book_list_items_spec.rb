@@ -25,6 +25,7 @@ RSpec.describe 'A book list item', type: :feature do
                                                create_item: false,
                                                category: 'foo')
 
+      list_page.expand_list_item_form
       list_page.author_input.set new_list_item.author
       list_page.title_input.set new_list_item.title
       list_page.number_in_series_input.set new_list_item.number_in_series
@@ -290,6 +291,8 @@ RSpec.describe 'A book list item', type: :feature do
       not_purchased_item = list_page.find_list_item(@list_items.first.title)
       purchased_item = list_page.find_list_item(@list_items.last.title,
                                                 purchased: true)
+
+      list_page.expand_list_item_form
 
       expect(list_page).to have_author_input
       expect(list_page).to have_title_input
