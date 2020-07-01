@@ -254,7 +254,7 @@ RSpec.describe 'A to-do list', type: :feature do
             home_page.wait_until_header_visible
           end
 
-          it 'can only be shared' do
+          it 'can only be shared or removed' do
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
@@ -263,10 +263,12 @@ RSpec.describe 'A to-do list', type: :feature do
             expect(write_list.find(home_page.complete_button_css))
               .to be_disabled
             expect(write_list.find(home_page.incomplete_delete_button_css))
-              .to be_disabled
+              .not_to be_disabled
             expect(write_list.find(home_page.edit_button_css)[:disabled])
               .not_to be_nil
           end
+
+          # TODO: is removed
 
           it 'cannot update permissions' do
             create_associated_list_objects(other_user, other_list)
@@ -291,17 +293,19 @@ RSpec.describe 'A to-do list', type: :feature do
             home_page.wait_until_header_visible
           end
 
-          it 'cannot be edited, completed, shared, or deleted' do
+          it 'cannot be edited, completed, or shared' do
             read_list = home_page.find_incomplete_list(other_list.name)
 
             expect(read_list.find(home_page.share_button_css)[:disabled])
               .not_to be_nil
             expect(read_list.find(home_page.complete_button_css)).to be_disabled
             expect(read_list.find(home_page.incomplete_delete_button_css))
-              .to be_disabled
+              .not_to be_disabled
             expect(read_list.find(home_page.edit_button_css)[:disabled])
               .not_to be_nil
           end
+
+          # TODO: is removed
         end
       end
 
@@ -396,7 +400,7 @@ RSpec.describe 'A to-do list', type: :feature do
           home_page.wait_until_header_visible
         end
 
-        it 'cannot be refreshed or deleted' do
+        it 'cannot be refreshed' do
           wait_for do
             home_page.complete_list_names.map(&:text).include? other_list.name
           end
@@ -405,8 +409,10 @@ RSpec.describe 'A to-do list', type: :feature do
 
           expect(write_list.find(home_page.refresh_button_css)).to be_disabled
           expect(write_list.find(home_page.complete_delete_button_css))
-            .to be_disabled
+            .not_to be_disabled
         end
+
+        # TODO: is removed
       end
 
       describe 'with only read access' do
@@ -419,14 +425,16 @@ RSpec.describe 'A to-do list', type: :feature do
           home_page.wait_until_header_visible
         end
 
-        it 'cannot be refreshed or deleted' do
+        it 'cannot be refreshed' do
           read_list = home_page.find_complete_list(other_list.name)
 
           expect(read_list.find(home_page.refresh_button_css))
             .to be_disabled
           expect(read_list.find(home_page.complete_delete_button_css))
-            .to be_disabled
+            .not_to be_disabled
         end
+
+        # TODO: is removed
       end
     end
   end
