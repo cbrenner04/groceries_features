@@ -270,7 +270,35 @@ RSpec.describe 'A music list', type: :feature do
               .not_to be_nil
           end
 
-          # TODO: is removed
+          it 'is removed' do
+            home_page.delete other_list.name
+            home_page.wait_until_confirm_remove_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            home_page.confirm_remove_button.click
+
+            wait_for do
+              !home_page.incomplete_list_names
+                        .map(&:text)
+                        .include?(other_list.name)
+            end
+
+            expect(home_page).to have_incomplete_lists
+            expect(home_page).to have_list_removed_alert
+            expect(home_page.incomplete_list_names.map(&:text))
+              .not_to include other_list.name
+
+            # users_list should be refused
+            users_list = DB[:users_lists]
+                         .where(user_id: user.id, list_id: other_list.id)
+                         .first
+            expect(users_list[:has_accepted]).to eq false
+            # list should still exist
+            list = DB[:lists].where(id: other_list.id).first
+            expect(list[:archived_at]).to eq nil
+          end
 
           it 'cannot update permissions' do
             create_associated_list_objects(other_user, other_list)
@@ -307,7 +335,35 @@ RSpec.describe 'A music list', type: :feature do
               .not_to be_nil
           end
 
-          # TODO: is removed
+          it 'is removed' do
+            home_page.delete other_list.name
+            home_page.wait_until_confirm_remove_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            home_page.confirm_remove_button.click
+
+            wait_for do
+              !home_page.incomplete_list_names
+                        .map(&:text)
+                        .include?(other_list.name)
+            end
+
+            expect(home_page).to have_incomplete_lists
+            expect(home_page).to have_list_removed_alert
+            expect(home_page.incomplete_list_names.map(&:text))
+              .not_to include other_list.name
+
+            # users_list should be refused
+            users_list = DB[:users_lists]
+                         .where(user_id: user.id, list_id: other_list.id)
+                         .first
+            expect(users_list[:has_accepted]).to eq false
+            # list should still exist
+            list = DB[:lists].where(id: other_list.id).first
+            expect(list[:archived_at]).to eq nil
+          end
         end
       end
 
@@ -414,7 +470,35 @@ RSpec.describe 'A music list', type: :feature do
             .not_to be_disabled
         end
 
-        # TODO: is removed
+        it 'is removed' do
+          home_page.delete other_list.name, complete: true
+          home_page.wait_until_confirm_remove_button_visible
+
+          # for some reason if the button is clicked to early it doesn't work
+          sleep 1
+
+          home_page.confirm_remove_button.click
+
+          wait_for do
+            !home_page.complete_list_names
+                      .map(&:text)
+                      .include?(other_list.name)
+          end
+
+          expect(home_page).to have_complete_lists
+          expect(home_page).to have_list_removed_alert
+          expect(home_page.complete_list_names.map(&:text))
+            .not_to include other_list.name
+
+          # users_list should be refused
+          users_list = DB[:users_lists]
+                       .where(user_id: user.id, list_id: other_list.id)
+                       .first
+          expect(users_list[:has_accepted]).to eq false
+          # list should still exist
+          list = DB[:lists].where(id: other_list.id).first
+          expect(list[:archived_at]).to eq nil
+        end
       end
 
       describe 'with only read access' do
@@ -435,7 +519,35 @@ RSpec.describe 'A music list', type: :feature do
             .not_to be_disabled
         end
 
-        # TODO: is removed
+        it 'is removed' do
+          home_page.delete other_list.name, complete: true
+          home_page.wait_until_confirm_remove_button_visible
+
+          # for some reason if the button is clicked to early it doesn't work
+          sleep 1
+
+          home_page.confirm_remove_button.click
+
+          wait_for do
+            !home_page.complete_list_names
+                      .map(&:text)
+                      .include?(other_list.name)
+          end
+
+          expect(home_page).to have_complete_lists
+          expect(home_page).to have_list_removed_alert
+          expect(home_page.complete_list_names.map(&:text))
+            .not_to include other_list.name
+
+          # users_list should be refused
+          users_list = DB[:users_lists]
+                       .where(user_id: user.id, list_id: other_list.id)
+                       .first
+          expect(users_list[:has_accepted]).to eq false
+          # list should still exist
+          list = DB[:lists].where(id: other_list.id).first
+          expect(list[:archived_at]).to eq nil
+        end
       end
     end
   end
