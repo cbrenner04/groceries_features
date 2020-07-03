@@ -254,7 +254,7 @@ RSpec.describe 'A to-do list', type: :feature do
             home_page.wait_until_header_visible
           end
 
-          it 'can only be shared' do
+          it 'can only be shared or removed' do
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
@@ -263,9 +263,39 @@ RSpec.describe 'A to-do list', type: :feature do
             expect(write_list.find(home_page.complete_button_css))
               .to be_disabled
             expect(write_list.find(home_page.incomplete_delete_button_css))
-              .to be_disabled
+              .not_to be_disabled
             expect(write_list.find(home_page.edit_button_css)[:disabled])
               .not_to be_nil
+          end
+
+          it 'is removed' do
+            home_page.delete other_list.name
+            home_page.wait_until_confirm_remove_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            home_page.confirm_remove_button.click
+
+            wait_for do
+              !home_page.incomplete_list_names
+                        .map(&:text)
+                        .include?(other_list.name)
+            end
+
+            expect(home_page).to have_incomplete_lists
+            expect(home_page).to have_list_removed_alert
+            expect(home_page.incomplete_list_names.map(&:text))
+              .not_to include other_list.name
+
+            # users_list should be refused
+            users_list = DB[:users_lists]
+                         .where(user_id: user.id, list_id: other_list.id)
+                         .first
+            expect(users_list[:has_accepted]).to eq false
+            # list should still exist
+            list = DB[:lists].where(id: other_list.id).first
+            expect(list[:archived_at]).to eq nil
           end
 
           it 'cannot update permissions' do
@@ -291,16 +321,46 @@ RSpec.describe 'A to-do list', type: :feature do
             home_page.wait_until_header_visible
           end
 
-          it 'cannot be edited, completed, shared, or deleted' do
+          it 'cannot be edited, completed, or shared' do
             read_list = home_page.find_incomplete_list(other_list.name)
 
             expect(read_list.find(home_page.share_button_css)[:disabled])
               .not_to be_nil
             expect(read_list.find(home_page.complete_button_css)).to be_disabled
             expect(read_list.find(home_page.incomplete_delete_button_css))
-              .to be_disabled
+              .not_to be_disabled
             expect(read_list.find(home_page.edit_button_css)[:disabled])
               .not_to be_nil
+          end
+
+          it 'is removed' do
+            home_page.delete other_list.name
+            home_page.wait_until_confirm_remove_button_visible
+
+            # for some reason if the button is clicked to early it doesn't work
+            sleep 1
+
+            home_page.confirm_remove_button.click
+
+            wait_for do
+              !home_page.incomplete_list_names
+                        .map(&:text)
+                        .include?(other_list.name)
+            end
+
+            expect(home_page).to have_incomplete_lists
+            expect(home_page).to have_list_removed_alert
+            expect(home_page.incomplete_list_names.map(&:text))
+              .not_to include other_list.name
+
+            # users_list should be refused
+            users_list = DB[:users_lists]
+                         .where(user_id: user.id, list_id: other_list.id)
+                         .first
+            expect(users_list[:has_accepted]).to eq false
+            # list should still exist
+            list = DB[:lists].where(id: other_list.id).first
+            expect(list[:archived_at]).to eq nil
           end
         end
       end
@@ -396,7 +456,7 @@ RSpec.describe 'A to-do list', type: :feature do
           home_page.wait_until_header_visible
         end
 
-        it 'cannot be refreshed or deleted' do
+        it 'cannot be refreshed' do
           wait_for do
             home_page.complete_list_names.map(&:text).include? other_list.name
           end
@@ -405,7 +465,37 @@ RSpec.describe 'A to-do list', type: :feature do
 
           expect(write_list.find(home_page.refresh_button_css)).to be_disabled
           expect(write_list.find(home_page.complete_delete_button_css))
-            .to be_disabled
+            .not_to be_disabled
+        end
+
+        it 'is removed' do
+          home_page.delete other_list.name, complete: true
+          home_page.wait_until_confirm_remove_button_visible
+
+          # for some reason if the button is clicked to early it doesn't work
+          sleep 1
+
+          home_page.confirm_remove_button.click
+
+          wait_for do
+            !home_page.complete_list_names
+                      .map(&:text)
+                      .include?(other_list.name)
+          end
+
+          expect(home_page).to have_complete_lists
+          expect(home_page).to have_list_removed_alert
+          expect(home_page.complete_list_names.map(&:text))
+            .not_to include other_list.name
+
+          # users_list should be refused
+          users_list = DB[:users_lists]
+                       .where(user_id: user.id, list_id: other_list.id)
+                       .first
+          expect(users_list[:has_accepted]).to eq false
+          # list should still exist
+          list = DB[:lists].where(id: other_list.id).first
+          expect(list[:archived_at]).to eq nil
         end
       end
 
@@ -419,13 +509,43 @@ RSpec.describe 'A to-do list', type: :feature do
           home_page.wait_until_header_visible
         end
 
-        it 'cannot be refreshed or deleted' do
+        it 'cannot be refreshed' do
           read_list = home_page.find_complete_list(other_list.name)
 
           expect(read_list.find(home_page.refresh_button_css))
             .to be_disabled
           expect(read_list.find(home_page.complete_delete_button_css))
-            .to be_disabled
+            .not_to be_disabled
+        end
+
+        it 'is removed' do
+          home_page.delete other_list.name, complete: true
+          home_page.wait_until_confirm_remove_button_visible
+
+          # for some reason if the button is clicked to early it doesn't work
+          sleep 1
+
+          home_page.confirm_remove_button.click
+
+          wait_for do
+            !home_page.complete_list_names
+                      .map(&:text)
+                      .include?(other_list.name)
+          end
+
+          expect(home_page).to have_complete_lists
+          expect(home_page).to have_list_removed_alert
+          expect(home_page.complete_list_names.map(&:text))
+            .not_to include other_list.name
+
+          # users_list should be refused
+          users_list = DB[:users_lists]
+                       .where(user_id: user.id, list_id: other_list.id)
+                       .first
+          expect(users_list[:has_accepted]).to eq false
+          # list should still exist
+          list = DB[:lists].where(id: other_list.id).first
+          expect(list[:archived_at]).to eq nil
         end
       end
     end

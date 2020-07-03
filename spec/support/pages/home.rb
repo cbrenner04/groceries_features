@@ -18,9 +18,8 @@ module Pages
     set_url '/'
 
     element :signed_in_alert, '.Toastify', text: 'Signed in successfully'
-    element :list_deleted_alert,
-            '.Toastify',
-            text: 'List successfully deleted.'
+    element :list_deleted_alert, '.Toastify', text: 'List successfully deleted.'
+    element :list_removed_alert, '.Toastify', text: 'List successfully removed.'
     element :list_type, '#type'
     element :header, 'h1', text: 'Lists'
     element :name, '#name'
@@ -40,6 +39,7 @@ module Pages
     elements :pending_list_names, "#{PENDING_LIST} h5"
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :confirm_reject_button, 'button[data-test-id="confirm-reject"]'
+    element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
 
     def go_to_completed_lists
       click_on 'See all completed lists here'
