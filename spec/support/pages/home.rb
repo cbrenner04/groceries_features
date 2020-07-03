@@ -18,12 +18,8 @@ module Pages
     set_url '/'
 
     element :signed_in_alert, '.Toastify', text: 'Signed in successfully'
-    element :list_deleted_alert,
-            '.Toastify',
-            text: 'List successfully deleted.'
-    element :list_removed_alert,
-            '.Toastify',
-            text: 'List successfully removed.'
+    element :list_deleted_alert, '.Toastify', text: 'List successfully deleted.'
+    element :list_removed_alert, '.Toastify', text: 'List successfully removed.'
     element :list_type, '#type'
     element :header, 'h1', text: 'Lists'
     element :name, '#name'
