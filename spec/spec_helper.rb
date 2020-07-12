@@ -11,6 +11,7 @@ require 'sequel'
 require 'envyable'
 require 'webdrivers/chromedriver'
 require 'byebug'
+require 'rspec/retry'
 
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
@@ -34,9 +35,9 @@ RSpec.configure do |config|
     DB = Sequel.connect(ENV['DATABASE_URL'])
     TEST_RUN = Time.now.to_i
   end
-  config.after(:suite) do
-    Helpers::DataCleanUpHelper.new(DB).remove_test_data
-  end
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+  config.default_retry_count = 3
   config.after(type: :feature) do
     errors =
       page.driver.browser.manage.logs.get(:browser)
@@ -51,14 +52,8 @@ RSpec.configure do |config|
     raise DriverJSError, errors.join("\n\n") if errors.any?
   end
   config.append_after do |spec|
-    Helpers::ResultsHelper.new(
-      ENV['ENV'],
-      ENV['RESULTS_USER'],
-      ENV['RESULTS_PASSWORD'],
-      ENV['RESULTS_URL'],
-      spec,
-      TEST_RUN
-    ).create_results
+    results_helper = Helpers::ResultsHelper.new
+    results_helper.create_results(spec, TEST_RUN)
   end
 end
 

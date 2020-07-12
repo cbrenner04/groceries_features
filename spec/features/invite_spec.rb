@@ -11,8 +11,6 @@ RSpec.describe 'Invite', type: :feature do
 
   context 'when user with email address does not exist' do
     it 'invites a user' do
-      before_creation_user_count = DB[:users].count
-
       # TODO: this does not currently work
       # expect(home_page).to have_signed_in_alert
 
@@ -26,7 +24,6 @@ RSpec.describe 'Invite', type: :feature do
 
       # TODO: check flash alert message (should be the same for both contexts)
 
-      expect(DB[:users].count).to eq before_creation_user_count + 1
       expect(DB[:users].where(email: new_user_email).count).to eq 1
 
       # for clean up purposes
@@ -37,8 +34,6 @@ RSpec.describe 'Invite', type: :feature do
   context 'when user with email does exist' do
     it 'does not create a user and redirects to home' do
       user = Models::User.new
-
-      before_invite_user_count = DB[:users].count
 
       # TODO: this does not currently work
       # expect(home_page).to have_signed_in_alert
@@ -51,7 +46,6 @@ RSpec.describe 'Invite', type: :feature do
 
       # TODO: check flash alert message (should be the same for both contexts)
 
-      expect(DB[:users].count).to eq before_invite_user_count
       expect(DB[:users].where(email: user.email).count).to eq 1
 
       # for clean up purposes

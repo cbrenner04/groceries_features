@@ -3,45 +3,56 @@
 require 'rest-client'
 require 'json'
 
+ENV_VAR_FILE_PATH = File.join(File.dirname(__FILE__), '../../../config/env.yml')
+
 module Helpers
   # helpers for post results
   class ResultsHelper
-    def initialize(environment, user, password, url, spec, test_run)
-      @environment = environment || 'development'
-      @user = user
-      @password = password
-      @url = url
+    # rubocop:disable Lint/HandleExceptions
+    def sign_in(user, password)
+      response = RestClient.post(
+        "#{ENV['RESULTS_URL']}/sign-in.json",
+        user_login: { email: user, password: password }
+      )
+      auth_token = JSON.parse(response.body)['auth_token']
+      file = File.open(ENV_VAR_FILE_PATH, 'a')
+      file.write("RESULTS_AUTH_TOKEN: #{auth_token}")
+      file.close
+    rescue Errno::ECONNREFUSED
+      # if can't connect to feature results, auth token doesn't matter
+    end
+    # rubocop:enable Lint/HandleExceptions
+
+    def create_results(spec, test_run)
+      @environment = ENV['ENV'] || 'development'
       @spec = spec
       @test_run = test_run
-    end
-
-    def create_results
       # TODO: this should not fail if it can't post results
-      set_auth_token unless @auth_token
+      @auth_token = ENV['RESULTS_AUTH_TOKEN']
       return unless @auth_token
 
       set_feature_id unless @feature_id
       post_results
-      delete_token
+    end
+
+    def sign_out
+      RestClient.delete(
+        "#{ENV['RESULTS_URL']}/sign-out.json",
+        'Authorization' => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}"
+      )
+    ensure
+      lines = File.readlines(ENV_VAR_FILE_PATH)
+      file = File.open(ENV_VAR_FILE_PATH, 'w+')
+      lines.each { |l| file << l unless l.include? 'RESULTS_AUTH_TOKEN' }
+      file.close
     end
 
     private
 
-    def set_auth_token
-      response = RestClient.post(
-        "#{@url}/sign-in.json",
-        user_login: { email: @user, password: @password }
-      )
-      @auth_token = JSON.parse(response.body)['auth_token']
-    rescue Errno::ECONNREFUSED
-      # if can't connect to feature results, auth token doesn't matter
-      @auth_token = nil
-    end
-
     def set_feature_id
       response = RestClient::Request.execute(
         method: :post,
-        url: "#{@url}/features.json",
+        url: "#{ENV['RESULTS_URL']}/features.json",
         payload: { feature: feature_payload },
         headers: { 'Authorization' => "Token token=#{@auth_token}" }
       )
@@ -55,7 +66,7 @@ module Helpers
     def post_results
       RestClient::Request.execute(
         method: :post,
-        url: "#{@url}/results.json",
+        url: "#{ENV['RESULTS_URL']}/results.json",
         payload: { result: result_payload },
         headers: { 'Authorization' => "Token token=#{@auth_token}" }
       )
@@ -70,13 +81,6 @@ module Helpers
         environment: @environment,
         test_run: @test_run
       }
-    end
-
-    def delete_token
-      RestClient.delete(
-        "#{@url}/sign-out.json",
-        'Authorization' => "Token token=#{@auth_token}"
-      )
     end
   end
 end

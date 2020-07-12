@@ -34,6 +34,7 @@ module Pages
     element :filter_button, '#filter-by-category-button'
     element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
+    element :multi_select_button, :button, 'Select'
 
     def unread_button_css
       UNREAD_BUTTON
@@ -101,6 +102,11 @@ module Pages
 
     def expand_list_item_form
       find('.btn.btn-link', text: 'Add Item').click
+    end
+
+    def multi_select_item(item_name, purchased: false)
+      item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM
+      find(item_css, text: item_name).find('input').click
     end
   end
 end

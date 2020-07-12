@@ -1,4 +1,2 @@
 --require spec_helper
 --format documentation
---format html
---out 'spec/output/<%= Time.now.to_i %>.html'
