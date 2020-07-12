@@ -264,7 +264,7 @@ RSpec.describe 'A book list item', type: :feature do
         list_page.delete item_name, purchased: true
         list_page.wait_until_confirm_delete_button_visible
 
-        # for some reason if the button is clicked to early it doesn't work
+        # for some reason if the button is clicked too early it doesn't work
         sleep 1
 
         list_page.confirm_delete_button.click
@@ -274,6 +274,60 @@ RSpec.describe 'A book list item', type: :feature do
         end
 
         expect(list_page.purchased_items.map(&:text)).not_to include item_name
+      end
+    end
+
+    describe 'when multiple selected' do
+      it 'is read' do
+        list_page.multi_select_button.click
+        @list_items.each do |item|
+          list_page
+            .multi_select_item(item.pretty_title, purchased: item.purchased)
+        end
+        list_page.read(@list_items.first.pretty_title, purchased: false)
+
+        @list_items.each do |item|
+          expect(list_page)
+            .to have_read_item item.pretty_title, purchased: item.purchased
+        end
+      end
+
+      it 'is purchased' do
+        list_page.multi_select_button.click
+        @list_items.each do |item|
+          list_page
+            .multi_select_item(item.pretty_title, purchased: item.purchased)
+        end
+        list_page.purchase(@list_items.first.pretty_title)
+
+        wait_for do
+          list_page.not_purchased_items.count == 0
+        end
+
+        expect(list_page.not_purchased_items.count).to eq 0
+        expect(list_page.purchased_items.count).to eq 3
+      end
+
+      it 'is destroyed' do
+        list_page.multi_select_button.click
+        @list_items.each do |item|
+          list_page
+            .multi_select_item(item.pretty_title, purchased: item.purchased)
+        end
+        list_page.delete(@list_items.first.pretty_title, purchased: false)
+        list_page.wait_until_confirm_delete_button_visible
+
+        # for some reason if the button is clicked too early it doesn't work
+        sleep 1
+
+        list_page.confirm_delete_button.click
+
+        wait_for do
+          list_page.not_purchased_items.count == 0
+        end
+
+        expect(list_page.not_purchased_items.count).to eq 0
+        expect(list_page.purchased_items.count).to eq 0
       end
     end
   end
@@ -297,6 +351,7 @@ RSpec.describe 'A book list item', type: :feature do
       expect(list_page).to have_author_input
       expect(list_page).to have_title_input
       expect(list_page).to have_submit_button
+      expect(list_page).to have_multi_select_button
       expect(not_purchased_item).to have_css list_page.unread_button_css
       expect(not_purchased_item).to have_css list_page.purchase_button_css
       expect(not_purchased_item).to have_css list_page.edit_button_css
@@ -323,6 +378,7 @@ RSpec.describe 'A book list item', type: :feature do
       expect(list_page).to have_no_author_input
       expect(list_page).to have_no_title_input
       expect(list_page).to have_no_submit_button
+      expect(list_page).to have_no_multi_select_button
       expect(not_purchased_item).to have_no_css list_page.unread_button_css
       expect(not_purchased_item).to have_no_css list_page.purchase_button_css
       expect(not_purchased_item).to have_no_css list_page.edit_button_css

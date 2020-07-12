@@ -90,8 +90,6 @@ RSpec.describe 'A music list', type: :feature do
     end
 
     it 'is shared with a new user' do
-      before_creation_user_count = DB[:users].count
-
       home_page.share list.name
 
       new_user_email = "share-new-user-test-#{Time.now.to_i}@example.com"
@@ -106,7 +104,6 @@ RSpec.describe 'A music list', type: :feature do
         .find_shared_user(shared_state: 'pending', user_id: new_user_id)
 
       expect(shared_user_button).to have_text new_user_email
-      expect(DB[:users].count).to eq before_creation_user_count + 1
       expect(DB[:users].where(email: new_user_email).count).to eq 1
 
       # for clean up purposes
