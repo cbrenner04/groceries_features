@@ -351,7 +351,8 @@ RSpec.describe 'A grocery list item', type: :feature do
           # all items should now have the same quantity "foobar"
           @list_items.each do |item|
             label = list_page
-                    .find_list_item(item.product, purchased: item.purchased).text
+                    .find_list_item(item.product, purchased: item.purchased)
+                    .text
             expect(label).to include "foobar #{item.product}"
           end
 
@@ -377,7 +378,8 @@ RSpec.describe 'A grocery list item', type: :feature do
           # all items should have had their quantitys cleared
           @list_items.each do |item|
             label = list_page
-                    .find_list_item(item.product, purchased: item.purchased).text
+                    .find_list_item(item.product, purchased: item.purchased)
+                    .text
             expect(label).not_to include 'foobar'
           end
         end

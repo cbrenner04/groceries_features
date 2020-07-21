@@ -356,9 +356,8 @@ RSpec.describe 'A to do list item', type: :feature do
           @list_items.each do |item|
             label = list_page
                     .find_list_item(item.task, purchased: item.completed).text
-            expect(label).to include(
-              "#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020"
-            )
+            expect(label).to include("#{item.task}\n" \
+              "Assigned To: #{user.email}\nDue By: February 2, 2020")
           end
 
           # return to edit page for clearing below
