@@ -1,11 +1,40 @@
-spec/features/list_items/book_list_items_spec.rb:88.1628339998424
-spec/features/lists/to_do_lists_spec.rb:98.19516199966893
-spec/features/list_items/music_list_items_spec.rb:79.43187299976125
-spec/features/lists/book_lists_spec.rb:100.33533599972725
-spec/features/share_spec.rb:12.105113999918103
-spec/features/invite_spec.rb:5.999856000300497
-spec/features/list_items/to_do_list_items_spec.rb:87.81061899987981
-spec/features/lists/grocery_lists_spec.rb:98.76390999974683
-spec/features/list_items/grocery_list_items_spec.rb:96.55561000015587
-spec/features/lists/music_lists_spec.rb:97.6419099997729
-spec/features/login_spec.rb:3.053053999785334
+
+1st Try error in ./spec/features/list_items/music_list_items_spec.rb:455:
+Unable to find link or button "foobar"
+
+RSpec::Retry: 2nd try ./spec/features/list_items/music_list_items_spec.rb:455
+
+1st Try error in ./spec/features/list_items/book_list_items_spec.rb:492:
+Unable to find link or button "foobar"
+
+RSpec::Retry: 2nd try ./spec/features/list_items/book_list_items_spec.rb:492
+
+1st Try error in ./spec/features/list_items/music_list_items_spec.rb:496:
+Unable to find visible css "div[data-test-class='non-purchased-item']" with text "49a2287016ec31c2de2169618645f7e2"
+
+RSpec::Retry: 2nd try ./spec/features/list_items/music_list_items_spec.rb:496
+
+1st Try error in ./spec/features/list_items/book_list_items_spec.rb:532:
+Unable to find visible css "div[data-test-class='non-purchased-item']" with text "22c7c78b6928a06400c5ffc9eafd7938"
+
+RSpec::Retry: 2nd try ./spec/features/list_items/book_list_items_spec.rb:532
+
+1st Try error in ./spec/features/list_items/to_do_list_items_spec.rb:550:
+SitePrism::ElementVisibilityTimeoutError
+
+RSpec::Retry: 2nd try ./spec/features/list_items/to_do_list_items_spec.rb:550
+
+2nd Try error in ./spec/features/list_items/to_do_list_items_spec.rb:550:
+Unable to find visible css "div[data-test-class='non-purchased-item']" with text "31138dfcf4cf1a41170a87b3d9b3d976"
+RSpec::Retry: 3rd try ./spec/features/list_items/to_do_list_items_spec.rb:550
+spec/features/list_items/book_list_items_spec.rb:120.62720700027421
+spec/features/lists/music_lists_spec.rb:97.59478900022805
+spec/features/login_spec.rb:6.05908100027591
+spec/features/invite_spec.rb:8.09357300028205
+spec/features/list_items/grocery_list_items_spec.rb:122.88900699978694
+spec/features/lists/grocery_lists_spec.rb:96.04046500008553
+spec/features/list_items/music_list_items_spec.rb:113.95000399975106
+spec/features/lists/book_lists_spec.rb:104.79709600005299
+spec/features/share_spec.rb:11.857011000160128
+spec/features/list_items/to_do_list_items_spec.rb:132.3578499997966
+spec/features/lists/to_do_lists_spec.rb:100.69269700022414

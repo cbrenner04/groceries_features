@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Pages
-  # edit list page
+  # list page
   class List < SitePrism::Page
     NOT_PURCHASED_ITEM = "div[data-test-class='non-purchased-item']"
     PURCHASED_ITEM = "div[data-test-class='purchased-item']"
@@ -16,6 +16,7 @@ module Pages
 
     elements :not_purchased_items, NOT_PURCHASED_ITEM
     elements :purchased_items, PURCHASED_ITEM
+    elements :category_header, "h5[data-test-class='category-header']"
 
     element :item_deleted_alert,
             '.Toastify',
@@ -30,7 +31,6 @@ module Pages
     element :task_input, '#task'
     element :product_input, '#product'
     element :submit_button, "button[type='submit']"
-    element :category_header, "h5[data-test-class='category-header']"
     element :filter_button, '#filter-by-category-button'
     element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
