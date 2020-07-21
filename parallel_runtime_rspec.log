@@ -1,32 +1,3 @@
-
-1st Try error in ./spec/features/list_items/music_list_items_spec.rb:455:
-Unable to find link or button "foobar"
-
-RSpec::Retry: 2nd try ./spec/features/list_items/music_list_items_spec.rb:455
-
-1st Try error in ./spec/features/list_items/book_list_items_spec.rb:492:
-Unable to find link or button "foobar"
-
-RSpec::Retry: 2nd try ./spec/features/list_items/book_list_items_spec.rb:492
-
-1st Try error in ./spec/features/list_items/music_list_items_spec.rb:496:
-Unable to find visible css "div[data-test-class='non-purchased-item']" with text "49a2287016ec31c2de2169618645f7e2"
-
-RSpec::Retry: 2nd try ./spec/features/list_items/music_list_items_spec.rb:496
-
-1st Try error in ./spec/features/list_items/book_list_items_spec.rb:532:
-Unable to find visible css "div[data-test-class='non-purchased-item']" with text "22c7c78b6928a06400c5ffc9eafd7938"
-
-RSpec::Retry: 2nd try ./spec/features/list_items/book_list_items_spec.rb:532
-
-1st Try error in ./spec/features/list_items/to_do_list_items_spec.rb:550:
-SitePrism::ElementVisibilityTimeoutError
-
-RSpec::Retry: 2nd try ./spec/features/list_items/to_do_list_items_spec.rb:550
-
-2nd Try error in ./spec/features/list_items/to_do_list_items_spec.rb:550:
-Unable to find visible css "div[data-test-class='non-purchased-item']" with text "31138dfcf4cf1a41170a87b3d9b3d976"
-RSpec::Retry: 3rd try ./spec/features/list_items/to_do_list_items_spec.rb:550
 spec/features/list_items/book_list_items_spec.rb:120.62720700027421
 spec/features/lists/music_lists_spec.rb:97.59478900022805
 spec/features/login_spec.rb:6.05908100027591
