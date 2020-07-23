@@ -3,8 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe 'A book list item', type: :feature do
+  let(:home_page) { Pages::Home.new }
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
+  let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:user) { Models::User.new }
   let(:list) { Models::List.new(type: 'BookList', owner_id: user.id) }
 
@@ -38,8 +40,9 @@ RSpec.describe 'A book list item', type: :feature do
 
       expect(list_page.not_purchased_items.map(&:text))
         .to include new_list_item.pretty_title
-      expect(list_page.category_header.text)
-        .to eq new_list_item.category.capitalize
+      category_headers = list_page.category_header.map(&:text)
+      expect(category_headers.count).to eq 1
+      expect(category_headers.first).to eq new_list_item.category.capitalize
     end
 
     describe 'that is not purchased' do
@@ -328,6 +331,241 @@ RSpec.describe 'A book list item', type: :feature do
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 0
+      end
+
+      describe 'when edited' do
+        before do
+          list_page.multi_select_button.click
+          @list_items.each do |item|
+            list_page
+              .multi_select_item(item.pretty_title, purchased: item.purchased)
+          end
+          list_page.edit(@list_items.first.pretty_title)
+        end
+
+        it 'updates all attributes for items' do
+          # change attributes to new attributes
+          edit_list_items_page.author.set 'foobar'
+          edit_list_items_page.category.set 'foobaz'
+          edit_list_items_page.submit.click
+
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should now have the same category "foobaz"
+          category_headers = list_page.category_header.map(&:text)
+          expect(category_headers.count).to eq 1
+          expect(category_headers[0]).to eq 'Foobaz'
+
+          # all items should now have the same author "foobar"
+          @list_items.each do |item|
+            label = list_page
+                    .find_list_item(item.title, purchased: item.purchased).text
+            expect(label).to include "\"#{item.title}\" foobar"
+          end
+
+          # return to edit page for clearing below
+          list_page.multi_select_button.click
+          @list_items.each do |item|
+            list_page.multi_select_item(
+              "\"#{item.title}\" foobar", purchased: item.purchased
+            )
+          end
+          list_page.edit("\"#{@list_items.first.title}\" foobar")
+
+          # clear attributes
+          edit_list_items_page.clear_author.click
+          edit_list_items_page.clear_category.click
+          edit_list_items_page.submit.click
+
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should have add their categories cleared
+          expect(list_page.category_header.map(&:text).count).to eq 0
+
+          # all items should have had their authors cleared
+          @list_items.each do |item|
+            label = list_page
+                    .find_list_item(item.title, purchased: item.purchased).text
+            expect(label).not_to include 'foobar'
+          end
+        end
+
+        describe 'when copy' do
+          it 'creates a new list' do
+            edit_list_items_page.copy.click
+            # cannot choose existing list when no other book lists exist
+            all_link_text = edit_list_items_page.all_links.map(&:text)
+
+            expect(all_link_text).not_to include 'Choose existing list'
+
+            # create new list
+            edit_list_items_page.new_list_name.set 'foobar'
+            # updates current items
+            edit_list_items_page.update_current_items.click
+            edit_list_items_page.author.set 'foobar'
+            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.submit.click
+
+            list_page.wait_until_not_purchased_items_visible
+
+            # all items should now have the same category "foobaz"
+            category_headers = list_page.category_header.map(&:text)
+            expect(category_headers.count).to eq 1
+            expect(category_headers[0]).to eq 'Foobaz'
+
+            # all items should now have the same author "foobar"
+            @list_items.each do |item|
+              label = list_page
+                      .find_list_item(item.title, purchased: item.purchased)
+                      .text
+              expect(label).to include "\"#{item.title}\" foobar"
+            end
+
+            # check new list for new items
+            home_page.load
+            home_page.select_list 'foobar'
+            list_page.wait_until_not_purchased_items_visible
+
+            # all items should now have the same category "foobaz"
+            new_list_category_headers = list_page.category_header.map(&:text)
+            expect(new_list_category_headers.count).to eq 1
+            expect(new_list_category_headers[0]).to eq 'Foobaz'
+
+            # all items should now have the same author "foobar"
+            # all items should be not purchased
+            @list_items.each do |item|
+              label =
+                list_page.find_list_item(item.title, purchased: false).text
+              expect(label).to include "\"#{item.title}\" foobar"
+            end
+          end
+
+          it 'chooses existing list' do
+            # create another list so option for existing list are available
+            new_list = Models::List.new(type: 'BookList', owner_id: user.id)
+            Models::UsersList.new(user_id: user.id, list_id: new_list.id)
+            # select existing list
+            edit_list_items_page.copy.click
+            edit_list_items_page.existing_list.select new_list.name
+            # does not update current items therefore these attributes will be
+            # on the existing list but not the current list
+            edit_list_items_page.author.set 'foobar'
+            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.submit.click
+
+            list_page.wait_until_not_purchased_items_visible
+
+            # category should not have been updated
+            category_headers = list_page.category_header.map(&:text)
+            expect(category_headers.count).to eq 1
+            expect(category_headers[0]).not_to eq 'Foobaz'
+
+            # all items should have the same attributes
+            @list_items.each do |item|
+              label = list_page
+                      .find_list_item(item.title, purchased: item.purchased)
+                      .text
+              expect(label).to include item.pretty_title
+            end
+
+            # go to existing list
+            list_page.load(id: new_list.id)
+            list_page.wait_until_not_purchased_items_visible
+
+            # all items should now have the same category "foobaz"
+            existing_list_category_headers =
+              list_page.category_header.map(&:text)
+            expect(existing_list_category_headers.count).to eq 1
+            expect(existing_list_category_headers[0]).to eq 'Foobaz'
+
+            # all items should now have the same author "foobar"
+            # all items should be not purchased
+            @list_items.each do |item|
+              label = list_page
+                      .find_list_item(item.title, purchased: false).text
+              expect(label).to include "\"#{item.title}\" foobar"
+            end
+          end
+        end
+
+        describe 'when move' do
+          it 'creates a new list' do
+            edit_list_items_page.move.click
+            # cannot choose existing list when no other book lists exist
+            all_link_text = edit_list_items_page.all_links.map(&:text)
+
+            expect(all_link_text).not_to include 'Choose existing list'
+
+            # create new list
+            edit_list_items_page.new_list_name.set 'foobar'
+
+            # cannot update current items when moving
+            expect(edit_list_items_page).to have_no_update_current_items
+
+            edit_list_items_page.author.set 'foobar'
+            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.submit.click
+
+            # all items should have been moved
+            expect(list_page).to have_no_not_purchased_items
+            expect(list_page).to have_no_purchased_items
+
+            # check new list for new items
+            home_page.load
+            home_page.select_list 'foobar'
+            list_page.wait_until_not_purchased_items_visible
+
+            # all items should now have the same category "foobaz"
+            category_headers = list_page.category_header.map(&:text)
+            expect(category_headers.count).to eq 1
+            expect(category_headers[0]).to eq 'Foobaz'
+
+            # all items should now have the same author "foobar"
+            # all items should be not purchased
+            @list_items.each do |item|
+              label =
+                list_page.find_list_item(item.title, purchased: false).text
+              expect(label).to include "\"#{item.title}\" foobar"
+            end
+          end
+
+          it 'chooses existing list' do
+            # create another list so option for existing list are available
+            new_list = Models::List.new(type: 'BookList', owner_id: user.id)
+            Models::UsersList.new(user_id: user.id, list_id: new_list.id)
+            # select existing list
+            edit_list_items_page.move.click
+            edit_list_items_page.existing_list.select new_list.name
+
+            # cannot update current items when moving
+            expect(edit_list_items_page).to have_no_update_current_items
+
+            edit_list_items_page.author.set 'foobar'
+            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.submit.click
+
+            # all items should have been moved
+            expect(list_page).to have_no_not_purchased_items
+            expect(list_page).to have_no_purchased_items
+
+            # go to existing list
+            list_page.load(id: new_list.id)
+            list_page.wait_until_not_purchased_items_visible
+
+            # all items should now have the same category "foobaz"
+            category_headers = list_page.category_header.map(&:text)
+            expect(category_headers.count).to eq 1
+            expect(category_headers[0]).to eq 'Foobaz'
+
+            # all items should now have the same author "foobar"
+            # all items should be not purchased
+            @list_items.each do |item|
+              label = list_page
+                      .find_list_item(item.title, purchased: false).text
+              expect(label).to include "\"#{item.title}\" foobar"
+            end
+          end
+        end
       end
     end
   end
