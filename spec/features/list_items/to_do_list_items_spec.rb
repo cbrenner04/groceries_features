@@ -524,6 +524,8 @@ RSpec.describe 'A to do list item', type: :feature do
             expect(list_page).to have_no_not_purchased_items
             expect(list_page).to have_no_purchased_items
 
+            sleep 1
+
             # check new list for new items
             home_page.load
             home_page.select_list 'foobar'
@@ -565,6 +567,8 @@ RSpec.describe 'A to do list item', type: :feature do
             # all items should have been moved
             expect(list_page).to have_no_not_purchased_items
             expect(list_page).to have_no_purchased_items
+
+            sleep 1 # no fucking clue but this fails in staging otherwise
 
             # go to existing list
             list_page.load(id: new_list.id)

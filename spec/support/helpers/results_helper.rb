@@ -21,7 +21,6 @@ module Helpers
     rescue Errno::ECONNREFUSED
       # if can't connect to feature results, auth token doesn't matter
     end
-    # rubocop:enable Lint/HandleExceptions
 
     def create_results(spec, test_run)
       @environment = ENV['ENV'] || 'development'
@@ -40,12 +39,15 @@ module Helpers
         "#{ENV['RESULTS_URL']}/sign-out.json",
         'Authorization' => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}"
       )
+    rescue Errno::ECONNREFUSED
+      # don't care if can't connect
     ensure
       lines = File.readlines(ENV_VAR_FILE_PATH)
       file = File.open(ENV_VAR_FILE_PATH, 'w+')
       lines.each { |l| file << l unless l.include? 'RESULTS_AUTH_TOKEN' }
       file.close
     end
+    # rubocop:enable Lint/HandleExceptions
 
     private
 
