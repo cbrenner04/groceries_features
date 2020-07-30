@@ -506,6 +506,8 @@ RSpec.describe 'A book list item', type: :feature do
             edit_list_items_page.category.set 'foobaz'
             edit_list_items_page.submit.click
 
+            sleep 1
+
             # all items should have been moved
             expect(list_page).to have_no_not_purchased_items
             expect(list_page).to have_no_purchased_items
@@ -547,6 +549,8 @@ RSpec.describe 'A book list item', type: :feature do
             # all items should have been moved
             expect(list_page).to have_no_not_purchased_items
             expect(list_page).to have_no_purchased_items
+
+            sleep 1 # no fucking clue but this fails in staging otherwise
 
             # go to existing list
             list_page.load(id: new_list.id)
