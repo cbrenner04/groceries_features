@@ -1,11 +1,14 @@
-spec/features/list_items/to_do_list_items_spec.rb:100.75813600001857
-spec/features/lists/to_do_lists_spec.rb:75.62651500012726
-spec/features/list_items/book_list_items_spec.rb:93.59083399991505
-spec/features/lists/music_lists_spec.rb:78.94742700015195
-spec/features/login_spec.rb:3.8463650001212955
-spec/features/list_items/music_list_items_spec.rb:85.8501389999874
-spec/features/lists/book_lists_spec.rb:82.954132999992
-spec/features/share_spec.rb:9.659341000020504
-spec/features/invite_spec.rb:5.273142999969423
-spec/features/list_items/grocery_list_items_spec.rb:100.8049769999925
-spec/features/lists/grocery_lists_spec.rb:78.71428299997933
+spec/features/list_items/to_do_list_items_spec.rb:88.33325200015679
+spec/features/lists/to_do_lists_spec.rb:72.64610400004312
+spec/features/list_items/book_list_items_spec.rb:88.4353809999302
+spec/features/lists/music_lists_spec.rb:74.98634000006132
+spec/features/login_spec.rb:3.0305319998878986
+
+1st Try error in ./spec/features/lists/grocery_lists_spec.rb:516:
+stale element reference: element is not attached to the page document
+  (Session info: chrome=84.0.4147.105)
+
+RSpec::Retry: 2nd try ./spec/features/lists/grocery_lists_spec.rb:516
+spec/features/invite_spec.rb:4.436885999981314
+spec/features/list_items/grocery_list_items_spec.rb:95.04081499995664
+spec/features/lists/grocery_lists_spec.rb:75.2178290002048

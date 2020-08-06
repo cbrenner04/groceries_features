@@ -549,4 +549,19 @@ RSpec.describe "A book list", type: :feature do
       end
     end
   end
+
+  describe "multiSelect" do
+    describe "complete" do
+    end
+
+    describe "merge" do
+      # TODO: share and edit should not be visible
+    end
+
+    describe "delete" do
+    end
+
+    describe "refresh" do
+    end
+  end
 end
