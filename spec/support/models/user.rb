@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
+require "bcrypt"
 
 module Models
   # a user of the application

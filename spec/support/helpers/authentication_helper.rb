@@ -3,7 +3,6 @@
 module Helpers
   # helpers for authenticating as a user
   module AuthenticationHelper
-    # rubocop:disable Metrics/AbcSize
     def login(user, expect_success: true)
       login_page.load
       enter_email(user)
@@ -14,7 +13,6 @@ module Helpers
       home_page.wait_until_log_out_visible
       expect(home_page).to have_log_out
     end
-    # rubocop:enable Metrics/AbcSize
 
     def logout
       home_page.log_out.click
@@ -27,7 +25,7 @@ module Helpers
       login_page.email.set user.email
     rescue Capybara::ElementNotFound
       logout if home_page.has_header?
-      logout if home_page.has_text? 'You are already signed in'
+      logout if home_page.has_text? "You are already signed in"
       retry
     end
 

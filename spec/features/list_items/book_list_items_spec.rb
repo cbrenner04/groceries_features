@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'A book list item', type: :feature do
+RSpec.describe "A book list item", type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: 'BookList', owner_id: user.id) }
+  let(:list) { Models::List.new(type: "BookList", owner_id: user.id) }
 
   before do
     @list_items = create_associated_list_objects(user, list)
   end
 
-  describe 'when logged in as owner' do
+  describe "when logged in as owner" do
     before do
       login user
       list_page.load(id: list.id)
       @initial_list_item_count = list_page.not_purchased_items.count
     end
 
-    it 'is created' do
+    it "is created" do
       new_list_item = Models::BookListItem.new(user_id: user.id,
                                                book_list_id: list.id,
                                                create_item: false,
-                                               category: 'foo')
+                                               category: "foo")
 
       list_page.expand_list_item_form
       list_page.author_input.set new_list_item.author
@@ -45,8 +45,8 @@ RSpec.describe 'A book list item', type: :feature do
       expect(category_headers.first).to eq new_list_item.category.capitalize
     end
 
-    describe 'that is not purchased' do
-      it 'is read' do
+    describe "that is not purchased" do
+      it "is read" do
         item_name = @list_items.first.pretty_title
 
         list_page.read item_name
@@ -54,7 +54,7 @@ RSpec.describe 'A book list item', type: :feature do
         expect(list_page).to have_read_item item_name
       end
 
-      it 'is purchased' do
+      it "is purchased" do
         item_name = @list_items.first.pretty_title
 
         list_page.purchase item_name
@@ -66,7 +66,7 @@ RSpec.describe 'A book list item', type: :feature do
         expect(list_page.purchased_items.map(&:text)).to include item_name
       end
 
-      it 'is edited' do
+      it "is edited" do
         item = @list_items.first
 
         list_page.edit item.pretty_title
@@ -84,7 +84,7 @@ RSpec.describe 'A book list item', type: :feature do
           .to include item.pretty_title
       end
 
-      it 'is destroyed' do
+      it "is destroyed" do
         item_name = @list_items.first.pretty_title
 
         list_page.delete item_name
@@ -106,14 +106,14 @@ RSpec.describe 'A book list item', type: :feature do
           .not_to include item_name
       end
 
-      describe 'when a filter is applied' do
+      describe "when a filter is applied" do
         before do
           list_page.wait_until_purchased_items_visible
           list_page.filter_button.click
-          list_page.filter_option('foo').click
+          list_page.filter_option("foo").click
         end
 
-        it 'is read' do
+        it "is read" do
           item_name = @list_items.first.pretty_title
 
           list_page.read item_name
@@ -121,7 +121,7 @@ RSpec.describe 'A book list item', type: :feature do
           expect(list_page).to have_read_item item_name
         end
 
-        it 'is edited' do
+        it "is edited" do
           item = @list_items.first
 
           list_page.edit item.pretty_title
@@ -136,14 +136,14 @@ RSpec.describe 'A book list item', type: :feature do
           edit_list_item_page.submit.click
           list_page.wait_until_not_purchased_items_visible
           list_page.filter_button.click
-          list_page.filter_option('foo').click
+          list_page.filter_option("foo").click
 
           expect(list_page.not_purchased_items.map(&:text))
             .to include item.pretty_title
         end
 
-        describe 'when there is only one item for the selected category' do
-          it 'is purchased' do
+        describe "when there is only one item for the selected category" do
+          it "is purchased" do
             item_name = @list_items.first.pretty_title
 
             list_page.purchase item_name
@@ -158,7 +158,7 @@ RSpec.describe 'A book list item', type: :feature do
               .to include @list_items[1].pretty_title
           end
 
-          it 'is destroyed' do
+          it "is destroyed" do
             item_name = @list_items.first.pretty_title
 
             list_page.delete item_name
@@ -185,11 +185,11 @@ RSpec.describe 'A book list item', type: :feature do
           end
         end
 
-        describe 'when there are multiple items for the selected category' do
+        describe "when there are multiple items for the selected category" do
           before do
             @another_list_item =
               Models::BookListItem
-              .new(user_id: user.id, book_list_id: list.id, category: 'foo')
+              .new(user_id: user.id, book_list_id: list.id, category: "foo")
             @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better
@@ -198,10 +198,10 @@ RSpec.describe 'A book list item', type: :feature do
             list_page.load(id: list.id)
             list_page.wait_until_purchased_items_visible
             list_page.filter_button.click
-            list_page.filter_option('foo').click
+            list_page.filter_option("foo").click
           end
 
-          it 'is purchased' do
+          it "is purchased" do
             item_name = @list_items.first.pretty_title
 
             list_page.purchase item_name
@@ -219,7 +219,7 @@ RSpec.describe 'A book list item', type: :feature do
               .not_to include @list_items[1].pretty_title
           end
 
-          it 'is destroyed' do
+          it "is destroyed" do
             initial_list_item_count = list_page.not_purchased_items.count
             item_name = @list_items.first.pretty_title
 
@@ -251,8 +251,8 @@ RSpec.describe 'A book list item', type: :feature do
       end
     end
 
-    describe 'that is purchased' do
-      it 'is read' do
+    describe "that is purchased" do
+      it "is read" do
         item_name = @list_items.last.pretty_title
 
         list_page.read item_name, purchased: true
@@ -260,7 +260,7 @@ RSpec.describe 'A book list item', type: :feature do
         expect(list_page).to have_read_item item_name, purchased: true
       end
 
-      it 'is destroyed' do
+      it "is destroyed" do
         initial_purchase_items_count = list_page.purchased_items.count
         item_name = @list_items.last.pretty_title
 
@@ -280,8 +280,8 @@ RSpec.describe 'A book list item', type: :feature do
       end
     end
 
-    describe 'when multiple selected' do
-      it 'is read' do
+    describe "when multiple selected" do
+      it "is read" do
         list_page.multi_select_button.click
         @list_items.each do |item|
           list_page
@@ -295,7 +295,7 @@ RSpec.describe 'A book list item', type: :feature do
         end
       end
 
-      it 'is purchased' do
+      it "is purchased" do
         list_page.multi_select_button.click
         @list_items.each do |item|
           list_page
@@ -311,7 +311,7 @@ RSpec.describe 'A book list item', type: :feature do
         expect(list_page.purchased_items.count).to eq 3
       end
 
-      it 'is destroyed' do
+      it "is destroyed" do
         list_page.multi_select_button.click
         @list_items.each do |item|
           list_page
@@ -333,7 +333,7 @@ RSpec.describe 'A book list item', type: :feature do
         expect(list_page.purchased_items.count).to eq 0
       end
 
-      describe 'when edited' do
+      describe "when edited" do
         before do
           list_page.multi_select_button.click
           @list_items.each do |item|
@@ -343,10 +343,10 @@ RSpec.describe 'A book list item', type: :feature do
           list_page.edit(@list_items.first.pretty_title)
         end
 
-        it 'updates all attributes for items' do
+        it "updates all attributes for items" do
           # change attributes to new attributes
-          edit_list_items_page.author.set 'foobar'
-          edit_list_items_page.category.set 'foobaz'
+          edit_list_items_page.author.set "foobar"
+          edit_list_items_page.category.set "foobaz"
           edit_list_items_page.submit.click
 
           list_page.wait_until_not_purchased_items_visible
@@ -354,7 +354,7 @@ RSpec.describe 'A book list item', type: :feature do
           # all items should now have the same category "foobaz"
           category_headers = list_page.category_header.map(&:text)
           expect(category_headers.count).to eq 1
-          expect(category_headers[0]).to eq 'Foobaz'
+          expect(category_headers[0]).to eq "Foobaz"
 
           # all items should now have the same author "foobar"
           @list_items.each do |item|
@@ -386,24 +386,24 @@ RSpec.describe 'A book list item', type: :feature do
           @list_items.each do |item|
             label = list_page
                     .find_list_item(item.title, purchased: item.purchased).text
-            expect(label).not_to include 'foobar'
+            expect(label).not_to include "foobar"
           end
         end
 
-        describe 'when copy' do
-          it 'creates a new list' do
+        describe "when copy" do
+          it "creates a new list" do
             edit_list_items_page.copy.click
             # cannot choose existing list when no other book lists exist
             all_link_text = edit_list_items_page.all_links.map(&:text)
 
-            expect(all_link_text).not_to include 'Choose existing list'
+            expect(all_link_text).not_to include "Choose existing list"
 
             # create new list
-            edit_list_items_page.new_list_name.set 'foobar'
+            edit_list_items_page.new_list_name.set "foobar"
             # updates current items
             edit_list_items_page.update_current_items.click
-            edit_list_items_page.author.set 'foobar'
-            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.author.set "foobar"
+            edit_list_items_page.category.set "foobaz"
             edit_list_items_page.submit.click
 
             list_page.wait_until_not_purchased_items_visible
@@ -411,7 +411,7 @@ RSpec.describe 'A book list item', type: :feature do
             # all items should now have the same category "foobaz"
             category_headers = list_page.category_header.map(&:text)
             expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq 'Foobaz'
+            expect(category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             @list_items.each do |item|
@@ -423,13 +423,13 @@ RSpec.describe 'A book list item', type: :feature do
 
             # check new list for new items
             home_page.load
-            home_page.select_list 'foobar'
+            home_page.select_list "foobar"
             list_page.wait_until_not_purchased_items_visible
 
             # all items should now have the same category "foobaz"
             new_list_category_headers = list_page.category_header.map(&:text)
             expect(new_list_category_headers.count).to eq 1
-            expect(new_list_category_headers[0]).to eq 'Foobaz'
+            expect(new_list_category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             # all items should be not purchased
@@ -440,17 +440,17 @@ RSpec.describe 'A book list item', type: :feature do
             end
           end
 
-          it 'chooses existing list' do
+          it "chooses existing list" do
             # create another list so option for existing list are available
-            new_list = Models::List.new(type: 'BookList', owner_id: user.id)
+            new_list = Models::List.new(type: "BookList", owner_id: user.id)
             Models::UsersList.new(user_id: user.id, list_id: new_list.id)
             # select existing list
             edit_list_items_page.copy.click
             edit_list_items_page.existing_list.select new_list.name
             # does not update current items therefore these attributes will be
             # on the existing list but not the current list
-            edit_list_items_page.author.set 'foobar'
-            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.author.set "foobar"
+            edit_list_items_page.category.set "foobaz"
             edit_list_items_page.submit.click
 
             list_page.wait_until_not_purchased_items_visible
@@ -458,7 +458,7 @@ RSpec.describe 'A book list item', type: :feature do
             # category should not have been updated
             category_headers = list_page.category_header.map(&:text)
             expect(category_headers.count).to eq 1
-            expect(category_headers[0]).not_to eq 'Foobaz'
+            expect(category_headers[0]).not_to eq "Foobaz"
 
             # all items should have the same attributes
             @list_items.each do |item|
@@ -476,7 +476,7 @@ RSpec.describe 'A book list item', type: :feature do
             existing_list_category_headers =
               list_page.category_header.map(&:text)
             expect(existing_list_category_headers.count).to eq 1
-            expect(existing_list_category_headers[0]).to eq 'Foobaz'
+            expect(existing_list_category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             # all items should be not purchased
@@ -488,22 +488,22 @@ RSpec.describe 'A book list item', type: :feature do
           end
         end
 
-        describe 'when move' do
-          it 'creates a new list' do
+        describe "when move" do
+          it "creates a new list" do
             edit_list_items_page.move.click
             # cannot choose existing list when no other book lists exist
             all_link_text = edit_list_items_page.all_links.map(&:text)
 
-            expect(all_link_text).not_to include 'Choose existing list'
+            expect(all_link_text).not_to include "Choose existing list"
 
             # create new list
-            edit_list_items_page.new_list_name.set 'foobar'
+            edit_list_items_page.new_list_name.set "foobar"
 
             # cannot update current items when moving
             expect(edit_list_items_page).to have_no_update_current_items
 
-            edit_list_items_page.author.set 'foobar'
-            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.author.set "foobar"
+            edit_list_items_page.category.set "foobaz"
             edit_list_items_page.submit.click
 
             sleep 1
@@ -514,13 +514,13 @@ RSpec.describe 'A book list item', type: :feature do
 
             # check new list for new items
             home_page.load
-            home_page.select_list 'foobar'
+            home_page.select_list "foobar"
             list_page.wait_until_not_purchased_items_visible
 
             # all items should now have the same category "foobaz"
             category_headers = list_page.category_header.map(&:text)
             expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq 'Foobaz'
+            expect(category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             # all items should be not purchased
@@ -531,9 +531,9 @@ RSpec.describe 'A book list item', type: :feature do
             end
           end
 
-          it 'chooses existing list' do
+          it "chooses existing list" do
             # create another list so option for existing list are available
-            new_list = Models::List.new(type: 'BookList', owner_id: user.id)
+            new_list = Models::List.new(type: "BookList", owner_id: user.id)
             Models::UsersList.new(user_id: user.id, list_id: new_list.id)
             # select existing list
             edit_list_items_page.move.click
@@ -542,8 +542,8 @@ RSpec.describe 'A book list item', type: :feature do
             # cannot update current items when moving
             expect(edit_list_items_page).to have_no_update_current_items
 
-            edit_list_items_page.author.set 'foobar'
-            edit_list_items_page.category.set 'foobaz'
+            edit_list_items_page.author.set "foobar"
+            edit_list_items_page.category.set "foobaz"
             edit_list_items_page.submit.click
 
             # all items should have been moved
@@ -559,7 +559,7 @@ RSpec.describe 'A book list item', type: :feature do
             # all items should now have the same category "foobaz"
             category_headers = list_page.category_header.map(&:text)
             expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq 'Foobaz'
+            expect(category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             # all items should be not purchased
@@ -574,16 +574,16 @@ RSpec.describe 'A book list item', type: :feature do
     end
   end
 
-  describe 'when logged in as shared user with write access' do
+  describe "when logged in as shared user with write access" do
     before do
       write_user = Models::User.new
       Models::UsersList.new(user_id: write_user.id, list_id: list.id,
-                            has_accepted: true, permissions: 'write')
+                            has_accepted: true, permissions: "write")
       login write_user
       list_page.load(id: list.id)
     end
 
-    it 'can create, read, purchase, edit, and destroy' do
+    it "can create, read, purchase, edit, and destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.title)
       purchased_item = list_page.find_list_item(@list_items.last.title,
                                                 purchased: true)
@@ -603,16 +603,16 @@ RSpec.describe 'A book list item', type: :feature do
     end
   end
 
-  describe 'when logged in as shared user with read access' do
+  describe "when logged in as shared user with read access" do
     before do
       read_user = Models::User.new
       Models::UsersList.new(user_id: read_user.id, list_id: list.id,
-                            has_accepted: true, permissions: 'read')
+                            has_accepted: true, permissions: "read")
       login read_user
       list_page.load(id: list.id)
     end
 
-    it 'cannot create, read, purchase, edit, or destroy' do
+    it "cannot create, read, purchase, edit, or destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.title)
       purchased_item = list_page.find_list_item(@list_items.last.title,
                                                 purchased: true)

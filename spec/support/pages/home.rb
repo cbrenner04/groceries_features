@@ -15,14 +15,14 @@ module Pages
     ACCEPT_BUTTON = 'button[data-test-id="pending-list-accept"]'
     REJECT_BUTTON = 'button[data-test-id="pending-list-trash"]'
 
-    set_url '/'
+    set_url "/"
 
-    element :signed_in_alert, '.Toastify', text: 'Signed in successfully'
-    element :list_deleted_alert, '.Toastify', text: 'List successfully deleted.'
-    element :list_removed_alert, '.Toastify', text: 'List successfully removed.'
-    element :list_type, '#type'
-    element :header, 'h1', text: 'Lists'
-    element :name, '#name'
+    element :signed_in_alert, ".Toastify", text: "Signed in successfully"
+    element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
+    element :list_removed_alert, ".Toastify", text: "List successfully removed."
+    element :list_type, "#type"
+    element :header, "h1", text: "Lists"
+    element :name, "#name"
     element :submit, "button[type='submit']"
     element :invite, 'a[data-test-id="invite-link"]'
     element :log_out, 'a[data-test-id="log-out-link"]'
@@ -42,7 +42,7 @@ module Pages
     element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
 
     def go_to_completed_lists
-      click_on 'See all completed lists here'
+      click_on "See all completed lists here"
     end
 
     def select_list(list_name)
@@ -124,7 +124,7 @@ module Pages
     end
 
     def expand_list_form
-      find('.btn.btn-link', text: 'Add List').click
+      find(".btn.btn-link", text: "Add List").click
     end
   end
 end

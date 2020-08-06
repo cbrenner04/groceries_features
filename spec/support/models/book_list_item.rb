@@ -3,9 +3,8 @@
 module Models
   # an item on a book list
   class BookListItem
-    attr_reader :id, :user_id, :book_list_id, :author, :title, :purchased,
-                :read, :number_in_series, :category
-    attr_writer :title
+    attr_accessor :title
+    attr_reader :id, :user_id, :book_list_id, :author, :purchased, :read, :number_in_series, :category
 
     def initialize(user_id:, book_list_id:, purchased: false, read: false,
                    category: nil, create_item: true)

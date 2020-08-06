@@ -7,9 +7,8 @@ module Models
     ONE_HOUR = ONE_MINUTE * 60
     ONE_DAY = ONE_HOUR * 24
 
-    attr_reader :id, :user_id, :to_do_list_id, :task, :assignee_id,
-                :due_by, :completed, :refreshed, :category
-    attr_writer :task, :due_by
+    attr_accessor :task
+    attr_reader :id, :user_id, :to_do_list_id, :assignee_id, :completed, :refreshed, :category
 
     def initialize(user_id:, to_do_list_id:, assignee_id: nil, completed: false,
                    category: nil, refreshed: false, create_item: true)

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Completed lists page', type: :feature do
+RSpec.describe "Completed lists page", type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:completed_lists_page) { Pages::CompletedLists.new }
   let(:edit_list_page) { Pages::EditList.new }
   let(:share_list_page) { Pages::ShareList.new }
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
-  let(:list_type) { 'GroceryList' }
+  let(:list_type) { "GroceryList" }
   let(:other_user) { Models::User.new }
 
   before do
@@ -30,7 +30,7 @@ RSpec.describe 'Completed lists page', type: :feature do
     home_page.go_to_completed_lists
   end
 
-  it 'refreshes list' do
+  it "refreshes list" do
     completed_lists_page.refresh @list.name
 
     wait_for do
@@ -48,7 +48,7 @@ RSpec.describe 'Completed lists page', type: :feature do
       .to include @list_items.last.pretty_title
   end
 
-  it 'deletes list' do
+  it "deletes list" do
     wait_for do
       completed_lists_page.complete_list_names.map(&:text).include? @list.name
     end
@@ -64,8 +64,8 @@ RSpec.describe 'Completed lists page', type: :feature do
     expect(home_page.complete_list_names.map(&:text)).not_to include @list.name
   end
 
-  describe 'shared list' do
-    it 'does not show refresh or delete' do
+  describe "shared list" do
+    it "does not show refresh or delete" do
       shared_list = completed_lists_page.find_complete_list(@other_list.name)
 
       expect(shared_list).to have_no_css completed_lists_page.refresh_button_css
