@@ -18,10 +18,8 @@ module Models
     private
 
     def create
-      DB[:lists].insert(
-        name: name, type: type, completed: completed, created_at: Time.now,
-        updated_at: Time.now, owner_id: owner_id
-      )
+      DB[:lists].insert(name: name, type: type, completed: completed, created_at: Time.now, updated_at: Time.now,
+                        owner_id: owner_id)
     end
   end
 end

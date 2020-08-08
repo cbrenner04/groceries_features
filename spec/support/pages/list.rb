@@ -18,9 +18,7 @@ module Pages
     elements :purchased_items, PURCHASED_ITEM
     elements :category_header, "h5[data-test-class='category-header']"
 
-    element :item_deleted_alert,
-            ".Toastify",
-            text: "Item successfully deleted."
+    element :item_deleted_alert, ".Toastify", text: "Item successfully deleted."
     element :author_input, "#author"
     element :title_input, "#title"
     element :number_in_series_input, "#numberInSeries"

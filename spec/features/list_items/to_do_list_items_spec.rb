@@ -22,10 +22,8 @@ RSpec.describe "A to do list item", type: :feature do
     end
 
     it "is created" do
-      new_list_item = Models::ToDoListItem.new(user_id: user.id,
-                                               to_do_list_id: list.id,
-                                               create_item: false,
-                                               category: "foo")
+      new_list_item =
+        Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id, create_item: false, category: "foo")
 
       list_page.expand_list_item_form
       new_list_item.due_by = Time.now
@@ -37,13 +35,12 @@ RSpec.describe "A to do list item", type: :feature do
 
       list_page.submit_button.click
 
-      wait_for do
-        list_page.not_purchased_items.count == @initial_list_item_count + 1
-      end
+      wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
-      expect(list_page.not_purchased_items.map(&:text))
-        .to include new_list_item.pretty_title
+      expect(list_page.not_purchased_items.map(&:text)).to include new_list_item.pretty_title
+
       category_headers = list_page.category_header.map(&:text)
+
       expect(category_headers.count).to eq 1
       expect(category_headers.first).to eq new_list_item.category.capitalize
     end
@@ -54,9 +51,7 @@ RSpec.describe "A to do list item", type: :feature do
 
         list_page.purchase item_name
 
-        wait_for do
-          list_page.purchased_items.count == @initial_list_item_count + 1
-        end
+        wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
         expect(list_page.purchased_items.map(&:text)).to include item_name
       end
@@ -76,8 +71,7 @@ RSpec.describe "A to do list item", type: :feature do
         edit_list_item_page.submit.click
         list_page.wait_until_not_purchased_items_visible
 
-        expect(list_page.not_purchased_items.map(&:text))
-          .to include item.pretty_title
+        expect(list_page.not_purchased_items.map(&:text)).to include item.pretty_title
       end
 
       it "is destroyed" do
@@ -91,15 +85,11 @@ RSpec.describe "A to do list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.not_purchased_items.count == @initial_list_item_count - 1
-        end
+        wait_for { list_page.not_purchased_items.count == @initial_list_item_count - 1 }
 
-        expect(list_page.not_purchased_items.count)
-          .to eq @initial_list_item_count - 1
+        expect(list_page.not_purchased_items.count).to eq @initial_list_item_count - 1
         expect(list_page).to have_item_deleted_alert
-        expect(list_page.not_purchased_items.map(&:text))
-          .not_to include item_name
+        expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
       end
 
       describe "when a filter is applied" do
@@ -126,8 +116,7 @@ RSpec.describe "A to do list item", type: :feature do
           list_page.filter_button.click
           list_page.filter_option("foo").click
 
-          expect(list_page.not_purchased_items.map(&:text))
-            .to include item.pretty_title
+          expect(list_page.not_purchased_items.map(&:text)).to include item.pretty_title
         end
 
         describe "when there is only one item for the selected category" do
@@ -136,14 +125,11 @@ RSpec.describe "A to do list item", type: :feature do
 
             list_page.purchase item_name
 
-            wait_for do
-              list_page.purchased_items.count == @initial_list_item_count + 1
-            end
+            wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
             expect(list_page.purchased_items.map(&:text)).to include item_name
             # no longer filtered
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).to include @list_items[1].pretty_title
           end
 
           it "is destroyed" do
@@ -157,27 +143,19 @@ RSpec.describe "A to do list item", type: :feature do
 
             list_page.confirm_delete_button.click
 
-            wait_for do
-              list_page.not_purchased_items.count ==
-                @initial_list_item_count - 1
-            end
+            wait_for { list_page.not_purchased_items.count == @initial_list_item_count - 1 }
 
-            expect(list_page.not_purchased_items.count)
-              .to eq @initial_list_item_count - 1
+            expect(list_page.not_purchased_items.count).to eq @initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include item_name
+            expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
             # no longer filtered
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).to include @list_items[1].pretty_title
           end
         end
 
         describe "when there are multiple items for the selected category" do
           before do
-            @another_list_item =
-              Models::ToDoListItem
-              .new(user_id: user.id, to_do_list_id: list.id, category: "foo")
+            @another_list_item = Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id, category: "foo")
             @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better
@@ -194,15 +172,11 @@ RSpec.describe "A to do list item", type: :feature do
 
             list_page.purchase item_name
 
-            wait_for do
-              list_page.purchased_items.count == @initial_list_item_count + 1
-            end
+            wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
             expect(list_page.purchased_items.map(&:text)).to include item_name
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @another_list_item.pretty_title
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).to include @another_list_item.pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).not_to include @list_items[1].pretty_title
           end
 
           it "is destroyed" do
@@ -218,20 +192,13 @@ RSpec.describe "A to do list item", type: :feature do
 
             list_page.confirm_delete_button.click
 
-            wait_for do
-              list_page.not_purchased_items.count ==
-                initial_list_item_count - 1
-            end
+            wait_for { list_page.not_purchased_items.count == initial_list_item_count - 1 }
 
-            expect(list_page.not_purchased_items.count)
-              .to eq initial_list_item_count - 1
+            expect(list_page.not_purchased_items.count).to eq initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include item_name
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @another_list_item.pretty_title
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
+            expect(list_page.not_purchased_items.map(&:text)).to include @another_list_item.pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).not_to include @list_items[1].pretty_title
           end
         end
       end
@@ -243,9 +210,7 @@ RSpec.describe "A to do list item", type: :feature do
 
         list_page.refresh item_name
 
-        wait_for do
-          list_page.not_purchased_items.count == @initial_list_item_count + 1
-        end
+        wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
         list_page.filter_button.click
         list_page.filter_option("foo").click
@@ -265,9 +230,7 @@ RSpec.describe "A to do list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.purchased_items.count == initial_purchased_items_count - 1
-        end
+        wait_for { list_page.purchased_items.count == initial_purchased_items_count - 1 }
 
         expect(list_page.purchased_items.map(&:text)).not_to include item_name
       end
@@ -276,15 +239,10 @@ RSpec.describe "A to do list item", type: :feature do
     describe "when multiple selected" do
       it "is completed" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.completed)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.completed) }
         list_page.purchase(@list_items.first.pretty_title)
 
-        wait_for do
-          list_page.not_purchased_items.count == 0
-        end
+        wait_for { list_page.not_purchased_items.count == 0 }
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 3
@@ -292,15 +250,10 @@ RSpec.describe "A to do list item", type: :feature do
 
       it "is refreshed" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.completed)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.completed) }
         list_page.refresh(@list_items.last.pretty_title)
 
-        wait_for do
-          list_page.not_purchased_items.count == 0
-        end
+        wait_for { list_page.not_purchased_items.count == 0 }
 
         expect(list_page.purchased_items.count).to eq 0
         expect(list_page.not_purchased_items.count).to eq 3
@@ -308,10 +261,7 @@ RSpec.describe "A to do list item", type: :feature do
 
       it "is destroyed" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.completed)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.completed) }
         list_page.delete(@list_items.first.pretty_title, purchased: false)
         list_page.wait_until_confirm_delete_button_visible
 
@@ -320,9 +270,7 @@ RSpec.describe "A to do list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.not_purchased_items.count == 0
-        end
+        wait_for { list_page.not_purchased_items.count == 0 }
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 0
@@ -331,10 +279,7 @@ RSpec.describe "A to do list item", type: :feature do
       describe "when edited" do
         before do
           list_page.multi_select_button.click
-          @list_items.each do |item|
-            list_page
-              .multi_select_item(item.pretty_title, purchased: item.completed)
-          end
+          @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.completed) }
           list_page.edit(@list_items.first.pretty_title)
         end
 
@@ -354,23 +299,18 @@ RSpec.describe "A to do list item", type: :feature do
 
           # all items should now have the same assignee and due by
           @list_items.each do |item|
-            label = list_page
-                    .find_list_item(item.task, purchased: item.completed).text
-            expect(label).to include("#{item.task}\n" \
-              "Assigned To: #{user.email}\nDue By: February 2, 2020")
+            label = list_page.find_list_item(item.task, purchased: item.completed).text
+
+            expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
           end
 
           # return to edit page for clearing below
           list_page.multi_select_button.click
           @list_items.each do |item|
-            list_page.multi_select_item(
-              "#{item.task}\nAssigned To: #{user.email}" \
-              "\nDue By: February 2, 2020",
-              purchased: item.completed
-            )
+            list_page.multi_select_item("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020",
+                                        purchased: item.completed)
           end
-          list_page.edit("#{@list_items.first.task}\n" \
-            "Assigned To: #{user.email}\nDue By: February 2, 2020")
+          list_page.edit("#{@list_items.first.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
 
           # clear attributes
           edit_list_items_page.clear_assignee.click
@@ -385,8 +325,8 @@ RSpec.describe "A to do list item", type: :feature do
 
           # all items should have had their artists cleared
           @list_items.each do |item|
-            label = list_page
-                    .find_list_item(item.task, purchased: item.completed).text
+            label = list_page.find_list_item(item.task, purchased: item.completed).text
+
             expect(label).not_to include user.email
             expect(label).not_to include "February 2, 2020"
           end
@@ -418,13 +358,9 @@ RSpec.describe "A to do list item", type: :feature do
 
             # all items should now have the same assignee and due by
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.task, purchased: item.completed)
-                      .text
-              expect(label).to include(
-                "#{item.task}\nAssigned To: #{user.email}\n" \
-                "Due By: February 2, 2020"
-              )
+              label = list_page.find_list_item(item.task, purchased: item.completed).text
+
+              expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
             end
 
             # check new list for new items
@@ -434,18 +370,16 @@ RSpec.describe "A to do list item", type: :feature do
 
             # all items should now have the same category "foobaz"
             new_list_category_headers = list_page.category_header.map(&:text)
+
             expect(new_list_category_headers.count).to eq 1
             expect(new_list_category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same assignee and due by
             # all items should be not completed
             @list_items.each do |item|
-              label =
-                list_page.find_list_item(item.task, purchased: false).text
-              expect(label).to include(
-                "#{item.task}\nAssigned To: #{user.email}\n" \
-                "Due By: February 2, 2020"
-              )
+              label = list_page.find_list_item(item.task, purchased: false).text
+
+              expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
             end
           end
 
@@ -472,9 +406,8 @@ RSpec.describe "A to do list item", type: :feature do
 
             # all items should have the same attributes
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.task, purchased: item.completed)
-                      .text
+              label = list_page.find_list_item(item.task, purchased: item.completed).text
+
               expect(label).to include item.pretty_title
             end
 
@@ -483,20 +416,16 @@ RSpec.describe "A to do list item", type: :feature do
             list_page.wait_until_not_purchased_items_visible
 
             # all items should now have the same category "foobaz"
-            existing_list_category_headers =
-              list_page.category_header.map(&:text)
+            existing_list_category_headers = list_page.category_header.map(&:text)
             expect(existing_list_category_headers.count).to eq 1
             expect(existing_list_category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same assignee and due by
             # all items should be not completed
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.task, purchased: false).text
-              expect(label).to include(
-                "#{item.task}\nAssigned To: #{user.email}\n" \
-                "Due By: February 2, 2020"
-              )
+              label = list_page.find_list_item(item.task, purchased: false).text
+
+              expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
             end
           end
         end
@@ -539,12 +468,9 @@ RSpec.describe "A to do list item", type: :feature do
             # all items should now have the same assignee and due by
             # all items should be not completed
             @list_items.each do |item|
-              label =
-                list_page.find_list_item(item.task, purchased: false).text
-              expect(label).to include(
-                "#{item.task}\nAssigned To: #{user.email}\n" \
-                "Due By: February 2, 2020"
-              )
+              label = list_page.find_list_item(item.task, purchased: false).text
+
+              expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
             end
           end
 
@@ -582,12 +508,9 @@ RSpec.describe "A to do list item", type: :feature do
             # all items should now have the same assignee and due by
             # all items should be not completed
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.task, purchased: false).text
-              expect(label).to include(
-                "#{item.task}\nAssigned To: #{user.email}\n" \
-                "Due By: February 2, 2020"
-              )
+              label = list_page.find_list_item(item.task, purchased: false).text
+
+              expect(label).to include("#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020")
             end
           end
         end
@@ -598,16 +521,14 @@ RSpec.describe "A to do list item", type: :feature do
   describe "when logged in as shared user with write access" do
     before do
       write_user = Models::User.new
-      Models::UsersList.new(user_id: write_user.id, list_id: list.id,
-                            has_accepted: true, permissions: "write")
+      Models::UsersList.new(user_id: write_user.id, list_id: list.id, has_accepted: true, permissions: "write")
       login write_user
       list_page.load(id: list.id)
     end
 
     it "can create, complete, edit, refresh, and destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.task)
-      purchased_item = list_page.find_list_item(@list_items.last.task,
-                                                purchased: true)
+      purchased_item = list_page.find_list_item(@list_items.last.task, purchased: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_task_input
@@ -624,16 +545,14 @@ RSpec.describe "A to do list item", type: :feature do
   describe "when logged in as shared user with read access" do
     before do
       read_user = Models::User.new
-      Models::UsersList.new(user_id: read_user.id, list_id: list.id,
-                            has_accepted: true, permissions: "read")
+      Models::UsersList.new(user_id: read_user.id, list_id: list.id, has_accepted: true, permissions: "read")
       login read_user
       list_page.load(id: list.id)
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.task)
-      purchased_item = list_page.find_list_item(@list_items.last.task,
-                                                purchased: true)
+      purchased_item = list_page.find_list_item(@list_items.last.task, purchased: true)
 
       expect(list_page).to have_no_task_input
       expect(list_page).to have_no_submit_button

@@ -14,6 +14,7 @@ module Pages
     REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
     ACCEPT_BUTTON = 'button[data-test-id="pending-list-accept"]'
     REJECT_BUTTON = 'button[data-test-id="pending-list-trash"]'
+    MERGE_BUTTON = 'button[data-test-id="incomplete-list-merge"]'
 
     set_url "/"
 
@@ -31,6 +32,8 @@ module Pages
     element :share_button, SHARE_BUTTON
     element :edit_button, EDIT_BUTTON
     element :refresh_button, REFRESH_BUTTON
+    element :merge_button, MERGE_BUTTON
+    element :new_merged_list_name_input, "#mergeName"
 
     elements :complete_lists, COMPLETE_LIST
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
@@ -40,6 +43,8 @@ module Pages
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :confirm_reject_button, 'button[data-test-id="confirm-reject"]'
     element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
+    element :confirm_merge_button, 'button[data-test-id="confirm-merge"]'
+    element :multi_select_button, :button, "Select"
 
     def go_to_completed_lists
       click_on "See all completed lists here"
@@ -93,6 +98,11 @@ module Pages
       REFRESH_BUTTON
     end
 
+    def multi_select_list(list_name, complete: false)
+      list_css = complete ? COMPLETE_LIST : INCOMPLETE_LIST
+      find(list_css, text: list_name).find("input").click
+    end
+
     def accept(list_name)
       find_pending_list(list_name).find(ACCEPT_BUTTON).click
     end
@@ -111,6 +121,10 @@ module Pages
 
     def edit(list_name)
       find_incomplete_list(list_name).find(EDIT_BUTTON).click
+    end
+
+    def merge(list_name)
+      find_incomplete_list(list_name).find(MERGE_BUTTON).click
     end
 
     def delete(list_name, complete: false)

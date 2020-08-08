@@ -9,10 +9,7 @@ module Helpers
   # helpers for post results
   class ResultsHelper
     def sign_in(user, password)
-      response = RestClient.post(
-        "#{ENV['RESULTS_URL']}/sign-in.json",
-        user_login: { email: user, password: password }
-      )
+      response = RestClient.post("#{ENV['RESULTS_URL']}/sign-in.json", user_login: { email: user, password: password })
       auth_token = JSON.parse(response.body)["auth_token"]
       file = File.open(ENV_VAR_FILE_PATH, "a")
       file.write("RESULTS_AUTH_TOKEN: #{auth_token}")
@@ -34,10 +31,8 @@ module Helpers
     end
 
     def sign_out
-      RestClient.delete(
-        "#{ENV['RESULTS_URL']}/sign-out.json",
-        "Authorization" => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}"
-      )
+      RestClient.delete("#{ENV['RESULTS_URL']}/sign-out.json",
+                        "Authorization" => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}")
     rescue Errno::ECONNREFUSED
       # don't care if can't connect
     ensure
@@ -50,12 +45,10 @@ module Helpers
     private
 
     def set_feature_id
-      response = RestClient::Request.execute(
-        method: :post,
-        url: "#{ENV['RESULTS_URL']}/features.json",
-        payload: { feature: feature_payload },
-        headers: { "Authorization" => "Token token=#{@auth_token}" }
-      )
+      response = RestClient::Request.execute(method: :post,
+                                             url: "#{ENV['RESULTS_URL']}/features.json",
+                                             payload: { feature: feature_payload },
+                                             headers: { "Authorization" => "Token token=#{@auth_token}" })
       @feature_id = JSON.parse(response.body)["feature_id"]
     end
 
@@ -64,12 +57,10 @@ module Helpers
     end
 
     def post_results
-      RestClient::Request.execute(
-        method: :post,
-        url: "#{ENV['RESULTS_URL']}/results.json",
-        payload: { result: result_payload },
-        headers: { "Authorization" => "Token token=#{@auth_token}" }
-      )
+      RestClient::Request.execute(method: :post,
+                                  url: "#{ENV['RESULTS_URL']}/results.json",
+                                  payload: { result: result_payload },
+                                  headers: { "Authorization" => "Token token=#{@auth_token}" })
     end
 
     def result_payload

@@ -10,9 +10,7 @@ RSpec.describe "A book list item", type: :feature do
   let(:user) { Models::User.new }
   let(:list) { Models::List.new(type: "BookList", owner_id: user.id) }
 
-  before do
-    @list_items = create_associated_list_objects(user, list)
-  end
+  before { @list_items = create_associated_list_objects(user, list) }
 
   describe "when logged in as owner" do
     before do
@@ -22,10 +20,8 @@ RSpec.describe "A book list item", type: :feature do
     end
 
     it "is created" do
-      new_list_item = Models::BookListItem.new(user_id: user.id,
-                                               book_list_id: list.id,
-                                               create_item: false,
-                                               category: "foo")
+      new_list_item =
+        Models::BookListItem.new(user_id: user.id, book_list_id: list.id, create_item: false, category: "foo")
 
       list_page.expand_list_item_form
       list_page.author_input.set new_list_item.author
@@ -34,13 +30,12 @@ RSpec.describe "A book list item", type: :feature do
       list_page.category_input.set new_list_item.category
       list_page.submit_button.click
 
-      wait_for do
-        list_page.not_purchased_items.count == @initial_list_item_count + 1
-      end
+      wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
-      expect(list_page.not_purchased_items.map(&:text))
-        .to include new_list_item.pretty_title
+      expect(list_page.not_purchased_items.map(&:text)).to include new_list_item.pretty_title
+
       category_headers = list_page.category_header.map(&:text)
+
       expect(category_headers.count).to eq 1
       expect(category_headers.first).to eq new_list_item.category.capitalize
     end
@@ -59,9 +54,7 @@ RSpec.describe "A book list item", type: :feature do
 
         list_page.purchase item_name
 
-        wait_for do
-          list_page.purchased_items.count == @initial_list_item_count + 1
-        end
+        wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
         expect(list_page.purchased_items.map(&:text)).to include item_name
       end
@@ -80,8 +73,7 @@ RSpec.describe "A book list item", type: :feature do
 
         edit_list_item_page.submit.click
 
-        expect(list_page.not_purchased_items.map(&:text))
-          .to include item.pretty_title
+        expect(list_page.not_purchased_items.map(&:text)).to include item.pretty_title
       end
 
       it "is destroyed" do
@@ -95,15 +87,11 @@ RSpec.describe "A book list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.not_purchased_items.count == @initial_list_item_count - 1
-        end
+        wait_for { list_page.not_purchased_items.count == @initial_list_item_count - 1 }
 
-        expect(list_page.not_purchased_items.count)
-          .to eq @initial_list_item_count - 1
+        expect(list_page.not_purchased_items.count).to eq @initial_list_item_count - 1
         expect(list_page).to have_item_deleted_alert
-        expect(list_page.not_purchased_items.map(&:text))
-          .not_to include item_name
+        expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
       end
 
       describe "when a filter is applied" do
@@ -138,8 +126,7 @@ RSpec.describe "A book list item", type: :feature do
           list_page.filter_button.click
           list_page.filter_option("foo").click
 
-          expect(list_page.not_purchased_items.map(&:text))
-            .to include item.pretty_title
+          expect(list_page.not_purchased_items.map(&:text)).to include item.pretty_title
         end
 
         describe "when there is only one item for the selected category" do
@@ -148,14 +135,11 @@ RSpec.describe "A book list item", type: :feature do
 
             list_page.purchase item_name
 
-            wait_for do
-              list_page.purchased_items.count == @initial_list_item_count + 1
-            end
+            wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
             expect(list_page.purchased_items.map(&:text)).to include item_name
             # no longer filtered
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).to include @list_items[1].pretty_title
           end
 
           it "is destroyed" do
@@ -169,27 +153,19 @@ RSpec.describe "A book list item", type: :feature do
 
             list_page.confirm_delete_button.click
 
-            wait_for do
-              list_page.not_purchased_items.count ==
-                @initial_list_item_count - 1
-            end
+            wait_for { list_page.not_purchased_items.count == @initial_list_item_count - 1 }
 
-            expect(list_page.not_purchased_items.count)
-              .to eq @initial_list_item_count - 1
+            expect(list_page.not_purchased_items.count).to eq @initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include item_name
+            expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
             # no longer filtered
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).to include @list_items[1].pretty_title
           end
         end
 
         describe "when there are multiple items for the selected category" do
           before do
-            @another_list_item =
-              Models::BookListItem
-              .new(user_id: user.id, book_list_id: list.id, category: "foo")
+            @another_list_item = Models::BookListItem.new(user_id: user.id, book_list_id: list.id, category: "foo")
             @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better
@@ -206,17 +182,13 @@ RSpec.describe "A book list item", type: :feature do
 
             list_page.purchase item_name
 
-            wait_for do
-              list_page.purchased_items.count == @initial_list_item_count + 1
-            end
+            wait_for { list_page.purchased_items.count == @initial_list_item_count + 1 }
 
             not_purchased_list_items = list_page.not_purchased_items.map(&:text)
 
             expect(list_page.purchased_items.map(&:text)).to include item_name
-            expect(not_purchased_list_items)
-              .to include @another_list_item.pretty_title
-            expect(not_purchased_list_items)
-              .not_to include @list_items[1].pretty_title
+            expect(not_purchased_list_items).to include @another_list_item.pretty_title
+            expect(not_purchased_list_items).not_to include @list_items[1].pretty_title
           end
 
           it "is destroyed" do
@@ -232,20 +204,13 @@ RSpec.describe "A book list item", type: :feature do
 
             list_page.confirm_delete_button.click
 
-            wait_for do
-              list_page.not_purchased_items.count ==
-                initial_list_item_count - 1
-            end
+            wait_for { list_page.not_purchased_items.count == initial_list_item_count - 1 }
 
-            expect(list_page.not_purchased_items.count)
-              .to eq initial_list_item_count - 1
+            expect(list_page.not_purchased_items.count).to eq initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include item_name
-            expect(list_page.not_purchased_items.map(&:text))
-              .to include @another_list_item.pretty_title
-            expect(list_page.not_purchased_items.map(&:text))
-              .not_to include @list_items[1].pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).not_to include item_name
+            expect(list_page.not_purchased_items.map(&:text)).to include @another_list_item.pretty_title
+            expect(list_page.not_purchased_items.map(&:text)).not_to include @list_items[1].pretty_title
           end
         end
       end
@@ -272,9 +237,7 @@ RSpec.describe "A book list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.purchased_items.count == initial_purchase_items_count - 1
-        end
+        wait_for { list_page.purchased_items.count == initial_purchase_items_count - 1 }
 
         expect(list_page.purchased_items.map(&:text)).not_to include item_name
       end
@@ -283,29 +246,18 @@ RSpec.describe "A book list item", type: :feature do
     describe "when multiple selected" do
       it "is read" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.purchased)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.purchased) }
         list_page.read(@list_items.first.pretty_title, purchased: false)
 
-        @list_items.each do |item|
-          expect(list_page)
-            .to have_read_item item.pretty_title, purchased: item.purchased
-        end
+        @list_items.each { |item| expect(list_page).to have_read_item item.pretty_title, purchased: item.purchased }
       end
 
       it "is purchased" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.purchased)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.purchased) }
         list_page.purchase(@list_items.first.pretty_title)
 
-        wait_for do
-          list_page.not_purchased_items.count == 0
-        end
+        wait_for { list_page.not_purchased_items.count == 0 }
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 3
@@ -313,10 +265,7 @@ RSpec.describe "A book list item", type: :feature do
 
       it "is destroyed" do
         list_page.multi_select_button.click
-        @list_items.each do |item|
-          list_page
-            .multi_select_item(item.pretty_title, purchased: item.purchased)
-        end
+        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.purchased) }
         list_page.delete(@list_items.first.pretty_title, purchased: false)
         list_page.wait_until_confirm_delete_button_visible
 
@@ -325,9 +274,7 @@ RSpec.describe "A book list item", type: :feature do
 
         list_page.confirm_delete_button.click
 
-        wait_for do
-          list_page.not_purchased_items.count == 0
-        end
+        wait_for { list_page.not_purchased_items.count == 0 }
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 0
@@ -336,10 +283,7 @@ RSpec.describe "A book list item", type: :feature do
       describe "when edited" do
         before do
           list_page.multi_select_button.click
-          @list_items.each do |item|
-            list_page
-              .multi_select_item(item.pretty_title, purchased: item.purchased)
-          end
+          @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.purchased) }
           list_page.edit(@list_items.first.pretty_title)
         end
 
@@ -358,18 +302,14 @@ RSpec.describe "A book list item", type: :feature do
 
           # all items should now have the same author "foobar"
           @list_items.each do |item|
-            label = list_page
-                    .find_list_item(item.title, purchased: item.purchased).text
+            label = list_page.find_list_item(item.title, purchased: item.purchased).text
+
             expect(label).to include "\"#{item.title}\" foobar"
           end
 
           # return to edit page for clearing below
           list_page.multi_select_button.click
-          @list_items.each do |item|
-            list_page.multi_select_item(
-              "\"#{item.title}\" foobar", purchased: item.purchased
-            )
-          end
+          @list_items.each { |item| list_page.multi_select_item("\"#{item.title}\" foobar", purchased: item.purchased) }
           list_page.edit("\"#{@list_items.first.title}\" foobar")
 
           # clear attributes
@@ -384,8 +324,8 @@ RSpec.describe "A book list item", type: :feature do
 
           # all items should have had their authors cleared
           @list_items.each do |item|
-            label = list_page
-                    .find_list_item(item.title, purchased: item.purchased).text
+            label = list_page.find_list_item(item.title, purchased: item.purchased).text
+
             expect(label).not_to include "foobar"
           end
         end
@@ -415,9 +355,8 @@ RSpec.describe "A book list item", type: :feature do
 
             # all items should now have the same author "foobar"
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.title, purchased: item.purchased)
-                      .text
+              label = list_page.find_list_item(item.title, purchased: item.purchased).text
+
               expect(label).to include "\"#{item.title}\" foobar"
             end
 
@@ -434,8 +373,8 @@ RSpec.describe "A book list item", type: :feature do
             # all items should now have the same author "foobar"
             # all items should be not purchased
             @list_items.each do |item|
-              label =
-                list_page.find_list_item(item.title, purchased: false).text
+              label = list_page.find_list_item(item.title, purchased: false).text
+
               expect(label).to include "\"#{item.title}\" foobar"
             end
           end
@@ -462,9 +401,8 @@ RSpec.describe "A book list item", type: :feature do
 
             # all items should have the same attributes
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.title, purchased: item.purchased)
-                      .text
+              label = list_page.find_list_item(item.title, purchased: item.purchased).text
+
               expect(label).to include item.pretty_title
             end
 
@@ -473,16 +411,15 @@ RSpec.describe "A book list item", type: :feature do
             list_page.wait_until_not_purchased_items_visible
 
             # all items should now have the same category "foobaz"
-            existing_list_category_headers =
-              list_page.category_header.map(&:text)
+            existing_list_category_headers = list_page.category_header.map(&:text)
             expect(existing_list_category_headers.count).to eq 1
             expect(existing_list_category_headers[0]).to eq "Foobaz"
 
             # all items should now have the same author "foobar"
             # all items should be not purchased
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.title, purchased: false).text
+              label = list_page.find_list_item(item.title, purchased: false).text
+
               expect(label).to include "\"#{item.title}\" foobar"
             end
           end
@@ -525,8 +462,8 @@ RSpec.describe "A book list item", type: :feature do
             # all items should now have the same author "foobar"
             # all items should be not purchased
             @list_items.each do |item|
-              label =
-                list_page.find_list_item(item.title, purchased: false).text
+              label = list_page.find_list_item(item.title, purchased: false).text
+
               expect(label).to include "\"#{item.title}\" foobar"
             end
           end
@@ -564,8 +501,8 @@ RSpec.describe "A book list item", type: :feature do
             # all items should now have the same author "foobar"
             # all items should be not purchased
             @list_items.each do |item|
-              label = list_page
-                      .find_list_item(item.title, purchased: false).text
+              label = list_page.find_list_item(item.title, purchased: false).text
+
               expect(label).to include "\"#{item.title}\" foobar"
             end
           end
@@ -577,16 +514,14 @@ RSpec.describe "A book list item", type: :feature do
   describe "when logged in as shared user with write access" do
     before do
       write_user = Models::User.new
-      Models::UsersList.new(user_id: write_user.id, list_id: list.id,
-                            has_accepted: true, permissions: "write")
+      Models::UsersList.new(user_id: write_user.id, list_id: list.id, has_accepted: true, permissions: "write")
       login write_user
       list_page.load(id: list.id)
     end
 
     it "can create, read, purchase, edit, and destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.title)
-      purchased_item = list_page.find_list_item(@list_items.last.title,
-                                                purchased: true)
+      purchased_item = list_page.find_list_item(@list_items.last.title, purchased: true)
 
       list_page.expand_list_item_form
 
@@ -606,16 +541,14 @@ RSpec.describe "A book list item", type: :feature do
   describe "when logged in as shared user with read access" do
     before do
       read_user = Models::User.new
-      Models::UsersList.new(user_id: read_user.id, list_id: list.id,
-                            has_accepted: true, permissions: "read")
+      Models::UsersList.new(user_id: read_user.id, list_id: list.id, has_accepted: true, permissions: "read")
       login read_user
       list_page.load(id: list.id)
     end
 
     it "cannot create, read, purchase, edit, or destroy" do
       not_purchased_item = list_page.find_list_item(@list_items.first.title)
-      purchased_item = list_page.find_list_item(@list_items.last.title,
-                                                purchased: true)
+      purchased_item = list_page.find_list_item(@list_items.last.title, purchased: true)
 
       expect(list_page).to have_no_author_input
       expect(list_page).to have_no_title_input

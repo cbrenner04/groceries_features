@@ -3,8 +3,7 @@
 module Helpers
   # helpers for cleaning data
   class DataCleanUpHelper
-    TABLES = %i[book_list_items grocery_list_items music_list_items
-                to_do_list_items].freeze
+    TABLES = %i[book_list_items grocery_list_items music_list_items to_do_list_items].freeze
 
     def initialize(database)
       @database = database
@@ -13,9 +12,7 @@ module Helpers
     def remove_test_data
       set_instance_variables
       @users_lists.delete
-      @user_ids.each do |id|
-        TABLES.each { |table| @database[table].where(user_id: id).delete }
-      end
+      @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
       @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
       @lists.delete
       @users.delete

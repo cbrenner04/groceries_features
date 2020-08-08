@@ -13,17 +13,9 @@ RSpec.describe "Completed lists page", type: :feature do
   let(:other_user) { Models::User.new }
 
   before do
-    @list = Models::List.new(
-      type: list_type,
-      completed: true,
-      owner_id: user.id
-    )
+    @list = Models::List.new(type: list_type, completed: true, owner_id: user.id)
     @list_items = create_associated_list_objects(user, @list)
-    @other_list = Models::List.new(
-      type: list_type,
-      owner_id: other_user.id,
-      completed: true
-    )
+    @other_list = Models::List.new(type: list_type, owner_id: other_user.id, completed: true)
     create_associated_list_objects(user, @other_list)
 
     login user
@@ -33,33 +25,23 @@ RSpec.describe "Completed lists page", type: :feature do
   it "refreshes list" do
     completed_lists_page.refresh @list.name
 
-    wait_for do
-      home_page.incomplete_list_names.map(&:text).include? @list.name
-    end
+    wait_for { home_page.incomplete_list_names.map(&:text).include? @list.name }
 
     expect(home_page.incomplete_list_names.map(&:text)).to include @list.name
 
     home_page.select_list @list.name
 
     expect(list_page).to have_not_purchased_items
-    expect(list_page.not_purchased_items.map(&:text))
-      .to include @list_items.first.pretty_title
-    expect(list_page.not_purchased_items.map(&:text))
-      .to include @list_items.last.pretty_title
+    expect(list_page.not_purchased_items.map(&:text)).to include @list_items.first.pretty_title
+    expect(list_page.not_purchased_items.map(&:text)).to include @list_items.last.pretty_title
   end
 
   it "deletes list" do
-    wait_for do
-      completed_lists_page.complete_list_names.map(&:text).include? @list.name
-    end
+    wait_for { completed_lists_page.complete_list_names.map(&:text).include? @list.name }
 
-    home_page.accept_alert do
-      home_page.delete @list.name, complete: true
-    end
+    home_page.accept_alert { home_page.delete @list.name, complete: true }
 
-    wait_for do
-      !home_page.complete_list_names.map(&:text).include?(@list.name)
-    end
+    wait_for { !home_page.complete_list_names.map(&:text).include?(@list.name) }
 
     expect(home_page.complete_list_names.map(&:text)).not_to include @list.name
   end
