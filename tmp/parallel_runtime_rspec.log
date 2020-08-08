@@ -1,0 +1,34 @@
+
+1st Try error in ./spec/features/invite_spec.rb:35:
+expected #<Pages::Home:0x007fc66f415040> to have header
+
+RSpec::Retry: 2nd try ./spec/features/invite_spec.rb:35
+
+1st Try error in ./spec/support/shared_examples/lists.rb:151:
+stale element reference: element is not attached to the page document
+  (Session info: chrome=84.0.4147.105)
+
+RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
+
+1st Try error in ./spec/support/shared_examples/lists.rb:151:
+stale element reference: element is not attached to the page document
+  (Session info: chrome=84.0.4147.105)
+
+RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
+
+1st Try error in ./spec/support/shared_examples/lists.rb:151:
+stale element reference: element is not attached to the page document
+  (Session info: chrome=84.0.4147.105)
+
+RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
+spec/features/list_items/grocery_list_items_spec.rb:99.69308099988848
+spec/features/list_items/to_do_list_items_spec.rb:92.93390800012276
+spec/features/list_items/book_list_items_spec.rb:96.83997200010344
+spec/features/lists/to_do_lists_spec.rb:103.20116900000721
+spec/features/invite_spec.rb:10.312906000064686
+spec/features/list_items/music_list_items_spec.rb:90.10974900005385
+spec/features/lists/book_lists_spec.rb:102.5996640000958
+spec/features/share_spec.rb:8.347709000110626
+spec/features/lists/grocery_lists_spec.rb:113.5999910000246
+spec/features/lists/music_lists_spec.rb:97.28497499995865
+spec/features/login_spec.rb:2.8450170001015067
