@@ -1,26 +1,3 @@
-
-1st Try error in ./spec/features/invite_spec.rb:35:
-expected #<Pages::Home:0x007fc66f415040> to have header
-
-RSpec::Retry: 2nd try ./spec/features/invite_spec.rb:35
-
-1st Try error in ./spec/support/shared_examples/lists.rb:151:
-stale element reference: element is not attached to the page document
-  (Session info: chrome=84.0.4147.105)
-
-RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
-
-1st Try error in ./spec/support/shared_examples/lists.rb:151:
-stale element reference: element is not attached to the page document
-  (Session info: chrome=84.0.4147.105)
-
-RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
-
-1st Try error in ./spec/support/shared_examples/lists.rb:151:
-stale element reference: element is not attached to the page document
-  (Session info: chrome=84.0.4147.105)
-
-RSpec::Retry: 2nd try ./spec/support/shared_examples/lists.rb:151
 spec/features/list_items/grocery_list_items_spec.rb:99.69308099988848
 spec/features/list_items/to_do_list_items_spec.rb:92.93390800012276
 spec/features/list_items/book_list_items_spec.rb:96.83997200010344
