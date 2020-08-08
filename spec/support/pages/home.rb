@@ -2,6 +2,7 @@
 
 module Pages
   # app home page, displayed after log in, displays lists
+  # rubocop:disable Metrics/ClassLength
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
@@ -141,4 +142,5 @@ module Pages
       find(".btn.btn-link", text: "Add List").click
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
