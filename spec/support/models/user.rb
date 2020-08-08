@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
+require "bcrypt"
 
 module Models
   # a user of the application
@@ -16,11 +16,8 @@ module Models
     private
 
     def create
-      DB[:users].insert(
-        email: email, encrypted_password: BCrypt::Password.create(password),
-        is_test_account: true, created_at: Time.now, updated_at: Time.now,
-        uid: email
-      )
+      DB[:users].insert(email: email, encrypted_password: BCrypt::Password.create(password), is_test_account: true,
+                        created_at: Time.now, updated_at: Time.now, uid: email)
     end
   end
 end

@@ -3,11 +3,11 @@
 module Pages
   # edit list page
   class EditListItem < SitePrism::Page
-    set_url 'lists/{list_id}/{list_item_type}/{id}/edit'
+    set_url "lists/{list_id}/{list_item_type}/{id}/edit"
 
-    element :title, '#title'
-    element :task, '#task'
-    element :product, '#product'
+    element :title, "#title"
+    element :task, "#task"
+    element :product, "#product"
     element :submit, "button[type='submit']"
   end
 end

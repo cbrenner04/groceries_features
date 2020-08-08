@@ -3,8 +3,8 @@
 module Models
   # a list, not related to a user, holds items
   class List
-    attr_reader :id, :name, :type, :completed, :owner_id
-    attr_writer :name
+    attr_accessor :name
+    attr_reader :id, :type, :completed, :owner_id
 
     def initialize(type:, completed: false, create_list: true, owner_id:)
       @name = SecureRandom.hex(16)
@@ -18,10 +18,8 @@ module Models
     private
 
     def create
-      DB[:lists].insert(
-        name: name, type: type, completed: completed, created_at: Time.now,
-        updated_at: Time.now, owner_id: owner_id
-      )
+      DB[:lists].insert(name: name, type: type, completed: completed, created_at: Time.now, updated_at: Time.now,
+                        owner_id: owner_id)
     end
   end
 end

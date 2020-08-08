@@ -4,8 +4,8 @@ module Pages
   # completed lists page, displays users completed lists
   class CompletedLists < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
-    DELETE_BUTTON = '.fa.fa-trash'
-    REFRESH_BUTTON = '.fa.fa-redo'
+    DELETE_BUTTON = ".fa.fa-trash"
+    REFRESH_BUTTON = ".fa.fa-redo"
 
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
 

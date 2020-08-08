@@ -2,6 +2,7 @@
 
 module Pages
   # app home page, displayed after log in, displays lists
+  # rubocop:disable Metrics/ClassLength
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
@@ -14,15 +15,16 @@ module Pages
     REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
     ACCEPT_BUTTON = 'button[data-test-id="pending-list-accept"]'
     REJECT_BUTTON = 'button[data-test-id="pending-list-trash"]'
+    MERGE_BUTTON = 'button[data-test-id="incomplete-list-merge"]'
 
-    set_url '/'
+    set_url "/"
 
-    element :signed_in_alert, '.Toastify', text: 'Signed in successfully'
-    element :list_deleted_alert, '.Toastify', text: 'List successfully deleted.'
-    element :list_removed_alert, '.Toastify', text: 'List successfully removed.'
-    element :list_type, '#type'
-    element :header, 'h1', text: 'Lists'
-    element :name, '#name'
+    element :signed_in_alert, ".Toastify", text: "Signed in successfully"
+    element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
+    element :list_removed_alert, ".Toastify", text: "List successfully removed."
+    element :list_type, "#type"
+    element :header, "h1", text: "Lists"
+    element :name, "#name"
     element :submit, "button[type='submit']"
     element :invite, 'a[data-test-id="invite-link"]'
     element :log_out, 'a[data-test-id="log-out-link"]'
@@ -31,6 +33,8 @@ module Pages
     element :share_button, SHARE_BUTTON
     element :edit_button, EDIT_BUTTON
     element :refresh_button, REFRESH_BUTTON
+    element :merge_button, MERGE_BUTTON
+    element :new_merged_list_name_input, "#mergeName"
 
     elements :complete_lists, COMPLETE_LIST
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
@@ -40,9 +44,11 @@ module Pages
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :confirm_reject_button, 'button[data-test-id="confirm-reject"]'
     element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
+    element :confirm_merge_button, 'button[data-test-id="confirm-merge"]'
+    element :multi_select_button, :button, "Select"
 
     def go_to_completed_lists
-      click_on 'See all completed lists here'
+      click_on "See all completed lists here"
     end
 
     def select_list(list_name)
@@ -93,6 +99,11 @@ module Pages
       REFRESH_BUTTON
     end
 
+    def multi_select_list(list_name, complete: false)
+      list_css = complete ? COMPLETE_LIST : INCOMPLETE_LIST
+      find(list_css, text: list_name).find("input").click
+    end
+
     def accept(list_name)
       find_pending_list(list_name).find(ACCEPT_BUTTON).click
     end
@@ -113,6 +124,10 @@ module Pages
       find_incomplete_list(list_name).find(EDIT_BUTTON).click
     end
 
+    def merge(list_name)
+      find_incomplete_list(list_name).find(MERGE_BUTTON).click
+    end
+
     def delete(list_name, complete: false)
       list_css = complete ? COMPLETE_LIST : INCOMPLETE_LIST
       button_css = complete ? COMPLETE_DELETE_BUTTON : INCOMPLETE_DELETE_BUTTON
@@ -124,7 +139,8 @@ module Pages
     end
 
     def expand_list_form
-      find('.btn.btn-link', text: 'Add List').click
+      find(".btn.btn-link", text: "Add List").click
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

@@ -11,62 +11,47 @@ module Helpers
     private
 
     def create_associated_items(user, list)
-      if list.type == 'BookList'
+      case list.type
+      when "BookList"
         create_book_list_items(user, list)
-      elsif list.type == 'GroceryList'
+      when "GroceryList"
         create_grocery_list_items(user, list)
-      elsif list.type == 'MusicList'
+      when "MusicList"
         create_music_list_items(user, list)
-      elsif list.type == 'ToDoList'
+      when "ToDoList"
         create_todo_list_items(user, list)
       end
     end
 
     def create_book_list_items(user, list)
       [
-        Models::BookListItem
-          .new(user_id: user.id, book_list_id: list.id, category: 'foo'),
+        Models::BookListItem.new(user_id: user.id, book_list_id: list.id, category: "foo"),
         Models::BookListItem.new(user_id: user.id, book_list_id: list.id),
-        Models::BookListItem.new(user_id: user.id,
-                                 book_list_id: list.id,
-                                 purchased: true,
-                                 category: 'foo')
+        Models::BookListItem.new(user_id: user.id, book_list_id: list.id, purchased: true, category: "foo")
       ]
     end
 
     def create_grocery_list_items(user, list)
       [
-        Models::GroceryListItem
-          .new(user_id: user.id, grocery_list_id: list.id, category: 'foo'),
+        Models::GroceryListItem.new(user_id: user.id, grocery_list_id: list.id, category: "foo"),
         Models::GroceryListItem.new(user_id: user.id, grocery_list_id: list.id),
-        Models::GroceryListItem.new(user_id: user.id,
-                                    grocery_list_id: list.id,
-                                    purchased: true,
-                                    category: 'foo')
+        Models::GroceryListItem.new(user_id: user.id, grocery_list_id: list.id, purchased: true, category: "foo")
       ]
     end
 
     def create_music_list_items(user, list)
       [
-        Models::MusicListItem
-          .new(user_id: user.id, music_list_id: list.id, category: 'foo'),
+        Models::MusicListItem.new(user_id: user.id, music_list_id: list.id, category: "foo"),
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id),
-        Models::MusicListItem.new(user_id: user.id,
-                                  music_list_id: list.id,
-                                  purchased: true,
-                                  category: 'foo')
+        Models::MusicListItem.new(user_id: user.id, music_list_id: list.id, purchased: true, category: "foo")
       ]
     end
 
     def create_todo_list_items(user, list)
       [
-        Models::ToDoListItem
-          .new(user_id: user.id, to_do_list_id: list.id, category: 'foo'),
+        Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id, category: "foo"),
         Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id),
-        Models::ToDoListItem.new(user_id: user.id,
-                                 to_do_list_id: list.id,
-                                 completed: true,
-                                 category: 'foo')
+        Models::ToDoListItem.new(user_id: user.id, to_do_list_id: list.id, completed: true, category: "foo")
       ]
     end
   end

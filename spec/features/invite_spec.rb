@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Invite', type: :feature do
+RSpec.describe "Invite", type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:invite_page) { Pages::Invite.new }
   let(:user) { Models::User.new }
 
   before { login user }
 
-  context 'when user with email address does not exist' do
-    it 'invites a user' do
+  context "when user with email address does not exist" do
+    it "invites a user" do
       # TODO: this does not currently work
       # expect(home_page).to have_signed_in_alert
 
@@ -31,8 +31,8 @@ RSpec.describe 'Invite', type: :feature do
     end
   end
 
-  context 'when user with email does exist' do
-    it 'does not create a user and redirects to home' do
+  context "when user with email does exist" do
+    it "does not create a user and redirects to home" do
       user = Models::User.new
 
       # TODO: this does not currently work

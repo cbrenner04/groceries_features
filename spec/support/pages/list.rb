@@ -5,36 +5,34 @@ module Pages
   class List < SitePrism::Page
     NOT_PURCHASED_ITEM = "div[data-test-class='non-purchased-item']"
     PURCHASED_ITEM = "div[data-test-class='purchased-item']"
-    UNREAD_BUTTON = '.far.fa-bookmark'
-    READ_BUTTON = '.fas.fa-bookmark'
-    PURCHASE_BUTTON = '.fa.fa-check'
-    EDIT_BUTTON = '.fa.fa-edit'
-    DELETE_BUTTON = '.fa.fa-trash'
-    REFRESH_BUTTON = '.fa.fa-redo'
+    UNREAD_BUTTON = ".far.fa-bookmark"
+    READ_BUTTON = ".fas.fa-bookmark"
+    PURCHASE_BUTTON = ".fa.fa-check"
+    EDIT_BUTTON = ".fa.fa-edit"
+    DELETE_BUTTON = ".fa.fa-trash"
+    REFRESH_BUTTON = ".fa.fa-redo"
 
-    set_url '/lists/{id}'
+    set_url "/lists/{id}"
 
     elements :not_purchased_items, NOT_PURCHASED_ITEM
     elements :purchased_items, PURCHASED_ITEM
     elements :category_header, "h5[data-test-class='category-header']"
 
-    element :item_deleted_alert,
-            '.Toastify',
-            text: 'Item successfully deleted.'
-    element :author_input, '#author'
-    element :title_input, '#title'
-    element :number_in_series_input, '#numberInSeries'
-    element :category_input, '#category'
-    element :quantity_input, '#quantity'
-    element :artist_input, '#artist'
-    element :album_input, '#album'
-    element :task_input, '#task'
-    element :product_input, '#product'
+    element :item_deleted_alert, ".Toastify", text: "Item successfully deleted."
+    element :author_input, "#author"
+    element :title_input, "#title"
+    element :number_in_series_input, "#numberInSeries"
+    element :category_input, "#category"
+    element :quantity_input, "#quantity"
+    element :artist_input, "#artist"
+    element :album_input, "#album"
+    element :task_input, "#task"
+    element :product_input, "#product"
     element :submit_button, "button[type='submit']"
-    element :filter_button, '#filter-by-category-button'
+    element :filter_button, "#filter-by-category-button"
     element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
-    element :multi_select_button, :button, 'Select'
+    element :multi_select_button, :button, "Select"
 
     def unread_button_css
       UNREAD_BUTTON
@@ -101,12 +99,12 @@ module Pages
     end
 
     def expand_list_item_form
-      find('.btn.btn-link', text: 'Add Item').click
+      find(".btn.btn-link", text: "Add Item").click
     end
 
     def multi_select_item(item_name, purchased: false)
       item_css = purchased ? PURCHASED_ITEM : NOT_PURCHASED_ITEM
-      find(item_css, text: item_name).find('input').click
+      find(item_css, text: item_name).find("input").click
     end
   end
 end
