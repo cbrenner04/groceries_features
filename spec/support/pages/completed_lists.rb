@@ -4,10 +4,14 @@ module Pages
   # completed lists page, displays users completed lists
   class CompletedLists < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
-    DELETE_BUTTON = ".fa.fa-trash"
-    REFRESH_BUTTON = ".fa.fa-redo"
+    DELETE_BUTTON = 'button[data-test-id="complete-list-trash"]'
+    REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
 
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
+    element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
+    element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
+    element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
+    element :list_removed_alert, ".Toastify", text: "List successfully removed."
 
     def delete(list_name)
       find_complete_list(list_name).find(DELETE_BUTTON).click
