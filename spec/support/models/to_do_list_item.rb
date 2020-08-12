@@ -24,7 +24,6 @@ module Models
     end
 
     def pretty_title
-      # TODO: deal with timezones
       adjusted_due_by = due_by - 5 * ONE_HOUR
       "#{task}\nDue By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
     end
