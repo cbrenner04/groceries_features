@@ -3,7 +3,7 @@
 RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, bulk_update_attrs|
   list_id_attr = "#{list_type.gsub(/(.)([A-Z])/, '\1_\2').downcase}_id"
   # ToDoLists complicated the crap out of this which is super unfortunate
-  purchased_attr = list_type == "ToDoList" ? "completed" : "purchased"
+  purchased_attr = %w[SimpleList ToDoList].include?(list_type) ? "completed" : "purchased"
 
   def update_attrs(bulk_attrs)
     bulk_attrs.each do |attr|
