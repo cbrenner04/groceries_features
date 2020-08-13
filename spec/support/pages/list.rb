@@ -27,6 +27,7 @@ module Pages
     element :artist_input, "#artist"
     element :album_input, "#album"
     element :task_input, "#task"
+    element :content_input, "#content"
     element :product_input, "#product"
     element :submit_button, "button[type='submit']"
     element :filter_button, "#filter-by-category-button"

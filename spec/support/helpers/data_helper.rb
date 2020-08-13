@@ -10,6 +10,7 @@ module Helpers
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def create_associated_items(user, list)
       case list.type
       when "BookList"
@@ -18,10 +19,13 @@ module Helpers
         create_grocery_list_items(user, list)
       when "MusicList"
         create_music_list_items(user, list)
+      when "SimpleList"
+        create_simple_list_items(user, list)
       when "ToDoList"
         create_todo_list_items(user, list)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def create_book_list_items(user, list)
       [
@@ -44,6 +48,14 @@ module Helpers
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id, category: "foo"),
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id),
         Models::MusicListItem.new(user_id: user.id, music_list_id: list.id, purchased: true, category: "foo")
+      ]
+    end
+
+    def create_simple_list_items(user, list)
+      [
+        Models::SimpleListItem.new(user_id: user.id, simple_list_id: list.id, category: "foo"),
+        Models::SimpleListItem.new(user_id: user.id, simple_list_id: list.id),
+        Models::SimpleListItem.new(user_id: user.id, simple_list_id: list.id, completed: true, category: "foo")
       ]
     end
 

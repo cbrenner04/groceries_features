@@ -15,6 +15,7 @@ RSpec.shared_examples "a list" do |list_type|
     BookList: "books",
     GroceryList: "groceries",
     MusicList: "music",
+    SimpleList: "simple",
     ToDoList: "to-do"
   }[list_type.to_sym]
 
@@ -22,6 +23,7 @@ RSpec.shared_examples "a list" do |list_type|
     BookList: "ToDoList",
     GroceryList: "ToDoList",
     MusicList: "ToDoList",
+    SimpleList: "ToDoList",
     ToDoList: "BookList"
   }[list_type.to_sym]
 

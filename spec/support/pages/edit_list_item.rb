@@ -7,6 +7,7 @@ module Pages
 
     element :title, "#title"
     element :task, "#task"
+    element :content, "#content"
     element :product, "#product"
     element :submit, "button[type='submit']"
   end

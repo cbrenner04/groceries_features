@@ -3,7 +3,7 @@
 module Helpers
   # helpers for cleaning data
   class DataCleanUpHelper
-    TABLES = %i[book_list_items grocery_list_items music_list_items to_do_list_items].freeze
+    TABLES = %i[book_list_items grocery_list_items music_list_items simple_list_items to_do_list_items].freeze
 
     def initialize(database)
       @database = database
