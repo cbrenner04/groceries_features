@@ -22,7 +22,6 @@ module Helpers
       @environment = ENV["ENV"] || "development"
       @spec = spec
       @test_run = test_run
-      # TODO: this should not fail if it can't post results
       @auth_token = ENV["RESULTS_AUTH_TOKEN"]
       return unless @auth_token
 

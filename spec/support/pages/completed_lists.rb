@@ -6,6 +6,7 @@ module Pages
     COMPLETE_LIST = "div[data-test-class='completed-list']"
     DELETE_BUTTON = 'button[data-test-id="complete-list-trash"]'
     REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
+    set_url "/completed_lists"
 
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'

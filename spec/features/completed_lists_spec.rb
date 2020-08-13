@@ -19,7 +19,7 @@ RSpec.describe "Completed lists page", type: :feature do
     create_associated_list_objects(user, other_list)
 
     login user
-    home_page.go_to_completed_lists
+    completed_lists_page.load
 
     wait_for { completed_lists_page.complete_list_names.map(&:text).include? list.name }
   end
