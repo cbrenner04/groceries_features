@@ -2,7 +2,6 @@
 
 require "rest-client"
 require "json"
-require "envyable"
 
 ENV_VAR_FILE_PATH = File.join(File.dirname(__FILE__), "../../../config/env.yml")
 
