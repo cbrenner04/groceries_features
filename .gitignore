@@ -5,5 +5,5 @@ spec/output/
 .byebug_history
 # Don't check in credentials
 config/env.yml
-failing_specs.log
-spec_summary.log
+# Don't check in logs
+tmp/*
