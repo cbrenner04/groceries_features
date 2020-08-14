@@ -25,7 +25,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = %i[should expect]
   end
-  config.example_status_persistence_file_path = "spec/examples.txt"
+  config.example_status_persistence_file_path = "spec/tmp/examples.txt"
   config.run_all_when_everything_filtered = true
   config.profile_examples = 10
   config.include Helpers::AuthenticationHelper
@@ -34,6 +34,10 @@ RSpec.configure do |config|
   config.before(:suite) do
     DB = Sequel.connect(ENV["DATABASE_URL"])
     TEST_RUN = Time.now.to_i
+    unless ENV["PARALLELS"]
+      RESULTS_HELPER = Helpers::ResultsHelper.new
+      RESULTS_HELPER.sign_in(ENV["RESULTS_USER"], ENV["RESULTS_PASSWORD"])
+    end
   end
   config.verbose_retry = true
   config.display_try_failure_messages = true
@@ -47,8 +51,14 @@ RSpec.configure do |config|
     raise DriverJSError, errors.join("\n\n") if errors.any?
   end
   config.append_after do |spec|
-    results_helper = Helpers::ResultsHelper.new
-    results_helper.create_results(spec, TEST_RUN)
+    RESULTS_HELPER ||= Helpers::ResultsHelper.new
+    RESULTS_HELPER.create_results(spec, TEST_RUN)
+  end
+  config.after(:suite) do
+    unless ENV["PARALLELS"]
+      Helpers::DataCleanUpHelper.new(DB).remove_test_data
+      RESULTS_HELPER.sign_out
+    end
   end
 end
 

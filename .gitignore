@@ -1,9 +1,9 @@
 .DS_Store
-spec/examples.txt
+
 spec/screenshots/
 spec/output/
+spec/tmp/
+
 .byebug_history
 # Don't check in credentials
 config/env.yml
-failing_specs.log
-spec_summary.log

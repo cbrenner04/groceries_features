@@ -10,9 +10,11 @@ module Helpers
   class ResultsHelper
     def sign_in(user, password)
       response = RestClient.post("#{ENV['RESULTS_URL']}/sign-in.json", user_login: { email: user, password: password })
-      auth_token = JSON.parse(response.body)["auth_token"]
+      @auth_token = JSON.parse(response.body)["auth_token"]
+
+      # necessary for when running with multiple parallels
       file = File.open(ENV_VAR_FILE_PATH, "a")
-      file.write("RESULTS_AUTH_TOKEN: #{auth_token}")
+      file.write("RESULTS_AUTH_TOKEN: #{@auth_token}")
       file.close
     rescue Errno::ECONNREFUSED
       # if can't connect to feature results, auth token doesn't matter
@@ -22,7 +24,9 @@ module Helpers
       @environment = ENV["ENV"] || "development"
       @spec = spec
       @test_run = test_run
-      @auth_token = ENV["RESULTS_AUTH_TOKEN"]
+      # necessary for when running with multiple parallels
+      @auth_token ||= ENV["RESULTS_AUTH_TOKEN"]
+      # if we don't have a token, there is no point in going on
       return unless @auth_token
 
       set_feature_id unless @feature_id
@@ -32,8 +36,8 @@ module Helpers
     def sign_out
       RestClient.delete("#{ENV['RESULTS_URL']}/sign-out.json",
                         "Authorization" => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}")
-    rescue Errno::ECONNREFUSED
-      # don't care if can't connect
+    rescue Errno::ECONNREFUSED, RestClient::Unauthorized
+      # don't care if can't connect or if we're unauthed
     ensure
       lines = File.readlines(ENV_VAR_FILE_PATH)
       file = File.open(ENV_VAR_FILE_PATH, "w+")
@@ -60,6 +64,8 @@ module Helpers
                                   url: "#{ENV['RESULTS_URL']}/results.json",
                                   payload: { result: result_payload },
                                   headers: { "Authorization" => "Token token=#{@auth_token}" })
+    rescue RestClient::Unauthorized
+      sign_in
     end
 
     def result_payload
