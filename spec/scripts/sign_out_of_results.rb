@@ -2,7 +2,7 @@
 
 require "envyable"
 
-require_relative "../spec/support/helpers/data_clean_up_helper"
+require_relative "../support/helpers/results_helper"
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
 results_helper = Helpers::ResultsHelper.new

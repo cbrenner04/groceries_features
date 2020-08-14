@@ -4,10 +4,10 @@
 : ${PARALLELS:=5}
 
 # sign in only once, before all tests start
-ruby scripts/sign_in_to_results.rb
+ruby spec/scripts/sign_in_to_results.rb
 # run tests
-PARALLELS=$PARALLELS bundle exec parallel_rspec spec/ -n $PARALLELS --serialize-stdout --combine-stderr --group-by runtime
+PARALLELS=$PARALLELS bundle exec parallel_rspec spec/ -n $PARALLELS --serialize-stdout --combine-stderr --group-by runtime --runtime-log spec/tmp/parallel_runtime_rspec.log
 # sign out only once, after all tests are finished
-ruby scripts/sign_out_of_results.rb
+ruby spec/scripts/sign_out_of_results.rb
 # clean up the database only once, after all tests are finished
-ruby scripts/clean_database.rb
+ruby spec/scripts/clean_database.rb

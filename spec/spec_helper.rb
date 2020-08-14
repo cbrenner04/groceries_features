@@ -25,7 +25,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = %i[should expect]
   end
-  config.example_status_persistence_file_path = "tmp/examples.txt"
+  config.example_status_persistence_file_path = "spec/tmp/examples.txt"
   config.run_all_when_everything_filtered = true
   config.profile_examples = 10
   config.include Helpers::AuthenticationHelper

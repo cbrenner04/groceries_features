@@ -1,8 +1,10 @@
 .DS_Store
+
 spec/screenshots/
 spec/output/
+spec/tmp/
+
 .byebug_history
 # Don't check in credentials
 config/env.yml
 # Don't check in logs
-tmp/*
