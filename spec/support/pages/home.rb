@@ -5,7 +5,7 @@ module Pages
   # rubocop:disable Metrics/ClassLength
   class Home < SitePrism::Page
     COMPLETE_LIST = "div[data-test-class='completed-list']"
-    INCOMPLETE_LIST = "div[data-test-class='non-completed-list']"
+    INCOMPLETE_LIST = "div[data-test-class='incomplete-list']"
     PENDING_LIST = "div[data-test-class='pending-list']"
     COMPLETE_BUTTON = 'button[data-test-id="incomplete-list-complete"]'
     INCOMPLETE_DELETE_BUTTON = 'button[data-test-id="incomplete-list-trash"]'
@@ -21,7 +21,6 @@ module Pages
 
     element :signed_in_alert, ".Toastify", text: "Signed in successfully"
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
-    element :list_removed_alert, ".Toastify", text: "List successfully removed."
     element :list_type, "#type"
     element :header, "h1", text: "Lists"
     element :name, "#name"
@@ -43,9 +42,8 @@ module Pages
     elements :pending_list_names, "#{PENDING_LIST} h5"
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :confirm_reject_button, 'button[data-test-id="confirm-reject"]'
-    element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
     element :confirm_merge_button, 'button[data-test-id="confirm-merge"]'
-    element :multi_select_button, :button, "Select"
+    elements :multi_select_buttons, :button, "Select"
 
     def go_to_completed_lists
       click_on "See all completed lists here"

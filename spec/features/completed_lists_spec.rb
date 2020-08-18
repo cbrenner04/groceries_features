@@ -60,18 +60,18 @@ RSpec.describe "Completed lists page", type: :feature do
   end
 
   describe "shared list" do
-    it "is removed" do
+    it "is deleted" do
       completed_lists_page.delete other_list.name
-      completed_lists_page.wait_until_confirm_remove_button_visible
+      completed_lists_page.wait_until_confirm_delete_button_visible
 
       # for some reason if the button is clicked to early it doesn't work
       sleep 1
 
-      completed_lists_page.confirm_remove_button.click
+      completed_lists_page.confirm_delete_button.click
 
       wait_for { !completed_lists_page.complete_list_names.map(&:text).include?(other_list.name) }
 
-      expect(completed_lists_page).to have_list_removed_alert
+      expect(completed_lists_page).to have_list_deleted_alert
       expect(completed_lists_page.complete_list_names.map(&:text)).not_to include other_list.name
 
       # users_list should be refused
