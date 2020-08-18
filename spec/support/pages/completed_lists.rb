@@ -10,9 +10,7 @@ module Pages
 
     elements :complete_list_names, "#{COMPLETE_LIST} h5"
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
-    element :confirm_remove_button, 'button[data-test-id="confirm-remove"]'
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
-    element :list_removed_alert, ".Toastify", text: "List successfully removed."
 
     def delete(list_name)
       find_complete_list(list_name).find(DELETE_BUTTON).click

@@ -29,7 +29,7 @@ module Helpers
       # if we don't have a token, there is no point in going on
       return unless @auth_token
 
-      set_feature_id unless @feature_id
+      set_feature_id
       post_results
     end
 

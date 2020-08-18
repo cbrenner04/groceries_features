@@ -19,13 +19,7 @@ RSpec.shared_examples "a list" do |list_type|
     ToDoList: "to-do"
   }[list_type.to_sym]
 
-  different_list_type = {
-    BookList: "ToDoList",
-    GroceryList: "ToDoList",
-    MusicList: "ToDoList",
-    SimpleList: "ToDoList",
-    ToDoList: "BookList"
-  }[list_type.to_sym]
+  different_list_type = list_type == "ToDoList" ? "BookList" : "ToDoList"
 
   before do
     @list_items = create_associated_list_objects(user, list)
@@ -223,7 +217,7 @@ RSpec.shared_examples "a list" do |list_type|
             home_page.wait_until_header_visible
           end
 
-          it "can only be shared or removed" do
+          it "can only be shared or deleted" do
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
@@ -233,19 +227,19 @@ RSpec.shared_examples "a list" do |list_type|
             expect(write_list.find(home_page.edit_button_css)[:disabled]).not_to be_nil
           end
 
-          it "is removed" do
+          it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_remove_button_visible
+            home_page.wait_until_confirm_delete_button_visible
 
             # for some reason if the button is clicked to early it doesn't work
             sleep 1
 
-            home_page.confirm_remove_button.click
+            home_page.confirm_delete_button.click
 
             wait_for { !home_page.incomplete_list_names.map(&:text).include?(other_list.name) }
 
             expect(home_page).to have_incomplete_lists
-            expect(home_page).to have_list_removed_alert
+            expect(home_page).to have_list_deleted_alert
             expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
 
             # users_list should be refused
@@ -287,19 +281,19 @@ RSpec.shared_examples "a list" do |list_type|
             expect(read_list.find(home_page.edit_button_css)[:disabled]).not_to be_nil
           end
 
-          it "is removed" do
+          it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_remove_button_visible
+            home_page.wait_until_confirm_delete_button_visible
 
             # for some reason if the button is clicked to early it doesn't work
             sleep 1
 
-            home_page.confirm_remove_button.click
+            home_page.confirm_delete_button.click
 
             wait_for { !home_page.incomplete_list_names.map(&:text).include?(other_list.name) }
 
             expect(home_page).to have_incomplete_lists
-            expect(home_page).to have_list_removed_alert
+            expect(home_page).to have_list_deleted_alert
             expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
 
             # users_list should be refused
@@ -392,19 +386,19 @@ RSpec.shared_examples "a list" do |list_type|
           expect(write_list.find(home_page.complete_delete_button_css)).not_to be_disabled
         end
 
-        it "is removed" do
+        it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_remove_button_visible
+          home_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked to early it doesn't work
           sleep 1
 
-          home_page.confirm_remove_button.click
+          home_page.confirm_delete_button.click
 
           wait_for { !home_page.complete_list_names.map(&:text).include?(other_list.name) }
 
           expect(home_page).to have_complete_lists
-          expect(home_page).to have_list_removed_alert
+          expect(home_page).to have_list_deleted_alert
           expect(home_page.complete_list_names.map(&:text)).not_to include other_list.name
 
           # users_list should be refused
@@ -434,19 +428,19 @@ RSpec.shared_examples "a list" do |list_type|
           expect(read_list.find(home_page.complete_delete_button_css)).not_to be_disabled
         end
 
-        it "is removed" do
+        it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_remove_button_visible
+          home_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked to early it doesn't work
           sleep 1
 
-          home_page.confirm_remove_button.click
+          home_page.confirm_delete_button.click
 
           wait_for { !home_page.complete_list_names.map(&:text).include?(other_list.name) }
 
           expect(home_page).to have_complete_lists
-          expect(home_page).to have_list_removed_alert
+          expect(home_page).to have_list_deleted_alert
           expect(home_page.complete_list_names.map(&:text)).not_to include other_list.name
 
           # users_list should be refused
@@ -469,20 +463,14 @@ RSpec.shared_examples "a list" do |list_type|
     before do
       @other_completed_list_items = create_associated_list_objects(user, other_completed_list)
       DB[:users_lists].where(user_id: user.id, list_id: other_list.id).update(permissions: "read")
-
-      home_page.multi_select_button.click
-      # list i own
-      home_page.multi_select_list list.name
-      # list i don't own
-      home_page.multi_select_list other_list.name
-      # completed list i own
-      home_page.multi_select_list completed_list.name, complete: true
-      # completed list i don't own
-      home_page.multi_select_list other_completed_list.name, complete: true
     end
 
     describe "complete" do
       it "completes multiple lists but only those the user has access to complete and that are incomplete" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
         home_page.complete list.name
 
         wait_for { !home_page.incomplete_list_names.map(&:text).include?(list.name) }
@@ -496,6 +484,10 @@ RSpec.shared_examples "a list" do |list_type|
 
     describe "merge" do
       it "merges all selected lists regardless of ownership or permissions but only those of the same type" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
         expect(home_page).to have_no_share_button
         expect(home_page).to have_no_edit_button
 
@@ -512,40 +504,40 @@ RSpec.shared_examples "a list" do |list_type|
         new_merged_list_items = list_page.not_purchased_items.map(&:text)
         @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
         @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @completed_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        # this list should not be included as it is a different type
-        @other_completed_list_items.each do |list_item|
-          expect(new_merged_list_items).not_to include list_item.pretty_title
-        end
       end
     end
 
     describe "delete" do
-      it "deletes multiple lists but only those that the user has access to" do
+      it "deletes multiple lists" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
         home_page.delete list.name
 
-        expect(find_all(".modal-body").last.text).to include other_list.name
-        expect(find_all(".modal-body").last.text).to include other_completed_list.name
-
-        home_page.confirm_remove_button.click
-
-        sleep 1 # Super lame
-
-        expect(find_all(".modal-body").first.text).to include list.name
-        expect(find_all(".modal-body").first.text).to include completed_list.name
+        expect(find(".modal-body").text).to include list.name
+        expect(find(".modal-body").text).to include other_list.name
 
         home_page.confirm_delete_button.click
 
         sleep 1 # Super lame
 
         expect(home_page.incomplete_lists.length).to eq 0
-        expect(home_page.complete_lists.length).to eq 0
+        # users_list should be refused
+        users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
+
+        expect(users_list[:has_accepted]).to eq false
       end
     end
 
     describe "refresh" do
       it "only refreshes lists the user owns and those that are complete" do
+        home_page.multi_select_buttons[1].click
+        home_page.multi_select_list completed_list.name, complete: true
+        home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name
+
+        sleep 1 # Super lame
 
         expect(home_page.incomplete_list_names.map(&:text)).to include list.name
         expect(home_page.incomplete_list_names.map(&:text)).to include other_list.name
