@@ -43,7 +43,7 @@ RSpec.describe "A music list item", type: :feature do
       expect(list_page).to have_artist_input
       expect(list_page).to have_album_input
       expect(list_page).to have_submit_button
-      expect(list_page).to have_multi_select_button
+      expect(list_page).to have_multi_select_buttons
       expect(not_purchased_item).to have_css list_page.purchase_button_css
       expect(not_purchased_item).to have_css list_page.edit_button_css
       expect(not_purchased_item).to have_css list_page.delete_button_css
@@ -67,7 +67,7 @@ RSpec.describe "A music list item", type: :feature do
       expect(list_page).to have_no_artist_input
       expect(list_page).to have_no_album_input
       expect(list_page).to have_no_submit_button
-      expect(list_page).to have_no_multi_select_button
+      expect(list_page).to have_no_multi_select_buttons
       expect(not_purchased_item).to have_no_css list_page.purchase_button_css
       expect(not_purchased_item).to have_no_css list_page.edit_button_css
       expect(not_purchased_item).to have_no_css list_page.delete_button_css

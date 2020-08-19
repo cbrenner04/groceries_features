@@ -69,11 +69,19 @@ RSpec.describe "A book list item", type: :feature do
 
     describe "when multiple selected" do
       it "is read" do
-        list_page.multi_select_button.click
-        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.purchased) }
+        list_page.multi_select_buttons.first.click
+        @list_items.each do |item|
+          next if item.purchased
+
+          list_page.multi_select_item(item.pretty_title, purchased: item.purchased)
+        end
         list_page.read(@list_items.first.pretty_title, purchased: false)
 
-        @list_items.each { |item| expect(list_page).to have_read_item item.pretty_title, purchased: item.purchased }
+        @list_items.each do |item|
+          next if item.purchased
+
+          expect(list_page).to have_read_item item.pretty_title, purchased: item.purchased
+        end
       end
     end
   end
@@ -95,7 +103,7 @@ RSpec.describe "A book list item", type: :feature do
       expect(list_page).to have_author_input
       expect(list_page).to have_title_input
       expect(list_page).to have_submit_button
-      expect(list_page).to have_multi_select_button
+      expect(list_page).to have_multi_select_buttons
       expect(not_purchased_item).to have_css list_page.unread_button_css
       expect(not_purchased_item).to have_css list_page.purchase_button_css
       expect(not_purchased_item).to have_css list_page.edit_button_css
@@ -120,7 +128,7 @@ RSpec.describe "A book list item", type: :feature do
       expect(list_page).to have_no_author_input
       expect(list_page).to have_no_title_input
       expect(list_page).to have_no_submit_button
-      expect(list_page).to have_no_multi_select_button
+      expect(list_page).to have_no_multi_select_buttons
       expect(not_purchased_item).to have_no_css list_page.unread_button_css
       expect(not_purchased_item).to have_no_css list_page.purchase_button_css
       expect(not_purchased_item).to have_no_css list_page.edit_button_css

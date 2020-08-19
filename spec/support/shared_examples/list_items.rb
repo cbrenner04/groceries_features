@@ -227,8 +227,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
     describe "when multiple selected" do
       it "is purchased" do
-        list_page.multi_select_button.click
-        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.send(purchased_attr)) }
+        list_page.multi_select_buttons.first.click
+        @list_items.each do |item|
+          next if item.send(purchased_attr)
+
+          list_page.multi_select_item(item.pretty_title, purchased: item.send(purchased_attr))
+        end
         list_page.purchase(@list_items.first.pretty_title)
 
         wait_for { list_page.not_purchased_items.count == 0 }
@@ -237,28 +241,54 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
         expect(list_page.purchased_items.count).to eq 3
       end
 
-      it "is destroyed" do
-        list_page.multi_select_button.click
-        @list_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: item.send(purchased_attr)) }
-        list_page.delete(@list_items.first.pretty_title, purchased: false)
-        list_page.wait_until_confirm_delete_button_visible
+      context "when items are not purchased" do
+        it "is destroyed" do
+          list_page.multi_select_buttons.first.click
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
 
-        # for some reason if the button is clicked too early it doesn't work
-        sleep 1
+            list_page.multi_select_item(item.pretty_title, purchased: false)
+          end
+          list_page.delete(@list_items.first.pretty_title, purchased: false)
+          list_page.wait_until_confirm_delete_button_visible
 
-        list_page.confirm_delete_button.click
+          # for some reason if the button is clicked too early it doesn't work
+          sleep 1
 
-        wait_for { list_page.not_purchased_items.count == 0 }
+          list_page.confirm_delete_button.click
 
-        expect(list_page.not_purchased_items.count).to eq 0
-        expect(list_page.purchased_items.count).to eq 0
+          wait_for { list_page.not_purchased_items.count == 0 }
+
+          expect(list_page.not_purchased_items.count).to eq 0
+        end
+      end
+
+      context "when items are purchased" do
+        it "is destroyed" do
+          list_page.multi_select_buttons.last.click
+          purchased_items = @list_items.filter { |item| item.send(purchased_attr) }
+          purchased_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: true) }
+          list_page.delete(purchased_items.first.pretty_title, purchased: true)
+          list_page.wait_until_confirm_delete_button_visible
+
+          # for some reason if the button is clicked too early it doesn't work
+          sleep 1
+
+          list_page.confirm_delete_button.click
+
+          wait_for { list_page.purchased_items.count == 0 }
+
+          expect(list_page.purchased_items.count).to eq 0
+        end
       end
 
       describe "when edited" do
         before do
-          list_page.multi_select_button.click
+          list_page.multi_select_buttons.first.click
           @list_items.each do |item|
-            list_page.multi_select_item(item.pretty_title, purchased: item.send(purchased_attr))
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(item.pretty_title, purchased: false)
           end
           list_page.edit(@list_items.first.pretty_title)
         end
@@ -278,17 +308,21 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
           # all items should now have the same attributes set to "foobar"
           @list_items.each do |item|
+            next if item.send(purchased_attr)
+
             label = list_page.find_list_item(
-              bulk_update_selector(item, list_type, edit_attribute), purchased: item.send(purchased_attr)
+              bulk_update_selector(item, list_type, edit_attribute), purchased: false
             ).text
 
             expect(label).to include send("bulk_updated_title", item)
           end
 
           # return to edit page for clearing below
-          list_page.multi_select_button.click
+          list_page.multi_select_buttons.first.click
           @list_items.each do |item|
-            list_page.multi_select_item(send("bulk_updated_title", item), purchased: item.send(purchased_attr))
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(send("bulk_updated_title", item), purchased: false)
           end
           list_page.edit(bulk_updated_title(@list_items.first))
 
@@ -304,8 +338,10 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
           # all items should have had their attributes cleared
           @list_items.each do |item|
+            next if item.send(purchased_attr)
+
             label = list_page
-                    .find_list_item(item.send(edit_attribute), purchased: item.send(purchased_attr))
+                    .find_list_item(item.send(edit_attribute), purchased: false)
                     .text
 
             if list_type == "ToDoList"
@@ -342,8 +378,10 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             # all items should now have the same attributes set to "foobar"
             @list_items.each do |item|
+              next if item.send(purchased_attr)
+
               label = list_page.find_list_item(
-                bulk_update_selector(item, list_type, edit_attribute), purchased: item.send(purchased_attr)
+                bulk_update_selector(item, list_type, edit_attribute), purchased: false
               ).text
 
               expect(label).to include send("bulk_updated_title", item)
@@ -362,6 +400,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             # all items should now have the same attributes set to "foobar"
             # all items should be not purchased
             @list_items.each do |item|
+              next if item.send(purchased_attr)
+
               label = list_page
                       .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
                       .text
@@ -392,7 +432,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             # all items should have the same attributes
             @list_items.each do |item|
-              label = list_page.find_list_item(item.send(edit_attribute), purchased: item.send(purchased_attr)).text
+              next if item.send(purchased_attr)
+
+              label = list_page.find_list_item(item.send(edit_attribute), purchased: false).text
 
               expect(label).to include item.pretty_title
             end
@@ -409,6 +451,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             # all items should now have the same attributes set to "foobar"
             # all items should be not purchased
             @list_items.each do |item|
+              next if item.send(purchased_attr)
+
               label = list_page
                       .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
                       .text
@@ -440,7 +484,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             # all items should have been moved
             expect(list_page).to have_no_not_purchased_items
-            expect(list_page).to have_no_purchased_items
 
             # check new list for new items
             home_page.load
@@ -455,6 +498,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             # all items should now have the same attributes set to "foobar"
             # all items should be not purchased
             @list_items.each do |item|
+              next if item.send(purchased_attr)
+
               label = list_page
                       .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
                       .text
@@ -496,6 +541,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             # all items should now have the same attributes set to "foobar"
             # all items should be not purchased
             @list_items.each do |item|
+              next if item.send(purchased_attr)
+
               label = list_page
                       .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
                       .text
