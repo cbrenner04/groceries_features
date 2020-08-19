@@ -2,7 +2,10 @@
 
 spec/screenshots/
 spec/output/
-spec/tmp/
+spec/tmp/*
+# you may be wondering why, its such a pain in the ass changing all the time
+# yeah, well, its more of a pain to get it back from a bad state
+!spec/tmp/parallel_runtime_rspec.log
 
 .byebug_history
 # Don't check in credentials
