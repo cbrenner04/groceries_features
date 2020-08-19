@@ -1,8 +1,3 @@
-
-1st Try error in ./spec/support/shared_examples/list_items.rb:466:
-Unable to find link or button "foobar"
-
-RSpec::Retry: 2nd try ./spec/support/shared_examples/list_items.rb:466
 spec/features/list_items/grocery_list_items_spec.rb:123.17098100017756
 spec/features/list_items/simple_list_items_spec.rb:118.71100299991667
 spec/features/list_items/to_do_list_items_spec.rb:126.32766899978742
