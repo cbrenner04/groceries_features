@@ -1,14 +1,19 @@
-spec/features/list_items/simple_list_items_spec.rb:115.4175999998115
-spec/features/lists/grocery_lists_spec.rb:111.94836599985138
-spec/features/completed_lists_spec.rb:15.960376000031829
-spec/features/list_items/music_list_items_spec.rb:107.28512800019234
-spec/features/lists/simple_lists_spec.rb:122.46290600020438
-spec/features/list_items/book_list_items_spec.rb:119.64098599972203
-spec/features/lists/to_do_lists_spec.rb:122.74742300016806
-spec/features/login_spec.rb:4.0324450000189245
-spec/features/invite_spec.rb:6.113866999745369
-spec/features/list_items/to_do_list_items_spec.rb:120.00584700005129
-spec/features/lists/music_lists_spec.rb:124.56621199985966
-spec/features/list_items/grocery_list_items_spec.rb:118.84162999968976
-spec/features/lists/book_lists_spec.rb:124.63533800002187
-spec/features/share_spec.rb:8.59952799975872
+
+1st Try error in ./spec/support/shared_examples/list_items.rb:466:
+Unable to find link or button "foobar"
+
+RSpec::Retry: 2nd try ./spec/support/shared_examples/list_items.rb:466
+spec/features/list_items/grocery_list_items_spec.rb:123.17098100017756
+spec/features/list_items/simple_list_items_spec.rb:118.71100299991667
+spec/features/list_items/to_do_list_items_spec.rb:126.32766899978742
+spec/features/lists/book_lists_spec.rb:121.17516200011596
+spec/features/invite_spec.rb:8.189551999792457
+spec/features/list_items/music_list_items_spec.rb:114.79805700015277
+spec/features/lists/to_do_lists_spec.rb:126.99758900003508
+spec/features/list_items/book_list_items_spec.rb:122.97118599992245
+spec/features/lists/simple_lists_spec.rb:127.62546799983829
+spec/features/share_spec.rb:8.702424000017345
+spec/features/completed_lists_spec.rb:17.84644200000912
+spec/features/lists/grocery_lists_spec.rb:120.45907899970189
+spec/features/lists/music_lists_spec.rb:120.31913499999791
+spec/features/login_spec.rb:3.1988710002042353
