@@ -138,3 +138,6 @@ Style/SlicingWithRange:
 
 Style/StringConcatenation:
   Enabled: true
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
