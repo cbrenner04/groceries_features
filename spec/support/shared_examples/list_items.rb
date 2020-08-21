@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, bulk_update_attrs|
-  list_id_attr = "#{list_type.gsub(/(.)([A-Z])/, '\1_\2').downcase}_id"
   # ToDoLists complicated the crap out of this which is super unfortunate
   purchased_attr = %w[SimpleList ToDoList].include?(list_type) ? "completed" : "purchased"
 
@@ -28,8 +27,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
     end
 
     it "is created" do
-      new_list_item = item_class.new(user_id: user.id, list_id_attr.to_sym => list.id, create_item: false,
-                                     category: "foo")
+      new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo")
 
       list_page.expand_list_item_form
       send("input_new_item_attributes", new_list_item)
@@ -155,7 +153,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         describe "when there are multiple items for the selected category" do
           before do
-            @another_list_item = item_class.new(user_id: user.id, list_id_attr.to_sym => list.id, category: "foo")
+            @another_list_item = item_class.new(user_id: user.id, list_id: list.id, category: "foo")
             @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better
