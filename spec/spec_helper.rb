@@ -39,8 +39,6 @@ RSpec.configure do |config|
       RESULTS_HELPER.sign_in(ENV["RESULTS_USER"], ENV["RESULTS_PASSWORD"])
     end
   end
-  config.verbose_retry = true
-  config.display_try_failure_messages = true
   config.default_retry_count = 3
   config.after(type: :feature) do
     errors = page.driver.browser.manage.logs.get(:browser).select do |e|
