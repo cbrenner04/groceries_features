@@ -12,7 +12,7 @@ RSpec.describe "A to do list item", type: :feature do
 
   def input_new_item_attributes(new_list_item)
     list_page.task_input.set new_list_item.task
-    fill_in "Due By", with: new_list_item.due_by.strftime('%m%d%Y')
+    fill_in "Due By", with: new_list_item.due_by.strftime("%m%d%Y")
   end
 
   def bulk_updated_title(item)
