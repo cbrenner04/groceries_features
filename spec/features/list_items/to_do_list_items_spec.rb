@@ -11,11 +11,8 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list) { Models::List.new(type: "ToDoList", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    new_list_item.due_by = Time.now
-    wait_for do
-      list_page.task_input.set new_list_item.task
-      list_page.task_input.value == new_list_item.task
-    end
+    list_page.task_input.set new_list_item.task
+    fill_in "Due By", with: new_list_item.due_by.strftime('%m%d%Y')
   end
 
   def bulk_updated_title(item)
