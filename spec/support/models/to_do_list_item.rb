@@ -31,9 +31,9 @@ module Models
     private
 
     def create
-      DB[:to_do_list_items].insert(user_id: user_id, list_id: list_id, task: task,
-                                   assignee_id: assignee_id, due_by: due_by, completed: completed, refreshed: refreshed,
-                                   created_at: Time.now, updated_at: Time.now, category: category)
+      DB[:to_do_list_items].insert(user_id: user_id, list_id: list_id, task: task, assignee_id: assignee_id,
+                                   due_by: due_by, completed: completed, refreshed: refreshed, created_at: Time.now,
+                                   updated_at: Time.now, category: category)
     end
   end
 end

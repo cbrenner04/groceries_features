@@ -27,6 +27,7 @@ module Pages
     element :artist_input, "#artist"
     element :album_input, "#album"
     element :task_input, "#task"
+    element :due_by_input, "#dueBy"
     element :content_input, "#content"
     element :product_input, "#product"
     element :submit_button, "button[type='submit']"
