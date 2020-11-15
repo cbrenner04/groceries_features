@@ -6,7 +6,7 @@ module Models
     attr_accessor :name
     attr_reader :id, :type, :completed, :owner_id
 
-    def initialize(type:, completed: false, create_list: true, owner_id:)
+    def initialize(type:, owner_id:, completed: false, create_list: true)
       @name = SecureRandom.hex(16)
       @type = type
       @completed = completed

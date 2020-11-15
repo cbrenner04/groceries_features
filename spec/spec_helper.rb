@@ -31,6 +31,7 @@ RSpec.configure do |config|
   config.include Helpers::AuthenticationHelper
   config.include Helpers::DataHelper
   config.include Helpers::WaitHelper
+  # rubocop:disable Lint/ConstantDefinitionInBlock
   config.before(:suite) do
     DB = Sequel.connect(ENV["DATABASE_URL"])
     TEST_RUN = Time.now.to_i
@@ -39,6 +40,7 @@ RSpec.configure do |config|
       RESULTS_HELPER.sign_in(ENV["RESULTS_USER"], ENV["RESULTS_PASSWORD"])
     end
   end
+  # rubocop:enable Lint/ConstantDefinitionInBlock
   config.default_retry_count = 3
   config.after(type: :feature) do
     errors = page.driver.browser.manage.logs.get(:browser).select do |e|
