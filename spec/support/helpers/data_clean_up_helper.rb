@@ -12,10 +12,11 @@ module Helpers
     def remove_test_data
       set_instance_variables
       @users_lists.delete
-      @user_ids.each do |id|
-        TABLES.each { |table| @database[table].where(user_id: id).delete }
-        @database[:lists].where(owner_id: id).delete
-      end
+      @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
+      # for some reason when the above and the below are in the same loop, errors occur /shrug
+      # rubocop:disable Style/CombinableLoops
+      @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
+      # rubocop:enable Style/CombinableLoops
       @lists.delete
       @users.delete
     end
