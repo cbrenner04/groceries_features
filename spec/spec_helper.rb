@@ -51,8 +51,10 @@ RSpec.configure do |config|
     raise DriverJSError, errors.join("\n\n") if errors.any?
   end
   config.append_after do |spec|
+    # rubocop:disable Lint/OrAssignmentToConstant
     RESULTS_HELPER ||= Helpers::ResultsHelper.new
     RESULTS_HELPER.create_results(spec, TEST_RUN)
+    # rubocop:enable Lint/OrAssignmentToConstant
   end
   config.after(:suite) do
     unless ENV["PARALLELS"]
