@@ -12,6 +12,7 @@ module Helpers
       response = RestClient.post("#{ENV['RESULTS_URL']}/sign-in.json", user_login: { email: user, password: password })
       @auth_token = JSON.parse(response.body)["auth_token"]
 
+      # TODO: just create a new file for this data
       # necessary for when running with multiple parallels
       file = File.open(ENV_VAR_FILE_PATH, "a")
       file.write("RESULTS_AUTH_TOKEN: #{@auth_token}")
@@ -39,6 +40,7 @@ module Helpers
     rescue Errno::ECONNREFUSED, RestClient::Unauthorized
       # don't care if can't connect or if we're unauthed
     ensure
+      # TODO: just delete file when token is in its own file
       lines = File.readlines(ENV_VAR_FILE_PATH)
       file = File.open(ENV_VAR_FILE_PATH, "w+")
       lines.each { |l| file << l unless l.include? "RESULTS_AUTH_TOKEN" }
@@ -53,6 +55,8 @@ module Helpers
                                              payload: { feature: feature_payload },
                                              headers: { "Authorization" => "Token token=#{@auth_token}" })
       @feature_id = JSON.parse(response.body)["feature_id"]
+    rescue RestClient::Unauthorized
+      # sign_in # TODO: this is meant to handle sign in after token expiry, please update
     end
 
     def feature_payload
@@ -65,7 +69,7 @@ module Helpers
                                   payload: { result: result_payload },
                                   headers: { "Authorization" => "Token token=#{@auth_token}" })
     rescue RestClient::Unauthorized
-      sign_in
+      # sign_in # TODO: this is meant to handle sign in after token expiry, please update
     end
 
     def result_payload

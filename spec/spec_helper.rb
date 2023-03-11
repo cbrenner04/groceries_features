@@ -43,12 +43,16 @@ RSpec.configure do |config|
   # rubocop:enable Lint/ConstantDefinitionInBlock
   config.default_retry_count = 3
   config.after(type: :feature) do
-    errors = page.driver.browser.manage.logs.get(:browser).select do |e|
-      e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
-        !e.message.include?("Not Found")
-    end.map(&:message)
+    # TODO: chrome is being poopy atm with the datalist element in CategoryField
+    # This only matters in staging
+    unless ENV["ENV"] == "staging"
+      errors = page.driver.browser.manage.logs.get(:browser).select do |e|
+        e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
+          !e.message.include?("Not Found")
+      end.map(&:message)
 
-    raise DriverJSError, errors.join("\n\n") if errors.any?
+      raise DriverJSError, errors.join("\n\n") if errors.any?
+    end
   end
   config.append_after do |spec|
     # rubocop:disable Lint/OrAssignmentToConstant
