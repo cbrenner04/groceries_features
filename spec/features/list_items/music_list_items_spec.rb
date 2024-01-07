@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "A music list item", type: :feature do
+RSpec.describe "A music list item" do
   let(:home_page) { Pages::Home.new }
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }

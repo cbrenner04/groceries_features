@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "Completed lists page", type: :feature do
+RSpec.describe "Completed lists page" do
   let(:home_page) { Pages::Home.new }
   let(:completed_lists_page) { Pages::CompletedLists.new }
   let(:share_list_page) { Pages::ShareList.new }
@@ -76,12 +76,12 @@ RSpec.describe "Completed lists page", type: :feature do
       # users_list should be refused
       users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
 
-      expect(users_list[:has_accepted]).to eq false
+      expect(users_list[:has_accepted]).to be false
 
       # list should still exist
       list = DB[:lists].where(id: other_list.id).first
 
-      expect(list[:archived_at]).to eq nil
+      expect(list[:archived_at]).to be_nil
     end
 
     it "cannot be refreshed" do

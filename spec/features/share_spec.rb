@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "Invite", type: :feature do
+RSpec.describe "Invite" do
   let(:share_list_page) { Pages::ShareList.new }
   let(:user) { Models::User.new }
   let(:pending_user) { Models::User.new }
