@@ -34,6 +34,7 @@ module Pages
     element :filter_button, "#filter-by-category-button"
     element :clear_filter_button, 'button[data-test-id="clear-filter"]'
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
+    element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     elements :multi_select_buttons, :button, "Select"
 
     def unread_button_css
