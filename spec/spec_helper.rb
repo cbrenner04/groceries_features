@@ -20,7 +20,7 @@ Envyable.load("config/env.yml", ENV["ENV"] || "development")
 class DriverJSError < StandardError; end
 
 # seems like latest chrome is not covered yet. revisit and remove
-Webdrivers::Chromedriver.required_version = '114.0.5735.90'
+Webdrivers::Chromedriver.required_version = "114.0.5735.90"
 
 # RSpec configuration options
 RSpec.configure do |config|

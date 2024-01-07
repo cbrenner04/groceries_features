@@ -19,7 +19,7 @@ RSpec.shared_examples "a refreshable list item" do |list_type|
 
         wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
-        find('.Toastify__close-button.Toastify__close-button--colored').click
+        find(".Toastify__close-button.Toastify__close-button--colored").click
 
         list_page.filter_button.click
         list_page.filter_option("foo").click
