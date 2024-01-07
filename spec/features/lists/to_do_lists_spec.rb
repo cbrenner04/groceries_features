@@ -2,6 +2,6 @@
 
 require "spec_helper"
 
-RSpec.describe "A to do list", type: :feature do
+RSpec.describe "A to do list" do
   it_behaves_like "a list", "ToDoList"
 end
