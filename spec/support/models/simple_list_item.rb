@@ -23,9 +23,9 @@ module Models
     private
 
     def create
-      DB[:simple_list_items].insert(user_id: user_id, list_id: list_id, content: content,
-                                    completed: completed, refreshed: refreshed, created_at: Time.now,
-                                    updated_at: Time.now, category: category)
+      DB[:simple_list_items].insert(user_id:, list_id:, content:,
+                                    completed:, refreshed:, created_at: Time.now,
+                                    updated_at: Time.now, category:)
     end
   end
 end

@@ -16,7 +16,7 @@ module Models
     private
 
     def create
-      DB[:users_lists].insert(user_id: user_id, list_id: list_id, has_accepted: has_accepted, permissions: permissions)
+      DB[:users_lists].insert(user_id:, list_id:, has_accepted:, permissions:)
     end
   end
 end

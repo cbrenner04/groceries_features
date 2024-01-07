@@ -10,7 +10,7 @@ module Helpers
   class ResultsHelper
     def sign_in(user, password)
       response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
-                                 user_login: { email: user, password: password })
+                                 user_login: { email: user, password: })
       @auth_token = JSON.parse(response.body)["auth_token"]
 
       # TODO: just create a new file for this data

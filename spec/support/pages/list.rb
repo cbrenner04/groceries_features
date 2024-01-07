@@ -79,7 +79,7 @@ module Pages
     end
 
     def has_read_item?(item_name, purchased: false)
-      item = find_list_item(item_name, purchased: purchased)
+      item = find_list_item(item_name, purchased:)
       item.has_css?(READ_BUTTON) && item.has_no_css?(UNREAD_BUTTON)
     end
 

@@ -9,18 +9,14 @@ require "selenium-webdriver"
 require "site_prism"
 require "sequel"
 require "envyable"
-require "webdrivers/chromedriver"
 require "byebug"
 require "rspec/retry"
 
-Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].sort.each { |f| require f }
+Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
 
 class DriverJSError < StandardError; end
-
-# seems like latest chrome is not covered yet. revisit and remove
-Webdrivers::Chromedriver.required_version = "114.0.5735.90"
 
 # RSpec configuration options
 RSpec.configure do |config|
@@ -49,7 +45,7 @@ RSpec.configure do |config|
     # TODO: chrome is being poopy atm with the datalist element in CategoryField
     # This only matters in staging
     unless ENV["ENV"] == "staging"
-      errors = page.driver.browser.manage.logs.get(:browser).select do |e|
+      errors = page.driver.browser.logs.get(:browser).select do |e|
         e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
           !e.message.include?("Not Found")
       end.map(&:message)
