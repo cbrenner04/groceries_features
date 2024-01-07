@@ -33,11 +33,11 @@ RSpec.configure do |config|
   config.include Helpers::WaitHelper
   # rubocop:disable Lint/ConstantDefinitionInBlock
   config.before(:suite) do
-    DB = Sequel.connect(ENV["DATABASE_URL"])
+    DB = Sequel.connect(ENV.fetch("DATABASE_URL", nil))
     TEST_RUN = Time.now.to_i
     unless ENV["PARALLELS"]
       RESULTS_HELPER = Helpers::ResultsHelper.new
-      RESULTS_HELPER.sign_in(ENV["RESULTS_USER"], ENV["RESULTS_PASSWORD"])
+      RESULTS_HELPER.sign_in(ENV.fetch("RESULTS_USER", nil), ENV.fetch("RESULTS_PASSWORD", nil))
     end
   end
   # rubocop:enable Lint/ConstantDefinitionInBlock
@@ -79,7 +79,7 @@ unless ENV["DRIVER"] == "poltergeist"
   Capybara.page.driver.browser.manage.window.resize_to(1280, 743)
 end
 Capybara.save_path = "spec/screenshots/"
-Capybara.app_host = ENV["HOST"]
+Capybara.app_host = ENV.fetch("HOST", nil)
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|

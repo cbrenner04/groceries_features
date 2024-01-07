@@ -9,7 +9,8 @@ module Helpers
   # helpers for post results
   class ResultsHelper
     def sign_in(user, password)
-      response = RestClient.post("#{ENV['RESULTS_URL']}/sign-in.json", user_login: { email: user, password: password })
+      response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
+                                 user_login: { email: user, password: password })
       @auth_token = JSON.parse(response.body)["auth_token"]
 
       # necessary for when running with multiple parallels
@@ -25,7 +26,7 @@ module Helpers
       @spec = spec
       @test_run = test_run
       # necessary for when running with multiple parallels
-      @auth_token ||= ENV["RESULTS_AUTH_TOKEN"]
+      @auth_token ||= ENV.fetch("RESULTS_AUTH_TOKEN", nil)
       # if we don't have a token, there is no point in going on
       return unless @auth_token
 
@@ -34,8 +35,8 @@ module Helpers
     end
 
     def sign_out
-      RestClient.delete("#{ENV['RESULTS_URL']}/sign-out.json",
-                        "Authorization" => "Token token=#{ENV['RESULTS_AUTH_TOKEN']}")
+      RestClient.delete("#{ENV.fetch('RESULTS_URL', nil)}/sign-out.json",
+                        "Authorization" => "Token token=#{ENV.fetch('RESULTS_AUTH_TOKEN', nil)}")
     rescue Errno::ECONNREFUSED, RestClient::Unauthorized
       # don't care if can't connect or if we're unauthed
     ensure
@@ -49,7 +50,7 @@ module Helpers
 
     def set_feature_id
       response = RestClient::Request.execute(method: :post,
-                                             url: "#{ENV['RESULTS_URL']}/features.json",
+                                             url: "#{ENV.fetch('RESULTS_URL', nil)}/features.json",
                                              payload: { feature: feature_payload },
                                              headers: { "Authorization" => "Token token=#{@auth_token}" })
       @feature_id = JSON.parse(response.body)["feature_id"]
@@ -61,7 +62,7 @@ module Helpers
 
     def post_results
       RestClient::Request.execute(method: :post,
-                                  url: "#{ENV['RESULTS_URL']}/results.json",
+                                  url: "#{ENV.fetch('RESULTS_URL', nil)}/results.json",
                                   payload: { result: result_payload },
                                   headers: { "Authorization" => "Token token=#{@auth_token}" })
     rescue RestClient::Unauthorized

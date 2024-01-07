@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "Login", type: :feature do
+RSpec.describe "Login" do
   let(:home_page) { Pages::Home.new }
   let(:login_page) { Pages::Login.new }
 

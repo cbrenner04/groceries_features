@@ -2,6 +2,6 @@
 
 require "spec_helper"
 
-RSpec.describe "A music list", type: :feature do
+RSpec.describe "A music list" do
   it_behaves_like "a list", "MusicList"
 end
