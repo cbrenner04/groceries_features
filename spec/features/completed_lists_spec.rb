@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "Completed lists page" do
+RSpec.describe "Completed lists page", type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:completed_lists_page) { Pages::CompletedLists.new }
   let(:share_list_page) { Pages::ShareList.new }

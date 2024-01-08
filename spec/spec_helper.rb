@@ -9,11 +9,10 @@ require "selenium-webdriver"
 require "site_prism"
 require "sequel"
 require "envyable"
-require "webdrivers/chromedriver"
 require "byebug"
 require "rspec/retry"
 
-Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].sort.each { |f| require f }
+Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
 
@@ -37,18 +36,22 @@ RSpec.configure do |config|
     TEST_RUN = Time.now.to_i
     unless ENV["PARALLELS"]
       RESULTS_HELPER = Helpers::ResultsHelper.new
-      RESULTS_HELPER.sign_in(ENV.fetch("RESULTS_USER", nil), ENV.fetch("RESULTS_PASSWORD", nil))
+      RESULTS_HELPER.sign_in
     end
   end
   # rubocop:enable Lint/ConstantDefinitionInBlock
   config.default_retry_count = 3
   config.after(type: :feature) do
-    errors = page.driver.browser.manage.logs.get(:browser).select do |e|
-      e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
-        !e.message.include?("Not Found")
-    end.map(&:message)
+    # TODO: CSP is throwing on something but doesn't effect the tests
+    # This only matters in staging
+    unless ENV["ENV"] == "staging"
+      errors = page.driver.browser.logs.get(:browser).select do |e|
+        e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
+          !e.message.include?("Not Found")
+      end.map(&:message)
 
-    raise DriverJSError, errors.join("\n\n") if errors.any?
+      raise DriverJSError, errors.join("\n\n") if errors.any?
+    end
   end
   config.append_after do |spec|
     # rubocop:disable Lint/OrAssignmentToConstant

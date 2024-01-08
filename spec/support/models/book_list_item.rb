@@ -25,9 +25,9 @@ module Models
     private
 
     def create
-      DB[:book_list_items].insert(user_id: user_id, list_id: list_id, author: author, title: title,
-                                  purchased: purchased, read: read, number_in_series: number_in_series,
-                                  created_at: Time.now, updated_at: Time.now, category: category)
+      DB[:book_list_items].insert(user_id:, list_id:, author:, title:,
+                                  purchased:, read:, number_in_series:,
+                                  created_at: Time.now, updated_at: Time.now, category:)
     end
   end
 end

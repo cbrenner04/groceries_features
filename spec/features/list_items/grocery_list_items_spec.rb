@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe "A grocery list item" do
+RSpec.describe "A grocery list item", type: :feature do
   let(:home_page) { Pages::Home.new }
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }

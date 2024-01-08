@@ -24,9 +24,9 @@ module Models
     private
 
     def create
-      DB[:music_list_items].insert(user_id: user_id, list_id: list_id, title: title, artist: artist,
-                                   album: album, purchased: purchased, created_at: Time.now, updated_at: Time.now,
-                                   category: category)
+      DB[:music_list_items].insert(user_id:, list_id:, title:, artist:,
+                                   album:, purchased:, created_at: Time.now, updated_at: Time.now,
+                                   category:)
     end
   end
 end

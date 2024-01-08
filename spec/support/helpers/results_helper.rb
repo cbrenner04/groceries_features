@@ -3,19 +3,19 @@
 require "rest-client"
 require "json"
 
-ENV_VAR_FILE_PATH = File.join(File.dirname(__FILE__), "../../../config/env.yml")
+TOKEN_FILE_PATH = File.join(File.dirname(__FILE__), "../../../token.txt")
 
 module Helpers
   # helpers for post results
   class ResultsHelper
-    def sign_in(user, password)
+    def sign_in
       response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
-                                 user_login: { email: user, password: password })
+                                 user_login: { email: ENV.fetch("RESULTS_USER", nil),
+                                               password: ENV.fetch("RESULTS_PASSWORD", nil) })
       @auth_token = JSON.parse(response.body)["auth_token"]
 
-      # necessary for when running with multiple parallels
-      file = File.open(ENV_VAR_FILE_PATH, "a")
-      file.write("RESULTS_AUTH_TOKEN: #{@auth_token}")
+      file = File.open(TOKEN_FILE_PATH, "w")
+      file.write(@auth_token)
       file.close
     rescue Errno::ECONNREFUSED
       # if can't connect to feature results, auth token doesn't matter
@@ -26,7 +26,7 @@ module Helpers
       @spec = spec
       @test_run = test_run
       # necessary for when running with multiple parallels
-      @auth_token ||= ENV.fetch("RESULTS_AUTH_TOKEN", nil)
+      @auth_token ||= File.read(TOKEN_FILE_PATH)
       # if we don't have a token, there is no point in going on
       return unless @auth_token
 
@@ -35,15 +35,14 @@ module Helpers
     end
 
     def sign_out
-      RestClient.delete("#{ENV.fetch('RESULTS_URL', nil)}/sign-out.json",
-                        "Authorization" => "Token token=#{ENV.fetch('RESULTS_AUTH_TOKEN', nil)}")
+      if File.exist?(TOKEN_FILE_PATH)
+        RestClient.delete("#{ENV.fetch('RESULTS_URL', nil)}/sign-out.json",
+                          "Authorization" => "Token token=#{File.read(TOKEN_FILE_PATH)}")
+      end
     rescue Errno::ECONNREFUSED, RestClient::Unauthorized
       # don't care if can't connect or if we're unauthed
     ensure
-      lines = File.readlines(ENV_VAR_FILE_PATH)
-      file = File.open(ENV_VAR_FILE_PATH, "w+")
-      lines.each { |l| file << l unless l.include? "RESULTS_AUTH_TOKEN" }
-      file.close
+      FileUtils.rm_f(TOKEN_FILE_PATH)
     end
 
     private
@@ -54,6 +53,9 @@ module Helpers
                                              payload: { feature: feature_payload },
                                              headers: { "Authorization" => "Token token=#{@auth_token}" })
       @feature_id = JSON.parse(response.body)["feature_id"]
+    rescue RestClient::Unauthorized
+      sign_out
+      sign_in
     end
 
     def feature_payload
@@ -66,6 +68,7 @@ module Helpers
                                   payload: { result: result_payload },
                                   headers: { "Authorization" => "Token token=#{@auth_token}" })
     rescue RestClient::Unauthorized
+      sign_out
       sign_in
     end
 
