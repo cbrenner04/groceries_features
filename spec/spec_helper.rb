@@ -36,13 +36,13 @@ RSpec.configure do |config|
     TEST_RUN = Time.now.to_i
     unless ENV["PARALLELS"]
       RESULTS_HELPER = Helpers::ResultsHelper.new
-      RESULTS_HELPER.sign_in(ENV.fetch("RESULTS_USER", nil), ENV.fetch("RESULTS_PASSWORD", nil))
+      RESULTS_HELPER.sign_in
     end
   end
   # rubocop:enable Lint/ConstantDefinitionInBlock
   config.default_retry_count = 3
   config.after(type: :feature) do
-    # TODO: chrome is being poopy atm with the datalist element in CategoryField
+    # TODO: CSP is throwing on something but doesn't effect the tests
     # This only matters in staging
     unless ENV["ENV"] == "staging"
       errors = page.driver.browser.logs.get(:browser).select do |e|

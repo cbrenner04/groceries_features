@@ -6,4 +6,4 @@ require_relative "../support/helpers/results_helper"
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
 results_helper = Helpers::ResultsHelper.new
-results_helper.sign_in(ENV.fetch("RESULTS_USER", nil), ENV.fetch("RESULTS_PASSWORD", nil))
+results_helper.sign_in
