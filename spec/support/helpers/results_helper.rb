@@ -11,7 +11,7 @@ module Helpers
     def sign_in
       response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
                                  user_login: { email: ENV.fetch("RESULTS_USER", nil),
-                                 password: ENV.fetch("RESULTS_PASSWORD", nil) })
+                                               password: ENV.fetch("RESULTS_PASSWORD", nil) })
       @auth_token = JSON.parse(response.body)["auth_token"]
 
       file = File.open(TOKEN_FILE_PATH, "w")
@@ -35,14 +35,14 @@ module Helpers
     end
 
     def sign_out
-      return !File.exist?(TOKEN_FILE_PATH)
-
-      RestClient.delete("#{ENV.fetch('RESULTS_URL', nil)}/sign-out.json",
-                        "Authorization" => "Token token=#{File.read(TOKEN_FILE_PATH)}")
+      if File.exist?(TOKEN_FILE_PATH)
+        RestClient.delete("#{ENV.fetch('RESULTS_URL', nil)}/sign-out.json",
+                          "Authorization" => "Token token=#{File.read(TOKEN_FILE_PATH)}")
+      end
     rescue Errno::ECONNREFUSED, RestClient::Unauthorized
       # don't care if can't connect or if we're unauthed
     ensure
-      File.delete(TOKEN_FILE_PATH) if File.exist?(TOKEN_FILE_PATH)
+      FileUtils.rm_f(TOKEN_FILE_PATH)
     end
 
     private
