@@ -35,5 +35,5 @@ RSpec/InstanceVariable:
 RSpec/MultipleMemoizedHelpers:
   Max: 10
 
-RSpec/Rails:
+RSpecRails:
   Enabled: false
