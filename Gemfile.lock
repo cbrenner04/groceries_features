@@ -6,7 +6,7 @@ GEM
     ast (2.4.2)
     base64 (0.2.0)
     bcrypt (3.1.20)
-    bigdecimal (3.1.7)
+    bigdecimal (3.1.8)
     byebug (11.1.3)
     capybara (3.40.0)
       addressable
@@ -112,7 +112,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sequel (5.79.0)
+    sequel (5.81.0)
       bigdecimal
     site_prism (5.0.3)
       addressable (~> 2.8, >= 2.8.4)
