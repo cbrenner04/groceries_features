@@ -154,7 +154,7 @@ DEPENDENCIES
   rubocop-sequel (~> 0.3.4)
   selenium-webdriver (~> 4.16)
   sequel (~> 5.76)
-  site_prism (~> 5.0)
+  site_prism (~> 5.0, >= 5.0.3)
 
 RUBY VERSION
    ruby 3.3.3p89
