@@ -23,7 +23,7 @@ module Pages
     element :clear_author, "#clearAuthor"
     element :category, "#category"
     element :clear_category, "#clearCategory"
-    element :due_by, "#dueBy"
+    element :due_by, "#due_by"
     element :clear_due_by, "#clearDueBy"
     element :quantity, "#quantity"
     element :clear_quantity, "#clearQuantity"
