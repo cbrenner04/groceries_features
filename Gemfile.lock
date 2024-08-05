@@ -102,7 +102,7 @@ GEM
       parser (>= 3.3.1.0)
     rubocop-capybara (2.21.0)
       rubocop (~> 1.41)
-    rubocop-rspec (3.0.3)
+    rubocop-rspec (3.0.4)
       rubocop (~> 1.61)
     rubocop-sequel (0.3.4)
       rubocop (~> 1.0)
