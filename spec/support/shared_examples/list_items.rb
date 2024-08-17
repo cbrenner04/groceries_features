@@ -30,13 +30,17 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
       new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo")
 
       list_page.expand_list_item_form
+      # `input_new_item_attribute` is defined in the spec that executes this shared example as it is different for each
       send("input_new_item_attributes", new_list_item)
       list_page.category_input.set new_list_item.category
+
       list_page.submit_button.click
 
       wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
       expect(list_page.not_purchased_items.map(&:text)).to include new_list_item.pretty_title
+      # `confirm_form_cleared` is defined in the spec that executes this shared example as it is different for each
+      send("confirm_form_cleared")
 
       category_headers = list_page.category_header.map(&:text)
 

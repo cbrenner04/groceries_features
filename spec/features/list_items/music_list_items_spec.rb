@@ -16,6 +16,13 @@ RSpec.describe "A music list item", type: :feature do
     list_page.album_input.set new_list_item.album
   end
 
+  def confirm_form_cleared
+    expect(list_page.title_input.value).to eq ""
+    expect(list_page.artist_input.value).to eq ""
+    expect(list_page.album_input.value).to eq ""
+    expect(list_page.category_input.value).to eq ""
+  end
+
   def bulk_updated_title(item)
     "\"#{item.title}\" foobar - foobar"
   end
