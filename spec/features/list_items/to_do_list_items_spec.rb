@@ -15,6 +15,12 @@ RSpec.describe "A to do list item", type: :feature do
     fill_in "Due By", with: new_list_item.due_by.strftime("%m%d%Y")
   end
 
+  def confirm_form_cleared
+    expect(list_page.task_input.value).to eq ""
+    expect(list_page.due_by_input.value).to eq ""
+    expect(list_page.category_input.value).to eq ""
+  end
+
   def bulk_updated_title(item)
     "#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020"
   end

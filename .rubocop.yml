@@ -14,6 +14,9 @@ Layout/LineLength:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
+Metrics/AbcSize:
+  Enabled: false
+
 Metrics/BlockLength:
   Enabled: False
 
