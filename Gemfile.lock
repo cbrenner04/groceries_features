@@ -50,7 +50,7 @@ GEM
     parallel (1.25.1)
     parallel_tests (4.7.1)
       parallel
-    parser (3.3.4.0)
+    parser (3.3.4.2)
       ast (~> 2.4.1)
       racc
     pg (1.5.7)
@@ -70,7 +70,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rexml (3.3.4)
+    rexml (3.3.5)
       strscan
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
@@ -102,7 +102,7 @@ GEM
       parser (>= 3.3.1.0)
     rubocop-capybara (2.21.0)
       rubocop (~> 1.41)
-    rubocop-rspec (3.0.3)
+    rubocop-rspec (3.0.4)
       rubocop (~> 1.61)
     rubocop-sequel (0.3.4)
       rubocop (~> 1.0)
