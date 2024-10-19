@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "3.3.4"
+ruby "3.3.5"
 
 gem "bcrypt", "~> 3.1", ">= 3.1.20"
 gem "byebug", "~> 11.1", ">= 11.1.3"
