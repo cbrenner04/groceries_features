@@ -15,6 +15,12 @@ RSpec.describe "A grocery list item", type: :feature do
     list_page.product_input.set new_list_item.product
   end
 
+  def confirm_form_cleared
+    expect(list_page.quantity_input.value).to eq ""
+    expect(list_page.product_input.value).to eq ""
+    expect(list_page.category_input.value).to eq ""
+  end
+
   def bulk_updated_title(item)
     "foobar #{item.product}"
   end

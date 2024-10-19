@@ -9,12 +9,11 @@ module Helpers
   # helpers for post results
   class ResultsHelper
     def sign_in
+      file = File.open(TOKEN_FILE_PATH, "w")
       response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
                                  user_login: { email: ENV.fetch("RESULTS_USER", nil),
                                                password: ENV.fetch("RESULTS_PASSWORD", nil) })
       @auth_token = JSON.parse(response.body)["auth_token"]
-
-      file = File.open(TOKEN_FILE_PATH, "w")
       file.write(@auth_token)
       file.close
     rescue Errno::ECONNREFUSED
@@ -56,6 +55,8 @@ module Helpers
     rescue RestClient::Unauthorized
       sign_out
       sign_in
+    rescue Errno::ECONNREFUSED
+      # if can't connect to feature results, set feature id doesn't matter
     end
 
     def feature_payload
@@ -70,6 +71,8 @@ module Helpers
     rescue RestClient::Unauthorized
       sign_out
       sign_in
+    rescue Errno::ECONNREFUSED
+      # if can't connect to feature results, posting results doesn't matter
     end
 
     def result_payload
