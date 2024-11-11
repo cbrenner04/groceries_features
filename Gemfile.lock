@@ -112,7 +112,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sequel (5.85.0)
+    sequel (5.86.0)
       bigdecimal
     site_prism (5.0.3)
       addressable (~> 2.8, >= 2.8.4)
