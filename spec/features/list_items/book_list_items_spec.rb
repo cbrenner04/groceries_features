@@ -7,6 +7,7 @@ RSpec.describe "A book list item", type: :feature do
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:edit_list_items_page) { Pages::EditListItems.new }
+  let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
   let(:list) { Models::List.new(type: "BookList", owner_id: user.id) }
 

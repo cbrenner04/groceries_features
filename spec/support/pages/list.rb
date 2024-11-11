@@ -36,6 +36,8 @@ module Pages
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     elements :multi_select_buttons, :button, "Select"
+    element :copy_to_list, :button, text: "Copy to list"
+    element :move_to_list, :button, text: "Move to list"
 
     def unread_button_css
       UNREAD_BUTTON
