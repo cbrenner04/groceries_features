@@ -8,7 +8,7 @@ module Models
     ONE_DAY = ONE_HOUR * 24
 
     attr_accessor :task, :due_by, :assignee_id
-    attr_reader :id, :user_id, :list_id, :assignee_id, :completed, :refreshed, :category
+    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category
 
     def initialize(user_id:, list_id:, assignee_id: nil, completed: false, category: nil, refreshed: false,
                    create_item: true)
@@ -25,9 +25,8 @@ module Models
 
     def pretty_title(assignee_email = nil)
       adjusted_due_by = due_by - (5 * ONE_HOUR)
-      "#{task}#{assignee_email ? "\nAssigned To: #{
-        assignee_email
-      }" : ""}\nDue By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
+      assignee = assignee_email ? "\nAssigned To: #{assignee_email}" : ""
+      "#{task}#{assignee}\nDue By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
     end
 
     private
