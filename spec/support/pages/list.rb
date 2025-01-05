@@ -27,6 +27,7 @@ module Pages
     element :artist_input, "#artist"
     element :album_input, "#album"
     element :task_input, "#task"
+    element :assignee_input, "#assignee_id"
     element :due_by_input, "#due_by"
     element :content_input, "#content"
     element :product_input, "#product"

@@ -38,7 +38,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
       wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
-      expect(list_page.not_purchased_items.map(&:text)).to include new_list_item.pretty_title
+      title = item_class == Models::ToDoListItem ? new_list_item.pretty_title(user.email) : new_list_item.pretty_title
+
+      expect(list_page.not_purchased_items.map(&:text)).to include title
       # `confirm_form_cleared` is defined in the spec that executes this shared example as it is different for each
       send("confirm_form_cleared")
 

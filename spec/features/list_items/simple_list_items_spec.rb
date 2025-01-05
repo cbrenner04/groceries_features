@@ -16,6 +16,8 @@ RSpec.describe "A simple list item", type: :feature do
       list_page.content_input.set new_list_item.content
       list_page.content_input.value == new_list_item.content
     end
+
+    expect(list_page.content_input.value).to eq new_list_item.content
   end
 
   def confirm_form_cleared

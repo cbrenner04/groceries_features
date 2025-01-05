@@ -7,7 +7,7 @@ module Models
     ONE_HOUR = ONE_MINUTE * 60
     ONE_DAY = ONE_HOUR * 24
 
-    attr_accessor :task, :due_by
+    attr_accessor :task, :due_by, :assignee_id
     attr_reader :id, :user_id, :list_id, :assignee_id, :completed, :refreshed, :category
 
     def initialize(user_id:, list_id:, assignee_id: nil, completed: false, category: nil, refreshed: false,
@@ -23,9 +23,9 @@ module Models
       @id = create if create_item
     end
 
-    def pretty_title
+    def pretty_title(assignee_email = nil)
       adjusted_due_by = due_by - (5 * ONE_HOUR)
-      "#{task}\nDue By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
+      "#{task}#{assignee_email ? "\nAssigned To: #{assignee_email}" : ""}\nDue By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
     end
 
     private
