@@ -15,6 +15,10 @@ RSpec.describe "A music list item", type: :feature do
     list_page.title_input.set new_list_item.title
     list_page.artist_input.set new_list_item.artist
     list_page.album_input.set new_list_item.album
+
+    expect(list_page.title_input.value).to eq new_list_item.title
+    expect(list_page.artist_input.value).to eq new_list_item.artist
+    expect(list_page.album_input.value).to eq new_list_item.album
   end
 
   def confirm_form_cleared

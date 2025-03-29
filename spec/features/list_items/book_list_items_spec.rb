@@ -15,6 +15,10 @@ RSpec.describe "A book list item", type: :feature do
     list_page.author_input.set new_list_item.author
     list_page.title_input.set new_list_item.title
     list_page.number_in_series_input.set new_list_item.number_in_series
+
+    expect(list_page.author_input.value).to eq new_list_item.author
+    expect(list_page.title_input.value).to eq new_list_item.title
+    expect(list_page.number_in_series_input.value).to eq new_list_item.number_in_series.to_s # input value is a string
   end
 
   def confirm_form_cleared

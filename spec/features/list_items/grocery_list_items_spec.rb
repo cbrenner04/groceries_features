@@ -14,6 +14,9 @@ RSpec.describe "A grocery list item", type: :feature do
   def input_new_item_attributes(new_list_item)
     list_page.quantity_input.set new_list_item.quantity
     list_page.product_input.set new_list_item.product
+
+    expect(list_page.quantity_input.value).to eq new_list_item.quantity
+    expect(list_page.product_input.value).to eq new_list_item.product
   end
 
   def confirm_form_cleared
