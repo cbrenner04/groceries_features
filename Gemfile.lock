@@ -49,7 +49,7 @@ GEM
     nokogiri (1.18.1-x86_64-linux-gnu)
       racc (~> 1.4)
     parallel (1.26.3)
-    parallel_tests (4.9.0)
+    parallel_tests (4.10.1)
       parallel
     parser (3.3.7.3)
       ast (~> 2.4.1)
