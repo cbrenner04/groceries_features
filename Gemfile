@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "3.4.2"
 
 gem "bcrypt", "~> 3.1", ">= 3.1.20"
-gem "byebug", "~> 11.1", ">= 11.1.3"
+gem "byebug", "~> 12.0", ">= 12.0.0"
 gem "capybara", "~> 3.39", ">= 3.39.2"
 gem "capybara-screenshot", "~> 1.0", ">= 1.0.26"
 gem "envyable", "~> 1.2"
