@@ -7,12 +7,27 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:edit_list_items_page) { Pages::EditListItems.new }
+  let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
   let(:list) { Models::List.new(type: "ToDoList", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
+    new_list_item.assignee_id = user.id # necessary for later checks as well
+
     list_page.task_input.set new_list_item.task
+    list_page.assignee_input.select user.email
     fill_in "Due By", with: new_list_item.due_by.strftime("%m%d%Y")
+
+    expect(list_page.task_input.value).to eq new_list_item.task
+    expect(list_page.assignee_input.value).to eq new_list_item.assignee_id
+    expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime("%Y-%m-%d")
+  end
+
+  def confirm_form_cleared
+    expect(list_page.task_input.value).to eq ""
+    expect(list_page.assignee_input.value).to eq ""
+    expect(list_page.due_by_input.value).to eq ""
+    expect(list_page.category_input.value).to eq ""
   end
 
   def bulk_updated_title(item)

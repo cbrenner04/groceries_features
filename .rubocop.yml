@@ -1,11 +1,11 @@
-require:
+plugins:
   - rubocop-rspec
   - rubocop-capybara
   - rubocop-sequel
 
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 3.2.2
+  TargetRubyVersion: 3.4.1
   NewCops: enable
 
 Layout/LineLength:
@@ -13,6 +13,9 @@ Layout/LineLength:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Metrics/AbcSize:
+  Enabled: false
 
 Metrics/BlockLength:
   Enabled: False
@@ -34,6 +37,3 @@ RSpec/InstanceVariable:
 
 RSpec/MultipleMemoizedHelpers:
   Max: 10
-
-RSpec/Rails:
-  Enabled: false

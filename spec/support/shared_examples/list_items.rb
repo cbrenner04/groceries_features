@@ -30,13 +30,19 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
       new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo")
 
       list_page.expand_list_item_form
+      # `input_new_item_attribute` is defined in the spec that executes this shared example as it is different for each
       send("input_new_item_attributes", new_list_item)
       list_page.category_input.set new_list_item.category
+
       list_page.submit_button.click
 
       wait_for { list_page.not_purchased_items.count == @initial_list_item_count + 1 }
 
-      expect(list_page.not_purchased_items.map(&:text)).to include new_list_item.pretty_title
+      title = item_class == Models::ToDoListItem ? new_list_item.pretty_title(user.email) : new_list_item.pretty_title
+
+      expect(list_page.not_purchased_items.map(&:text)).to include title
+      # `confirm_form_cleared` is defined in the spec that executes this shared example as it is different for each
+      send("confirm_form_cleared")
 
       category_headers = list_page.category_header.map(&:text)
 
@@ -280,6 +286,144 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
         end
       end
 
+      describe "when copy" do
+        it "creates a new list" do
+          list_page.multi_select_buttons.first.click
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(item.pretty_title, purchased: false)
+          end
+          list_page.copy_to_list.click
+
+          change_other_list_modal.wait_until_new_list_name_input_visible
+
+          # cannot choose existing list when no other lists exist
+          all_link_text = change_other_list_modal.all_links.map(&:text)
+
+          expect(all_link_text).not_to include "Choose existing list"
+
+          # create new list
+          change_other_list_modal.new_list_name_input.set "foobar"
+          change_other_list_modal.complete.click
+
+          list_page.wait_until_not_purchased_items_visible
+
+          # check new list for new items
+          home_page.load
+          home_page.select_list "foobar"
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should exist on this list
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            expect(list_page.find_list_item(item.pretty_title, purchased: false)).to be_visible
+          end
+        end
+
+        it "chooses existing list" do
+          # create another list so option for existing list are available
+          new_list = Models::List.new(type: list_type, owner_id: user.id)
+          Models::UsersList.new(user_id: user.id, list_id: new_list.id)
+
+          page.refresh
+          list_page.multi_select_buttons.first.click
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(item.pretty_title, purchased: false)
+          end
+          list_page.copy_to_list.click
+
+          change_other_list_modal.existing_list_dropdown.select new_list.name
+          change_other_list_modal.complete.click
+
+          list_page.wait_until_not_purchased_items_visible
+
+          # go to existing list
+          list_page.load(id: new_list.id)
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should exist on this list
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            expect(list_page.find_list_item(item.pretty_title, purchased: false)).to be_visible
+          end
+        end
+      end
+
+      describe "when move" do
+        it "creates a new list" do
+          list_page.multi_select_buttons.first.click
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(item.pretty_title, purchased: false)
+          end
+          list_page.move_to_list.click
+
+          change_other_list_modal.wait_until_new_list_name_input_visible
+
+          # cannot choose existing list when no other lists exist
+          all_link_text = change_other_list_modal.all_links.map(&:text)
+
+          expect(all_link_text).not_to include "Choose existing list"
+
+          # create new list
+          change_other_list_modal.new_list_name_input.set "foobar"
+          change_other_list_modal.complete.click
+
+          # selected items should not be on this list any longer
+          wait_for { list_page.not_purchased_items.count == 0 }
+
+          # check new list for new items
+          home_page.load
+          home_page.select_list "foobar"
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should exist on new list
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            expect(list_page.find_list_item(item.pretty_title, purchased: false)).to be_visible
+          end
+        end
+
+        it "chooses existing list" do
+          # create another list so option for existing list are available
+          new_list = Models::List.new(type: list_type, owner_id: user.id)
+          Models::UsersList.new(user_id: user.id, list_id: new_list.id)
+
+          page.refresh
+          list_page.multi_select_buttons.first.click
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            list_page.multi_select_item(item.pretty_title, purchased: false)
+          end
+          list_page.move_to_list.click
+
+          change_other_list_modal.existing_list_dropdown.select new_list.name
+          change_other_list_modal.complete.click
+
+          # selected items should not be on this list any longer
+          wait_for { list_page.not_purchased_items.count == 0 }
+
+          # go to existing list
+          list_page.load(id: new_list.id)
+          list_page.wait_until_not_purchased_items_visible
+
+          # all items should exist on this list
+          @list_items.each do |item|
+            next if item.send(purchased_attr)
+
+            expect(list_page.find_list_item(item.pretty_title, purchased: false)).to be_visible
+          end
+        end
+      end
+
       describe "when edited" do
         before do
           list_page.multi_select_buttons.first.click
@@ -347,205 +491,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
               expect(label).not_to include "February 2, 2020"
             else
               expect(label).not_to include "foobar"
-            end
-          end
-        end
-
-        describe "when copy" do
-          it "creates a new list" do
-            edit_list_items_page.copy.click
-            # cannot choose existing list when no other lists exist
-            all_link_text = edit_list_items_page.all_links.map(&:text)
-
-            expect(all_link_text).not_to include "Choose existing list"
-
-            # create new list
-            edit_list_items_page.new_list_name.set "foobar"
-            # updates current items
-            edit_list_items_page.update_current_items.click
-            update_attrs(bulk_update_attrs)
-            edit_list_items_page.category.set "foobaz"
-            edit_list_items_page.submit.click
-
-            list_page.wait_until_not_purchased_items_visible
-
-            # all items should now have the same category "foobaz"
-            category_headers = list_page.category_header.map(&:text)
-            expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq "Foobaz"
-
-            # all items should now have the same attributes set to "foobar"
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page.find_list_item(
-                bulk_update_selector(item, list_type, edit_attribute), purchased: false
-              ).text
-
-              expect(label).to include send("bulk_updated_title", item)
-            end
-
-            # check new list for new items
-            home_page.load
-            home_page.select_list "foobar"
-            list_page.wait_until_not_purchased_items_visible
-
-            # all items should now have the same category "foobaz"
-            new_list_category_headers = list_page.category_header.map(&:text)
-            expect(new_list_category_headers.count).to eq 1
-            expect(new_list_category_headers[0]).to eq "Foobaz"
-
-            # all items should now have the same attributes set to "foobar"
-            # all items should be not purchased
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page
-                      .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
-                      .text
-
-              expect(label).to include send("bulk_updated_title", item)
-            end
-          end
-
-          it "chooses existing list" do
-            # create another list so option for existing list are available
-            new_list = Models::List.new(type: list_type, owner_id: user.id)
-            Models::UsersList.new(user_id: user.id, list_id: new_list.id)
-            # select existing list
-            edit_list_items_page.copy.click
-            edit_list_items_page.existing_list.select new_list.name
-            # does not update current items therefore these attributes will be
-            # on the existing list but not the current list
-            update_attrs(bulk_update_attrs)
-            edit_list_items_page.category.set "foobaz"
-            edit_list_items_page.submit.click
-
-            list_page.wait_until_not_purchased_items_visible
-
-            # category should not have been updated
-            category_headers = list_page.category_header.map(&:text)
-            expect(category_headers.count).to eq 1
-            expect(category_headers[0]).not_to eq "Foobaz"
-
-            # all items should have the same attributes
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page.find_list_item(item.send(edit_attribute), purchased: false).text
-
-              expect(label).to include item.pretty_title
-            end
-
-            # go to existing list
-            list_page.load(id: new_list.id)
-            list_page.wait_until_not_purchased_items_visible
-
-            # all items should now have the same category "foobaz"
-            existing_list_category_headers = list_page.category_header.map(&:text)
-            expect(existing_list_category_headers.count).to eq 1
-            expect(existing_list_category_headers[0]).to eq "Foobaz"
-
-            # all items should now have the same attributes set to "foobar"
-            # all items should be not purchased
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page
-                      .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
-                      .text
-
-              expect(label).to include send("bulk_updated_title", item)
-            end
-          end
-        end
-
-        describe "when move" do
-          it "creates a new list" do
-            edit_list_items_page.move.click
-            # cannot choose existing list when no other lists exist
-            all_link_text = edit_list_items_page.all_links.map(&:text)
-
-            expect(all_link_text).not_to include "Choose existing list"
-
-            # create new list
-            edit_list_items_page.new_list_name.set "foobar"
-
-            # cannot update current items when moving
-            expect(edit_list_items_page).to have_no_update_current_items
-
-            update_attrs(bulk_update_attrs)
-            edit_list_items_page.category.set "foobaz"
-            edit_list_items_page.submit.click
-
-            sleep 1
-
-            # all items should have been moved
-            expect(list_page).to have_no_not_purchased_items
-
-            # check new list for new items
-            home_page.load
-            home_page.select_list "foobar"
-            list_page.wait_until_not_purchased_items_visible
-
-            # all items should now have the same category "foobaz"
-            category_headers = list_page.category_header.map(&:text)
-            expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq "Foobaz"
-
-            # all items should now have the same attributes set to "foobar"
-            # all items should be not purchased
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page
-                      .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
-                      .text
-
-              expect(label).to include send("bulk_updated_title", item)
-            end
-          end
-
-          it "chooses existing list" do
-            # create another list so option for existing list are available
-            new_list = Models::List.new(type: list_type, owner_id: user.id)
-            Models::UsersList.new(user_id: user.id, list_id: new_list.id)
-            # select existing list
-            edit_list_items_page.move.click
-            edit_list_items_page.existing_list.select new_list.name
-
-            # cannot update current items when moving
-            expect(edit_list_items_page).to have_no_update_current_items
-
-            update_attrs(bulk_update_attrs)
-            edit_list_items_page.category.set "foobaz"
-            edit_list_items_page.submit.click
-
-            # all items should have been moved
-            expect(list_page).to have_no_not_purchased_items
-            expect(list_page).to have_no_purchased_items
-
-            sleep 1 # no fucking clue but this fails in staging otherwise
-
-            # go to existing list
-            list_page.load(id: new_list.id)
-            list_page.wait_until_not_purchased_items_visible
-
-            # all items should now have the same category "foobaz"
-            category_headers = list_page.category_header.map(&:text)
-            expect(category_headers.count).to eq 1
-            expect(category_headers[0]).to eq "Foobaz"
-
-            # all items should now have the same attributes set to "foobar"
-            # all items should be not purchased
-            @list_items.each do |item|
-              next if item.send(purchased_attr)
-
-              label = list_page
-                      .find_list_item(bulk_update_selector(item, list_type, edit_attribute), purchased: false)
-                      .text
-
-              expect(label).to include send("bulk_updated_title", item)
             end
           end
         end

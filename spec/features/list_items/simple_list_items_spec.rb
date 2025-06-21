@@ -7,6 +7,7 @@ RSpec.describe "A simple list item", type: :feature do
   let(:list_page) { Pages::List.new }
   let(:edit_list_item_page) { Pages::EditListItem.new }
   let(:edit_list_items_page) { Pages::EditListItems.new }
+  let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
   let(:list) { Models::List.new(type: "SimpleList", owner_id: user.id) }
 
@@ -15,6 +16,13 @@ RSpec.describe "A simple list item", type: :feature do
       list_page.content_input.set new_list_item.content
       list_page.content_input.value == new_list_item.content
     end
+
+    expect(list_page.content_input.value).to eq new_list_item.content
+  end
+
+  def confirm_form_cleared
+    expect(list_page.content_input.value).to eq ""
+    expect(list_page.category_input.value).to eq ""
   end
 
   def bulk_updated_title(item)

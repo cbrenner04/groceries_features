@@ -21,13 +21,14 @@ module Pages
     element :item_deleted_alert, ".Toastify", text: "Item successfully deleted."
     element :author_input, "#author"
     element :title_input, "#title"
-    element :number_in_series_input, "#numberInSeries"
+    element :number_in_series_input, "#number_in_series"
     element :category_input, "#category"
     element :quantity_input, "#quantity"
     element :artist_input, "#artist"
     element :album_input, "#album"
     element :task_input, "#task"
-    element :due_by_input, "#dueBy"
+    element :assignee_input, "#assignee_id"
+    element :due_by_input, "#due_by"
     element :content_input, "#content"
     element :product_input, "#product"
     element :submit_button, "button[type='submit']"
@@ -36,6 +37,8 @@ module Pages
     element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     elements :multi_select_buttons, :button, "Select"
+    element :copy_to_list, :button, text: "Copy to list"
+    element :move_to_list, :button, text: "Move to list"
 
     def unread_button_css
       UNREAD_BUTTON
