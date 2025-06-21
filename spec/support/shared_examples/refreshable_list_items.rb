@@ -34,7 +34,7 @@ RSpec.shared_examples "a refreshable list item" do |list_type|
         purchased_items.each { |item| list_page.multi_select_item(item.pretty_title, purchased: true) }
         list_page.refresh(purchased_items.last.pretty_title)
 
-        wait_for { list_page.not_purchased_items.count == 0 }
+        wait_for { list_page.not_purchased_items.none? }
 
         expect(list_page.purchased_items.count).to eq 0
         expect(list_page.not_purchased_items.count).to eq 3
