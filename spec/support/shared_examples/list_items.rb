@@ -239,7 +239,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
         end
         list_page.purchase(@list_items.first.pretty_title)
 
-        wait_for { list_page.not_purchased_items.count == 0 }
+        wait_for { list_page.not_purchased_items.none? }
 
         expect(list_page.not_purchased_items.count).to eq 0
         expect(list_page.purchased_items.count).to eq 3
@@ -261,7 +261,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
           list_page.confirm_delete_button.click
 
-          wait_for { list_page.not_purchased_items.count == 0 }
+          wait_for { list_page.not_purchased_items.none? }
 
           expect(list_page.not_purchased_items.count).to eq 0
         end
@@ -280,7 +280,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
           list_page.confirm_delete_button.click
 
-          wait_for { list_page.purchased_items.count == 0 }
+          wait_for { list_page.purchased_items.none? }
 
           expect(list_page.purchased_items.count).to eq 0
         end
@@ -376,7 +376,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           change_other_list_modal.complete.click
 
           # selected items should not be on this list any longer
-          wait_for { list_page.not_purchased_items.count == 0 }
+          wait_for { list_page.not_purchased_items.none? }
 
           # check new list for new items
           home_page.load
@@ -409,7 +409,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           change_other_list_modal.complete.click
 
           # selected items should not be on this list any longer
-          wait_for { list_page.not_purchased_items.count == 0 }
+          wait_for { list_page.not_purchased_items.none? }
 
           # go to existing list
           list_page.load(id: new_list.id)
