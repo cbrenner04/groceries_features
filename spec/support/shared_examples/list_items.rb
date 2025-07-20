@@ -24,7 +24,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
     end
 
     it "is created" do
-      new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo", list_item_configuration_id: list.list_item_configuration.id)
+      new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo",
+                                     list_item_configuration_id: list.list_item_configuration.id)
 
       list_page.expand_list_item_form
 
@@ -160,7 +161,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         describe "when there are multiple items for the selected category" do
           before do
-            @another_list_item = item_class.new(user_id: user.id, list_id: list.id, category: "foo", list_item_configuration_id: list.list_item_configuration.id)
+            @another_list_item = item_class.new(user_id: user.id, list_id: list.id, category: "foo",
+                                                list_item_configuration_id: list.list_item_configuration.id)
             @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better

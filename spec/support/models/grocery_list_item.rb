@@ -6,7 +6,8 @@ module Models
     attr_accessor :product
     attr_reader :id, :user_id, :list_id, :quantity, :completed, :refreshed, :category, :list_item_configuration_id
 
-    def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false, list_item_configuration_id: nil, create_item: true)
+    def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false,
+                   list_item_configuration_id: nil, create_item: true)
       @user_id = user_id
       @list_id = list_id
       @product = SecureRandom.hex(16)

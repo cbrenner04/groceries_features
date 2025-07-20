@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples "a refreshable list item" do |list_type|
-  # ToDoLists complicated the crap out of this which is super unfortunate
-  completed_attr = %w[SimpleList ToDoList].include?(list_type) ? "completed" : "completed"
-
+RSpec.shared_examples "a refreshable list item" do
   describe "when logged in as the list owner" do
     before do
       login user
@@ -30,7 +27,7 @@ RSpec.shared_examples "a refreshable list item" do |list_type|
     describe "when multiple selected" do
       it "is refreshed" do
         list_page.multi_select_buttons.last.click
-        completed_items = @list_items.filter { |item| item.send(completed_attr) }
+        completed_items = @list_items.filter { |item| item.send("completed") }
         completed_items.each { |item| list_page.multi_select_item(item.pretty_title, completed: true) }
         list_page.refresh(completed_items.last.pretty_title)
 

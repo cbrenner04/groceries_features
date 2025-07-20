@@ -6,7 +6,8 @@ module Models
     attr_accessor :content
     attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
 
-    def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false, list_item_configuration_id: nil, create_item: true)
+    def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false,
+                   list_item_configuration_id: nil, create_item: true)
       @user_id = user_id
       @list_id = list_id
       @content = SecureRandom.hex(16)
@@ -18,7 +19,7 @@ module Models
     end
 
     def pretty_title
-      "#{content}"
+      content.to_s
     end
 
     private

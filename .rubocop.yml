@@ -11,8 +11,22 @@ AllCops:
 Layout/LineLength:
   Max: 120
 
+Metrics/ModuleLength:
+  Max: 120
+
+Metrics/ClassLength:
+  Max: 120
+  Exclude:
+    - spec/support/pages/**/*
+
 Metrics/MethodLength:
-  Max: 15
+  Max: 20
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

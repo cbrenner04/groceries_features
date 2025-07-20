@@ -15,7 +15,7 @@ module Helpers
       @user_ids.each do |user_id|
         list_item_configurations = @database[:list_item_configurations].where(user_id:)
 
-        return if list_item_configurations.empty?
+        next if list_item_configurations.empty?
 
         list_item_configurations.each do |list_item_configuration|
           field_configurations = @database[:list_item_field_configurations]
@@ -30,8 +30,8 @@ module Helpers
         end
         list_item_configurations.delete
       end
-      @user_ids.each { |id| TABLES.each {|table| @database[table].where(user_id: id).delete } }
       # rubocop:disable Style/CombinableLoops
+      @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
       @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
       # rubocop:enable Style/CombinableLoops
       @lists.delete

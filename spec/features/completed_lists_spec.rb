@@ -41,7 +41,7 @@ RSpec.describe "Completed lists page", type: :feature do
 
     wait_for { list_page.not_completed_items.any? }
 
-    incomplete_items = @list_items.select { |item| !item.completed }
+    incomplete_items = @list_items.reject(&:completed)
 
     expect(list_page.not_completed_items.map(&:text)).to include incomplete_items.first.pretty_title
     expect(list_page.not_completed_items.map(&:text)).to include incomplete_items.last.pretty_title

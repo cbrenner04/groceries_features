@@ -41,7 +41,8 @@ module Helpers
       [
         Models::BookListItem.new(user_id: user.id, list_id: list.id, category: "foo", list_item_configuration_id:),
         Models::BookListItem.new(user_id: user.id, list_id: list.id, list_item_configuration_id:),
-        Models::BookListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo", list_item_configuration_id:)
+        Models::BookListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo",
+                                 list_item_configuration_id:)
       ]
     end
 
@@ -56,7 +57,8 @@ module Helpers
       [
         Models::GroceryListItem.new(user_id: user.id, list_id: list.id, category: "foo", list_item_configuration_id:),
         Models::GroceryListItem.new(user_id: user.id, list_id: list.id, list_item_configuration_id:),
-        Models::GroceryListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo", list_item_configuration_id:)
+        Models::GroceryListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo",
+                                    list_item_configuration_id:)
       ]
     end
 
@@ -73,7 +75,8 @@ module Helpers
       [
         Models::MusicListItem.new(user_id: user.id, list_id: list.id, category: "foo", list_item_configuration_id:),
         Models::MusicListItem.new(user_id: user.id, list_id: list.id, list_item_configuration_id:),
-        Models::MusicListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo", list_item_configuration_id:)
+        Models::MusicListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo",
+                                  list_item_configuration_id:)
       ]
     end
 
@@ -86,7 +89,8 @@ module Helpers
       [
         Models::SimpleListItem.new(user_id: user.id, list_id: list.id, category: "foo", list_item_configuration_id:),
         Models::SimpleListItem.new(user_id: user.id, list_id: list.id, list_item_configuration_id:),
-        Models::SimpleListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo", list_item_configuration_id:)
+        Models::SimpleListItem.new(user_id: user.id, list_id: list.id, completed: true, category: "foo",
+                                   list_item_configuration_id:)
       ]
     end
 
@@ -102,9 +106,12 @@ module Helpers
       Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
                                              list_item_configuration_id:, position: 4, create_field: true)
       [
-        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email, category: "foo", list_item_configuration_id:),
-        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email, list_item_configuration_id:),
-        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email, completed: true, category: "foo", list_item_configuration_id:)
+        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email, category: "foo",
+                                 list_item_configuration_id:),
+        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email,
+                                 list_item_configuration_id:),
+        Models::ToDoListItem.new(user_id: user.id, list_id: list.id, assignee_email: user.email, completed: true,
+                                 category: "foo", list_item_configuration_id:)
       ]
     end
   end

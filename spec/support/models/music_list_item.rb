@@ -6,7 +6,8 @@ module Models
     attr_accessor :title
     attr_reader :id, :user_id, :list_id, :artist, :album, :completed, :category, :list_item_configuration_id
 
-    def initialize(user_id:, list_id:, completed: false, category: nil, list_item_configuration_id: nil, create_item: true)
+    def initialize(user_id:, list_id:, completed: false, category: nil, list_item_configuration_id: nil,
+                   create_item: true)
       @user_id = user_id
       @list_id = list_id
       @title = SecureRandom.hex(16)

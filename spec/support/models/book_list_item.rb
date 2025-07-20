@@ -4,9 +4,11 @@ module Models
   # an item on a book list
   class BookListItem
     attr_accessor :title
-    attr_reader :id, :user_id, :list_id, :author, :completed, :read, :number_in_series, :category, :list_item_configuration_id
+    attr_reader :id, :user_id, :list_id, :author, :completed, :read, :number_in_series, :category,
+                :list_item_configuration_id
 
-    def initialize(user_id:, list_id:, completed: false, read: false, category: nil, list_item_configuration_id: nil, create_item: true)
+    def initialize(user_id:, list_id:, completed: false, read: false, category: nil, list_item_configuration_id: nil,
+                   create_item: true)
       @user_id = user_id
       @list_id = list_id
       @author = SecureRandom.hex(16)

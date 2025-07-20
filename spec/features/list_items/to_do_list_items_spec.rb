@@ -39,7 +39,7 @@ RSpec.describe "A to do list item", type: :feature do
   end
 
   it_behaves_like "a list item", "task", "ToDoList", Models::ToDoListItem, %w[assignee due_by]
-  it_behaves_like "a refreshable list item", "ToDoList"
+  it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do
     before do

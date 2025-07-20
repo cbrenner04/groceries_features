@@ -34,7 +34,7 @@ RSpec.describe "A grocery list item", type: :feature do
   end
 
   it_behaves_like "a list item", "product", "GroceryList", Models::GroceryListItem, ["quantity"]
-  it_behaves_like "a refreshable list item", "GroceryList"
+  it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do
     before do

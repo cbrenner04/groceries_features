@@ -10,8 +10,8 @@ module Models
     attr_accessor :task, :due_by, :assignee_email
     attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
 
-    def initialize(user_id:, list_id:, assignee_email: nil, completed: false, category: nil, refreshed: false, list_item_configuration_id: nil,
-                   create_item: true)
+    def initialize(user_id:, list_id:, assignee_email: nil, completed: false, category: nil, refreshed: false,
+                   list_item_configuration_id: nil, create_item: true)
       @user_id = user_id
       @list_id = list_id
       @list_item_configuration_id = list_item_configuration_id
