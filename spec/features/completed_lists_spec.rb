@@ -20,28 +20,31 @@ RSpec.describe "Completed lists page", type: :feature do
     login user
     completed_lists_page.load
 
-    wait_for { completed_lists_page.complete_list_names.map(&:text).include? list.name }
+    wait_for { completed_lists_page.complete_list_names.include? list.name }
   end
 
   it "refreshes list" do
     completed_lists_page.refresh list.name
 
-    completed_lists_names = completed_lists_page.complete_list_names.map(&:text)
+    completed_lists_names = completed_lists_page.complete_list_names
 
     expect(completed_lists_names).to include "#{list.name}*"
     expect(completed_lists_names).not_to include list.name
 
     home_page.load
 
-    wait_for { home_page.incomplete_list_names.map(&:text).include? list.name }
+    wait_for { home_page.incomplete_list_names.include? list.name }
 
-    expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+    expect(home_page.incomplete_list_names).to include list.name
 
     home_page.select_list list.name
 
-    expect(list_page).to have_not_purchased_items
-    expect(list_page.not_purchased_items.map(&:text)).to include @list_items.first.pretty_title
-    expect(list_page.not_purchased_items.map(&:text)).to include @list_items.last.pretty_title
+    wait_for { list_page.not_completed_items.any? }
+
+    incomplete_items = @list_items.select { |item| !item.completed }
+
+    expect(list_page.not_completed_items.map(&:text)).to include incomplete_items.first.pretty_title
+    expect(list_page.not_completed_items.map(&:text)).to include incomplete_items.last.pretty_title
   end
 
   it "deletes list" do
@@ -53,9 +56,9 @@ RSpec.describe "Completed lists page", type: :feature do
 
     completed_lists_page.confirm_delete_button.click
 
-    wait_for { !completed_lists_page.complete_list_names.map(&:text).include?(list.name) }
+    wait_for { !completed_lists_page.complete_list_names.include?(list.name) }
 
-    expect(completed_lists_page.complete_list_names.map(&:text)).not_to include list.name
+    expect(completed_lists_page.complete_list_names).not_to include list.name
   end
 
   describe "shared list" do
@@ -68,10 +71,10 @@ RSpec.describe "Completed lists page", type: :feature do
 
       completed_lists_page.confirm_delete_button.click
 
-      wait_for { !completed_lists_page.complete_list_names.map(&:text).include?(other_list.name) }
+      wait_for { !completed_lists_page.complete_list_names.include?(other_list.name) }
 
       expect(completed_lists_page).to have_list_deleted_alert
-      expect(completed_lists_page.complete_list_names.map(&:text)).not_to include other_list.name
+      expect(completed_lists_page.complete_list_names).not_to include other_list.name
 
       # users_list should be refused
       users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first

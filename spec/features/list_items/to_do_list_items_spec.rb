@@ -12,15 +12,15 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list) { Models::List.new(type: "ToDoList", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    new_list_item.assignee_id = user.id # necessary for later checks as well
+    date_format = "%m/%d/%Y"
 
     list_page.task_input.set new_list_item.task
-    list_page.assignee_input.select user.email
-    fill_in "Due By", with: new_list_item.due_by.strftime("%m%d%Y")
+    list_page.assignee_input.set new_list_item.assignee_email
+    fill_in "Due by", with: new_list_item.due_by.strftime(date_format)
 
     expect(list_page.task_input.value).to eq new_list_item.task
-    expect(list_page.assignee_input.value).to eq new_list_item.assignee_id
-    expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime("%Y-%m-%d")
+    expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
+    expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime(date_format)
   end
 
   def confirm_form_cleared
@@ -31,7 +31,7 @@ RSpec.describe "A to do list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "#{item.task}\nAssigned To: #{user.email}\nDue By: February 2, 2020"
+    "#{item.task} Assigned To: #{item.assignee_email} Due By: February 2, 2020"
   end
 
   before do
@@ -50,18 +50,18 @@ RSpec.describe "A to do list item", type: :feature do
     end
 
     it "can create, complete, edit, refresh, and destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.task)
-      purchased_item = list_page.find_list_item(@list_items.last.task, purchased: true)
+      not_completed_item = list_page.find_list_item(@list_items.first.task)
+      completed_item = list_page.find_list_item(@list_items.last.task, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_task_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
-      expect(not_purchased_item).to have_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_css list_page.edit_button_css
-      expect(not_purchased_item).to have_css list_page.delete_button_css
-      expect(purchased_item).to have_css list_page.refresh_button_css
-      expect(purchased_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.complete_button_css
+      expect(not_completed_item).to have_css list_page.edit_button_css
+      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.refresh_button_css
+      expect(completed_item).to have_css list_page.delete_button_css
     end
   end
 
@@ -74,17 +74,17 @@ RSpec.describe "A to do list item", type: :feature do
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.task)
-      purchased_item = list_page.find_list_item(@list_items.last.task, purchased: true)
+      not_completed_item = list_page.find_list_item(@list_items.first.task)
+      completed_item = list_page.find_list_item(@list_items.last.task, completed: true)
 
       expect(list_page).to have_no_task_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
-      expect(not_purchased_item).to have_no_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_no_css list_page.edit_button_css
-      expect(not_purchased_item).to have_no_css list_page.delete_button_css
-      expect(purchased_item).to have_no_css list_page.refresh_button_css
-      expect(purchased_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.complete_button_css
+      expect(not_completed_item).to have_no_css list_page.edit_button_css
+      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.refresh_button_css
+      expect(completed_item).to have_no_css list_page.delete_button_css
     end
   end
 end
