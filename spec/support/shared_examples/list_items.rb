@@ -137,7 +137,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             # no longer filtered
             list_page.clear_filter_button.click
-            wait_for { list_page.not_completed_items.count == 1 }
+            wait_for { list_page.not_completed_items.one? }
 
             # After clearing filter, should see the remaining incomplete item
             expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
@@ -162,7 +162,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             # no longer filtered
             list_page.clear_filter_button.click
-            wait_for { list_page.not_completed_items.count == 1 }
+            wait_for { list_page.not_completed_items.one? }
 
             # After clearing filter, should see the remaining incomplete item
             expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title

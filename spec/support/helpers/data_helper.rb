@@ -29,15 +29,15 @@ module Helpers
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
       unless skip_field_configuration
         Models::ListItemFieldConfiguration.new(label: "author", data_type: "free_text", archived_at: nil,
-                                              list_item_configuration_id:, position: 1, create_field: true)
+                                               list_item_configuration_id:, position: 1, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "title", data_type: "free_text", archived_at: nil,
-                                              list_item_configuration_id:, position: 2, create_field: true)
+                                               list_item_configuration_id:, position: 2, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "read", data_type: "boolean", archived_at: nil,
-                                              list_item_configuration_id:, position: 3, create_field: true)
+                                               list_item_configuration_id:, position: 3, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "number_in_series", data_type: "integer", archived_at: nil,
-                                              list_item_configuration_id:, position: 4, create_field: true)
+                                               list_item_configuration_id:, position: 4, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
-                                              list_item_configuration_id:, position: 5, create_field: true)
+                                               list_item_configuration_id:, position: 5, create_field: true)
       end
 
       [
@@ -52,9 +52,9 @@ module Helpers
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
       unless skip_field_configuration
         Models::ListItemFieldConfiguration.new(label: "quantity", data_type: "integer", archived_at: nil,
-                                             list_item_configuration_id:, position: 1, create_field: true)
+                                               list_item_configuration_id:, position: 1, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "product", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 2, create_field: true)
+                                               list_item_configuration_id:, position: 2, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
                                                list_item_configuration_id:, position: 3, create_field: true)
       end
@@ -70,9 +70,9 @@ module Helpers
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
       unless skip_field_configuration
         Models::ListItemFieldConfiguration.new(label: "title", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 1, create_field: true)
+                                               list_item_configuration_id:, position: 1, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "artist", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 2, create_field: true)
+                                               list_item_configuration_id:, position: 2, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "album", data_type: "free_text", archived_at: nil,
                                                list_item_configuration_id:, position: 3, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
@@ -90,7 +90,7 @@ module Helpers
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
       unless skip_field_configuration
         Models::ListItemFieldConfiguration.new(label: "content", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 1, create_field: true)
+                                               list_item_configuration_id:, position: 1, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
                                                list_item_configuration_id:, position: 2, create_field: true)
       end
@@ -106,12 +106,12 @@ module Helpers
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
       unless skip_field_configuration
         Models::ListItemFieldConfiguration.new(label: "task", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 1, create_field: true)
+                                               list_item_configuration_id:, position: 1, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "due_by", data_type: "date", archived_at: nil,
-                                             list_item_configuration_id:, position: 2, create_field: true)
+                                               list_item_configuration_id:, position: 2, create_field: true)
         # TODO: this isn't exactly right
         Models::ListItemFieldConfiguration.new(label: "assignee_email", data_type: "free_text", archived_at: nil,
-                                             list_item_configuration_id:, position: 3, create_field: true)
+                                               list_item_configuration_id:, position: 3, create_field: true)
         Models::ListItemFieldConfiguration.new(label: "category", data_type: "free_text", archived_at: nil,
                                                list_item_configuration_id:, position: 4, create_field: true)
       end

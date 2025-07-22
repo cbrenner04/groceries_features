@@ -260,7 +260,7 @@ RSpec.shared_examples "a list" do |list_type|
 
             home_page.share other_list.name
 
-            list_user = share_list_page.find_shared_user(shared_state: "accepted", user_id: other_user.id)
+            share_list_page.find_shared_user(shared_state: "accepted", user_id: other_user.id)
 
             expect(share_list_page).not_to have_write_badge
             expect(share_list_page).not_to have_read_badge
