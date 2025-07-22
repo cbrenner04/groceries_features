@@ -138,6 +138,14 @@ module Pages
       list_element.find("input").click
     end
 
+    def accept_button_css
+      "[data-test-id='pending-list-accept']"
+    end
+
+    def reject_button_css
+      "[data-test-id='pending-list-trash']"
+    end
+
     def accept(list_name)
       list_element = find_pending_list(list_name)
       find_by_test_id_within(list_element, "pending-list-accept").click
@@ -151,6 +159,26 @@ module Pages
     def complete(list_name)
       list_element = find_incomplete_list(list_name)
       find_by_test_id_within(list_element, "incomplete-list-complete").click
+    end
+
+    def complete_button_css
+      "[data-test-id='incomplete-list-complete']"
+    end
+
+    def has_share_button?
+      has_test_id?("incomplete-list-share")
+    end
+
+    def share_button_css
+      "[data-test-id='incomplete-list-share']"
+    end
+
+    def has_edit_button?
+      has_test_id?("incomplete-list-edit")
+    end
+
+    def edit_button_css
+      "[data-test-id='incomplete-list-edit']"
     end
 
     def share(list_name)
@@ -168,10 +196,22 @@ module Pages
       find_by_test_id_within(list_element, "incomplete-list-merge").click
     end
 
+    def incomplete_delete_button_css
+      "[data-test-id='incomplete-list-trash']"
+    end
+
+    def complete_delete_button_css
+      "[data-test-id='complete-list-trash']"
+    end
+
     def delete(list_name, complete: false)
       list_element = complete ? find_complete_list(list_name) : find_incomplete_list(list_name)
       test_id = complete ? "complete-list-trash" : "incomplete-list-trash"
       find_by_test_id_within(list_element, test_id).click
+    end
+
+    def refresh_button_css
+      "[data-test-id='complete-list-refresh']"
     end
 
     def refresh(list_name)
@@ -193,6 +233,30 @@ module Pages
 
     def wait_until_confirm_reject_button_visible
       wait_for { has_test_id?("confirm-reject") }
+    end
+
+    def has_merge_warning?
+      has_text?("Only lists of the same type can be merged")
+    end
+
+    def has_merge_breakdown?
+      has_text?("Lists to be merged") && has_text?("Lists excluded")
+    end
+
+    def merge_warning_text
+      find(".alert-warning").text
+    end
+
+    def merge_breakdown_text
+      find(".alert-info").text
+    end
+
+    def has_clear_merge_button?
+      has_test_id?("clear-merge")
+    end
+
+    def clear_merge_button
+      find_by_test_id("clear-merge")
     end
   end
   # rubocop:enable Metrics/ClassLength

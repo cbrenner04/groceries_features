@@ -25,34 +25,34 @@ RSpec.describe "Invite", type: :feature do
     refused = share_list_page.find_shared_user(shared_state: "refused", user_id: refused_user.id)
 
     expect(pending).to have_text pending_user.email
-    expect(pending).to share_list_page.have_write_badge
+    expect(pending).to have_css share_list_page.write_badge_css
     expect(accepted).to have_text accepted_user.email
-    expect(accepted).to share_list_page.have_read_badge
+    expect(accepted).to have_css share_list_page.read_badge_css
     expect(refused).to have_text refused_user.email
-    expect(refused).not_to share_list_page.have_write_badge
-    expect(refused).not_to share_list_page.have_read_badge
+    expect(refused).to have_no_css share_list_page.write_badge_css
+    expect(refused).to have_no_css share_list_page.read_badge_css
   end
 
   it "toggles permissions" do
     pending = share_list_page.find_shared_user(shared_state: "pending", user_id: pending_user.id)
 
     expect(pending).to have_text pending_user.email
-    expect(pending).to share_list_page.have_write_badge
+    expect(pending).to have_css share_list_page.write_badge_css
 
     share_list_page.toggle_permissions(shared_state: "pending", user_id: pending_user.id)
 
     pending = share_list_page.find_shared_user(shared_state: "pending", user_id: pending_user.id)
 
     expect(pending).to have_text pending_user.email
-    expect(pending).to share_list_page.have_read_badge
+    expect(pending).to have_css share_list_page.read_badge_css
   end
 
   it "refreshes share" do
     refused = share_list_page.find_shared_user(shared_state: "refused", user_id: refused_user.id)
 
     expect(refused).to have_text refused_user.email
-    expect(refused).not_to share_list_page.have_write_badge
-    expect(refused).not_to share_list_page.have_read_badge
+    expect(refused).to have_no_css share_list_page.write_badge_css
+    expect(refused).to have_no_css share_list_page.read_badge_css
 
     share_list_page.refresh_share(user_id: refused_user.id)
 
@@ -65,7 +65,7 @@ RSpec.describe "Invite", type: :feature do
     accepted = share_list_page.find_shared_user(shared_state: "accepted", user_id: accepted_user.id)
 
     expect(accepted).to have_text accepted_user.email
-    expect(accepted).to share_list_page.have_read_badge
+    expect(accepted).to have_css share_list_page.read_badge_css
 
     share_list_page.remove_share(shared_state: "accepted", user_id: accepted_user.id)
 

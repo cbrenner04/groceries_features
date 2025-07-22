@@ -122,14 +122,23 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
         describe "when there is only one item for the selected category" do
           it "is completed" do
             item_name = @list_items.first.pretty_title
+            incomplete_item_count_start = list_page.not_completed_items.count
+            completed_item_count_start = list_page.completed_items.count
 
             list_page.complete item_name
 
-            wait_for { list_page.completed_items.count == @initial_list_item_count + 1 }
+            wait_for { list_page.completed_items.count == incomplete_item_count_start + 1 }
 
+            expect(list_page.not_completed_items.count).to eq incomplete_item_count_start - 1
+            expect(list_page.completed_items.count).to eq completed_item_count_start + 1
+            expect(list_page.not_completed_items.map(&:text)).not_to include item_name
+            expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
             expect(list_page.completed_items.map(&:text)).to include item_name
+
             # no longer filtered
             list_page.clear_filter_button.click
+            wait_for { list_page.not_completed_items.count == 1 }
+
             # After clearing filter, should see the remaining incomplete item
             expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
             expect(list_page.not_completed_items.count).to eq 1
@@ -137,22 +146,24 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
           it "is destroyed" do
             item_name = @list_items.first.pretty_title
+            incomplete_item_count_start = list_page.not_completed_items.count
 
             list_page.delete item_name
             list_page.wait_until_confirm_delete_button_visible
 
-            # for some reason if the button is clicked to early it doesn't work
-            sleep 1
-
             list_page.confirm_delete_button.click
-
-            wait_for { list_page.not_completed_items.count == @initial_list_item_count - 1 }
-
-            expect(list_page.not_completed_items.count).to eq @initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
+
+            wait_for { list_page.not_completed_items.count == incomplete_item_count_start - 1 }
+
+            expect(list_page.not_completed_items.count).to eq incomplete_item_count_start - 1
             expect(list_page.not_completed_items.map(&:text)).not_to include item_name
+            expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
+
             # no longer filtered
             list_page.clear_filter_button.click
+            wait_for { list_page.not_completed_items.count == 1 }
+
             # After clearing filter, should see the remaining incomplete item
             expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
             expect(list_page.not_completed_items.count).to eq 1
