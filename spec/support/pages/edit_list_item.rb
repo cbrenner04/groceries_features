@@ -5,7 +5,7 @@ module Pages
   class EditListItem < SitePrism::Page
     include TestSelectors
 
-    set_url "lists/{list_id}/{list_item_type}/{id}/edit"
+    set_url "lists/{list_id}/list_items/{id}/edit"
 
     element :title, "#title"
     element :task, "#task"

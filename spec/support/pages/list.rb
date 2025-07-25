@@ -13,7 +13,7 @@ module Pages
     DELETE_BUTTON = ".fa.fa-trash"
     REFRESH_BUTTON = ".fa.fa-redo"
 
-    set_url "/lists/{id}"
+    set_url "lists/{id}"
 
     element :item_deleted_alert, "[role='alert']", text: "Item successfully deleted."
     element :author_input, "#author"

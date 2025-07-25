@@ -5,7 +5,7 @@ module Pages
   class EditList < SitePrism::Page
     include TestSelectors
 
-    set_url "/lists/{id}/edit"
+    set_url "lists/{id}/edit"
 
     element :name, "#name"
     element :submit, "[type='submit']"

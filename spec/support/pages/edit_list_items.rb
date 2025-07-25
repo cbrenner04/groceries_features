@@ -5,7 +5,7 @@ module Pages
   class EditListItems < SitePrism::Page
     include TestSelectors
 
-    set_url "lists/{list_id}/{list_item_type}/bulk_edit?item_ids={item_ids}"
+    set_url "lists/{list_id}/list_items/bulk-edit?item_ids={item_ids}"
 
     # attribute inputs
     element :album, "#album"
