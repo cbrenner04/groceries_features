@@ -12,6 +12,8 @@ require "envyable"
 require "byebug"
 require "rspec/retry"
 
+require_relative "support/pages/test_selectors"
+
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
@@ -40,7 +42,7 @@ RSpec.configure do |config|
     end
   end
   # rubocop:enable Lint/ConstantDefinitionInBlock
-  config.default_retry_count = 3
+  config.default_retry_count = 1
   config.after(type: :feature) do
     # TODO: CSP is throwing on something but doesn't effect the tests
     # This only matters in staging

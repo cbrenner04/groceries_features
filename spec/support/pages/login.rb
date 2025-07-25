@@ -3,6 +3,8 @@
 module Pages
   # login page, including forgot password and sign up
   class Login < SitePrism::Page
+    include TestSelectors
+
     set_url "/users/sign_in"
 
     element :email, "#email"

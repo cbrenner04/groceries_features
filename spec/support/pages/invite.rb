@@ -3,6 +3,8 @@
 module Pages
   # invite page
   class Invite < SitePrism::Page
+    include TestSelectors
+
     set_url "/users/invitation/new"
 
     element :email, "#email"

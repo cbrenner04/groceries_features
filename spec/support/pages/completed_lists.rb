@@ -3,33 +3,61 @@
 module Pages
   # completed lists page, displays users completed lists
   class CompletedLists < SitePrism::Page
-    COMPLETE_LIST = "div[data-test-class='completed-list']"
-    DELETE_BUTTON = 'button[data-test-id="complete-list-trash"]'
-    REFRESH_BUTTON = 'button[data-test-id="complete-list-refresh"]'
+    include TestSelectors
+    include Helpers::WaitHelper
+
+    REFRESH_BUTTON_ID = "complete-list-refresh"
+
     set_url "/completed_lists"
 
-    elements :complete_list_names, "#{COMPLETE_LIST} h5"
-    element :confirm_delete_button, 'button[data-test-id="confirm-delete"]'
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
 
-    def delete(list_name)
-      find_complete_list(list_name).find(DELETE_BUTTON).click
+    def complete_list_names
+      all_by_test_class("completed-list").map { |list| list.find("h5").text }
     end
 
-    def delete_button_css
-      DELETE_BUTTON
+    def delete(list_name)
+      list_element = find_complete_list(list_name)
+      find_by_test_id_within(list_element, "complete-list-trash").click
+    end
+
+    def confirm_delete_button
+      find_by_test_id("confirm-delete")
     end
 
     def find_complete_list(list_name)
-      find(COMPLETE_LIST, text: list_name)
-    end
-
-    def refresh_button_css
-      REFRESH_BUTTON
+      find_by_test_class("completed-list", text: list_name)
     end
 
     def refresh(list_name)
-      find_complete_list(list_name).find(REFRESH_BUTTON).click
+      list_element = find_complete_list(list_name)
+      find_by_test_id_within(list_element, REFRESH_BUTTON_ID).click
+    end
+
+    def refresh_button_css
+      "[data-test-id='#{REFRESH_BUTTON_ID}']"
+    end
+
+    # has_*? methods for elements that use data-test-* selectors
+    def has_confirm_delete?
+      has_test_id?("confirm-delete")
+    end
+
+    def has_complete_lists?
+      has_test_class?("completed-list")
+    end
+
+    # has_no_*? methods for negative assertions
+    def has_no_confirm_delete?
+      has_no_test_id?("confirm-delete")
+    end
+
+    def has_no_complete_lists?
+      has_no_test_class?("completed-list")
+    end
+
+    def wait_until_confirm_delete_button_visible
+      wait_for { has_test_id?("confirm-delete") }
     end
   end
 end

@@ -34,7 +34,7 @@ RSpec.describe "A simple list item", type: :feature do
   end
 
   it_behaves_like "a list item", "content", "SimpleList", Models::SimpleListItem, []
-  it_behaves_like "a refreshable list item", "SimpleList"
+  it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do
     before do
@@ -45,18 +45,18 @@ RSpec.describe "A simple list item", type: :feature do
     end
 
     it "can create, complete, edit, refresh, and destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.content)
-      purchased_item = list_page.find_list_item(@list_items.last.content, purchased: true)
+      not_completed_item = list_page.find_list_item(@list_items.first.content)
+      completed_item = list_page.find_list_item(@list_items.last.content, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_content_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
-      expect(not_purchased_item).to have_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_css list_page.edit_button_css
-      expect(not_purchased_item).to have_css list_page.delete_button_css
-      expect(purchased_item).to have_css list_page.refresh_button_css
-      expect(purchased_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.complete_button_css
+      expect(not_completed_item).to have_css list_page.edit_button_css
+      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.refresh_button_css
+      expect(completed_item).to have_css list_page.delete_button_css
     end
   end
 
@@ -69,17 +69,17 @@ RSpec.describe "A simple list item", type: :feature do
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.content)
-      purchased_item = list_page.find_list_item(@list_items.last.content, purchased: true)
+      not_completed_item = list_page.find_list_item(@list_items.first.content)
+      completed_item = list_page.find_list_item(@list_items.last.content, completed: true)
 
       expect(list_page).to have_no_content_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
-      expect(not_purchased_item).to have_no_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_no_css list_page.edit_button_css
-      expect(not_purchased_item).to have_no_css list_page.delete_button_css
-      expect(purchased_item).to have_no_css list_page.refresh_button_css
-      expect(purchased_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.complete_button_css
+      expect(not_completed_item).to have_no_css list_page.edit_button_css
+      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.refresh_button_css
+      expect(completed_item).to have_no_css list_page.delete_button_css
     end
   end
 end

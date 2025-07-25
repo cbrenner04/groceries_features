@@ -34,7 +34,7 @@ RSpec.describe "A grocery list item", type: :feature do
   end
 
   it_behaves_like "a list item", "product", "GroceryList", Models::GroceryListItem, ["quantity"]
-  it_behaves_like "a refreshable list item", "GroceryList"
+  it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do
     before do
@@ -44,9 +44,9 @@ RSpec.describe "A grocery list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "can create, purchase, edit, refresh, and destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.product)
-      purchased_item = list_page.find_list_item(@list_items.last.product, purchased: true)
+    it "can create, complete, edit, refresh, and destroy" do
+      not_completed_item = list_page.find_list_item(@list_items.first.product)
+      completed_item = list_page.find_list_item(@list_items.last.product, completed: true)
 
       list_page.expand_list_item_form
 
@@ -54,11 +54,11 @@ RSpec.describe "A grocery list item", type: :feature do
       expect(list_page).to have_product_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
-      expect(not_purchased_item).to have_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_css list_page.edit_button_css
-      expect(not_purchased_item).to have_css list_page.delete_button_css
-      expect(purchased_item).to have_css list_page.refresh_button_css
-      expect(purchased_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.complete_button_css
+      expect(not_completed_item).to have_css list_page.edit_button_css
+      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.refresh_button_css
+      expect(completed_item).to have_css list_page.delete_button_css
     end
   end
 
@@ -70,19 +70,19 @@ RSpec.describe "A grocery list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "cannot create, purchase, edit, refresh, or destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.product)
-      purchased_item = list_page.find_list_item(@list_items.last.product, purchased: true)
+    it "cannot create, complete, edit, refresh, or destroy" do
+      not_completed_item = list_page.find_list_item(@list_items.first.product)
+      completed_item = list_page.find_list_item(@list_items.last.product, completed: true)
 
       expect(list_page).to have_no_quantity_input
       expect(list_page).to have_no_product_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
-      expect(not_purchased_item).to have_no_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_no_css list_page.edit_button_css
-      expect(not_purchased_item).to have_no_css list_page.delete_button_css
-      expect(purchased_item).to have_no_css list_page.refresh_button_css
-      expect(purchased_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.complete_button_css
+      expect(not_completed_item).to have_no_css list_page.edit_button_css
+      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.refresh_button_css
+      expect(completed_item).to have_no_css list_page.delete_button_css
     end
   end
 end
