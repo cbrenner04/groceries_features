@@ -647,7 +647,7 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.confirm_delete_button.click
 
-        wait_for { home_page.incomplete_lists.count.zero? }
+        wait_for { home_page.incomplete_lists.none? }
 
         expect(home_page.incomplete_lists.length).to eq 0
         # users_list should be refused
@@ -667,8 +667,8 @@ RSpec.shared_examples "a list" do |list_type|
         # TODO: this seems to wait the entire max wait time
         wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
 
-        expect(home_page.incomplete_list_names).to match_array [list.name, other_list.name, completed_list.name]
-        expect(home_page.complete_list_names).to match_array ["#{completed_list.name}*", other_completed_list.name]
+        expect(home_page.incomplete_list_names).to contain_exactly(list.name, other_list.name, completed_list.name)
+        expect(home_page.complete_list_names).to contain_exactly("#{completed_list.name}*", other_completed_list.name)
       end
     end
   end

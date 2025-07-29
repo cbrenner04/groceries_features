@@ -69,7 +69,7 @@ RSpec.configure do |config|
   end
 end
 
-CONSTANT_WINDOW_SIZE = [1728, 960]
+CONSTANT_WINDOW_SIZE = [1728, 960].freeze
 
 # Capybara configuration options
 Capybara.register_driver :selenium do |app|
