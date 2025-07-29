@@ -134,8 +134,13 @@ module Pages
     end
 
     def multi_select_list(list_name, complete: false)
-      list_element = complete ? find_complete_list(list_name) : find_incomplete_list(list_name)
+      list_element = multi_select_list_element(list_name, complete: complete)
+
       list_element.find("input").click
+    end
+
+    def multi_select_list_element(list_name, complete: false)
+      complete ? find_complete_list(list_name) : find_incomplete_list(list_name)
     end
 
     def accept_button_css
@@ -192,8 +197,12 @@ module Pages
     end
 
     def merge(list_name)
+      merge_button(list_name).click
+    end
+
+    def merge_button(list_name)
       list_element = find_incomplete_list(list_name)
-      find_by_test_id_within(list_element, "incomplete-list-merge").click
+      find_by_test_id_within(list_element, "incomplete-list-merge")
     end
 
     def incomplete_delete_button_css

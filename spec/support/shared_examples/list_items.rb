@@ -72,6 +72,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         edit_list_item_page.submit.click
 
+        # need a wait here - staging is be slow
+
         expect(list_page.not_completed_items.map(&:text)).to include item.pretty_title
       end
 

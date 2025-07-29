@@ -478,6 +478,7 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.complete list.name
 
         wait_for { !home_page.incomplete_list_names.include?(list.name) }
+        wait_for { home_page.complete_list_names.include?(other_completed_list.name) }
 
         expect(home_page.complete_list_names).to include list.name
         expect(home_page.complete_list_names).not_to include other_list.name
@@ -515,9 +516,19 @@ RSpec.shared_examples "a list" do |list_type|
         different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
         create_associated_list_objects(user, different_type_list)
 
+        # need to pick up the data changes
+        home_page.load
+
+        wait_for { home_page.multi_select_buttons.first.visible? }
+
         home_page.multi_select_buttons.first.click
+
+        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+
         home_page.multi_select_list list.name
         home_page.multi_select_list different_type_list.name
+
+        wait_for { home_page.merge_button(list.name).visible? }
 
         home_page.merge list.name
 
@@ -533,7 +544,15 @@ RSpec.shared_examples "a list" do |list_type|
         different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
         create_associated_list_objects(user, different_type_list)
 
+        # need to pick up the data changes
+        home_page.load
+
+        wait_for { home_page.multi_select_buttons.first.visible? }
+
         home_page.multi_select_buttons.first.click
+
+        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
         home_page.multi_select_list different_type_list.name
@@ -628,7 +647,7 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.confirm_delete_button.click
 
-        sleep 1 # Super lame
+        wait_for { home_page.incomplete_lists.count.zero? }
 
         expect(home_page.incomplete_lists.length).to eq 0
         # users_list should be refused
@@ -645,15 +664,11 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name
 
-        sleep 1 # Super lame
+        # TODO: this seems to wait the entire max wait time
+        wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
 
-        expect(home_page.incomplete_list_names).to include list.name
-        expect(home_page.incomplete_list_names).to include other_list.name
-        expect(home_page.incomplete_list_names).to include completed_list.name
-        expect(home_page.complete_list_names).to include "#{completed_list.name}*"
-        expect(home_page.complete_list_names).not_to include completed_list.name
-        expect(home_page.complete_list_names).to include other_completed_list.name
-        expect(home_page.complete_list_names).not_to include "#{other_completed_list.name}*"
+        expect(home_page.incomplete_list_names).to match_array [list.name, other_list.name, completed_list.name]
+        expect(home_page.complete_list_names).to match_array ["#{completed_list.name}*", other_completed_list.name]
       end
     end
   end
