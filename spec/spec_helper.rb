@@ -12,6 +12,8 @@ require "envyable"
 require "byebug"
 require "rspec/retry"
 
+require_relative "support/pages/test_selectors"
+
 Dir["#{File.expand_path(__dir__)}/support/**/*.rb"].each { |f| require f }
 
 Envyable.load("config/env.yml", ENV["ENV"] || "development")
@@ -40,7 +42,7 @@ RSpec.configure do |config|
     end
   end
   # rubocop:enable Lint/ConstantDefinitionInBlock
-  config.default_retry_count = 3
+  config.default_retry_count = 1
   config.after(type: :feature) do
     # TODO: CSP is throwing on something but doesn't effect the tests
     # This only matters in staging
@@ -67,22 +69,25 @@ RSpec.configure do |config|
   end
 end
 
+CONSTANT_WINDOW_SIZE = [1728, 960].freeze
+
 # Capybara configuration options
 Capybara.register_driver :selenium do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
 end
 Capybara.register_driver :poltergeist do |app|
-  options = { js: true, js_errors: false, window_size: [1280, 743] }
+  options = { js: true, js_errors: false, window_size: CONSTANT_WINDOW_SIZE }
   Capybara::Poltergeist::Driver.new(app, options)
 end
 # set `DRIVER=poltergeist` on the command line when you want to run headless
 Capybara.default_driver = ENV["DRIVER"].nil? ? :selenium : ENV["DRIVER"].to_sym
 unless ENV["DRIVER"] == "poltergeist"
   Capybara.javascript_driver = :chrome
-  Capybara.page.driver.browser.manage.window.resize_to(1280, 743)
+  Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
 end
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
+Capybara.default_max_wait_time = 15
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|

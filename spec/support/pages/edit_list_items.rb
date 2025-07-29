@@ -3,23 +3,25 @@
 module Pages
   # edit list page
   class EditListItems < SitePrism::Page
-    set_url "lists/{list_id}/{list_item_type}/bulk_edit?item_ids={item_ids}"
+    include TestSelectors
+
+    set_url "lists/{list_id}/list_items/bulk-edit?item_ids={item_ids}"
 
     # attribute inputs
     element :album, "#album"
-    element :clear_album, "#clearAlbum"
+    element :clear_album, "#clear_album"
     element :artist, "#artist"
-    element :clear_artist, "#clearArtist"
-    element :assignee, "#assigneeId"
-    element :clear_assignee, "#clearAssignee"
+    element :clear_artist, "#clear_artist"
+    element :assignee, "#assignee_email"
+    element :clear_assignee, "#clear_assignee_email"
     element :author, "#author"
-    element :clear_author, "#clearAuthor"
+    element :clear_author, "#clear_author"
     element :category, "#category"
-    element :clear_category, "#clearCategory"
+    element :clear_category, "#clear_category"
     element :due_by, "#due_by"
-    element :clear_due_by, "#clearDueBy"
+    element :clear_due_by, "#clear_due_by"
     element :quantity, "#quantity"
-    element :clear_quantity, "#clearQuantity"
+    element :clear_quantity, "#clear_quantity"
 
     element :submit, "button[type='submit']"
 

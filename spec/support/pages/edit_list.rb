@@ -3,9 +3,11 @@
 module Pages
   # edit list page
   class EditList < SitePrism::Page
-    set_url "/lists/{id}/edit"
+    include TestSelectors
+
+    set_url "lists/{id}/edit"
 
     element :name, "#name"
-    element :submit, "button[type='submit']"
+    element :submit, "[type='submit']"
   end
 end
