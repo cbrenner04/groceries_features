@@ -3,6 +3,8 @@
 module Pages
   # edit list page
   class ChangeOtherListModal < SitePrism::Page
+    include TestSelectors
+
     element :switch_to_existing_list, :button, text: "Choose existing list"
     element :switch_to_create_list, :button, text: "Create new list"
     element :existing_list_dropdown, "#existingList"

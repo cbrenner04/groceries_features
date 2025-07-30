@@ -36,9 +36,9 @@ RSpec.shared_examples "a list" do |list_type|
     home_page.list_type.select new_list_form_type
     home_page.submit.click
 
-    wait_for { home_page.incomplete_list_names.map(&:text).include? list.name }
+    wait_for { home_page.incomplete_list_names.include? list.name }
 
-    expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+    expect(home_page.incomplete_list_names).to include list.name
   end
 
   describe "that is incomplete" do
@@ -46,29 +46,29 @@ RSpec.shared_examples "a list" do |list_type|
       before { home_page.select_list list.name }
 
       it "displays list items" do
-        expect(list_page).to have_not_purchased_items
-        expect(list_page.not_purchased_items.map(&:text)).to include @list_items.first.pretty_title
-        expect(list_page).to have_purchased_items
-        expect(list_page.purchased_items.map(&:text)).to include @list_items.last.pretty_title
+        expect(list_page).to have_not_completed_items
+        expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+        expect(list_page).to have_completed_items
+        expect(list_page.completed_items.map(&:text)).to include @list_items.last.pretty_title
       end
 
       describe "that is filtered" do
         before do
-          list_page.wait_until_purchased_items_visible
+          list_page.wait_until_completed_items_visible
           list_page.filter_button.click
           list_page.filter_option("foo").click
         end
 
         it "only shows filtered items" do
-          expect(list_page.not_purchased_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_purchased_items.map(&:text)).not_to include @list_items[1].pretty_title
+          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+          expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
         end
 
         it "can clear filter" do
           list_page.clear_filter_button.click
 
-          expect(list_page.not_purchased_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_purchased_items.map(&:text)).to include @list_items[1].pretty_title
+          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+          expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
         end
       end
     end
@@ -76,12 +76,12 @@ RSpec.shared_examples "a list" do |list_type|
     it "is completed" do
       home_page.complete list.name
 
+      sleep 1 # it was complaining about stale element references in the wait_for block
+
       wait_for { !home_page.incomplete_list_names.include?(list.name) }
 
-      sleep 1
-
-      expect(home_page).to have_complete_lists
-      expect(home_page.complete_list_names.map(&:text)).to include list.name
+      expect(home_page).to have_completed_lists
+      expect(home_page.complete_list_names).to include list.name
     end
 
     it "is shared with a new user" do
@@ -105,10 +105,11 @@ RSpec.shared_examples "a list" do |list_type|
 
     it "is shared with a previously shared with user" do
       Models::UsersList.new(user_id: other_user.id, list_id: other_list.id)
+      other_user_list_count_before_share = DB[:users_lists].where(user_id: other_user.id).count
 
       home_page.share list.name
 
-      other_user_list_count_before_share = DB[:users_lists].where(user_id: other_user.id).count
+      wait_for { share_list_page.shared_list_names.include? other_user.email }
 
       share_list_page.share_list_with other_user.id
 
@@ -139,9 +140,9 @@ RSpec.shared_examples "a list" do |list_type|
 
       edit_list_page.submit.click
 
-      wait_for { !home_page.incomplete_list_names.map(&:text).include?(list.name) }
+      wait_for { !home_page.incomplete_list_names.include?(list.name) }
 
-      expect(home_page.incomplete_list_names.map(&:text)).to include list.name
+      expect(home_page.incomplete_list_names).to include list.name
     end
 
     it "is deleted" do
@@ -153,11 +154,11 @@ RSpec.shared_examples "a list" do |list_type|
 
       home_page.confirm_delete_button.click
 
-      wait_for { !home_page.incomplete_list_names.map(&:text).include?(list.name) }
+      wait_for { !home_page.incomplete_list_names.include?(list.name) }
 
       expect(home_page).to have_incomplete_lists
       expect(home_page).to have_list_deleted_alert
-      expect(home_page.incomplete_list_names.map(&:text)).not_to include list.name
+      expect(home_page.incomplete_list_names).not_to include list.name
     end
 
     describe "that is shared" do
@@ -185,9 +186,9 @@ RSpec.shared_examples "a list" do |list_type|
 
         it "accepts" do
           home_page.accept other_list.name
-          wait_for { home_page.incomplete_list_names.map(&:text).include? other_list.name }
+          wait_for { home_page.incomplete_list_names.include? other_list.name }
 
-          expect(home_page.incomplete_list_names.map(&:text)).to eq [other_list.name, list.name]
+          expect(home_page.incomplete_list_names).to eq [other_list.name, list.name]
         end
 
         it "rejects" do
@@ -200,12 +201,12 @@ RSpec.shared_examples "a list" do |list_type|
           home_page.confirm_reject_button.click
 
           wait_for do
-            !home_page.incomplete_list_names.map(&:text).include?(other_list.name) &&
-              !home_page.pending_list_names.map(&:text).include?(other_list.name)
+            !home_page.incomplete_list_names.include?(other_list.name) &&
+              !home_page.pending_list_names.include?(other_list.name)
           end
 
-          expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
-          expect(home_page.pending_list_names.map(&:text)).not_to include other_list.name
+          expect(home_page.incomplete_list_names).not_to include other_list.name
+          expect(home_page.pending_list_names).not_to include other_list.name
         end
       end
 
@@ -237,11 +238,11 @@ RSpec.shared_examples "a list" do |list_type|
 
             home_page.confirm_delete_button.click
 
-            wait_for { !home_page.incomplete_list_names.map(&:text).include?(other_list.name) }
+            wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
             expect(home_page).to have_incomplete_lists
             expect(home_page).to have_list_deleted_alert
-            expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
+            expect(home_page.incomplete_list_names).not_to include other_list.name
 
             # users_list should be refused
             users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -255,14 +256,14 @@ RSpec.shared_examples "a list" do |list_type|
           end
 
           it "cannot update permissions" do
-            create_associated_list_objects(other_user, other_list)
+            create_associated_list_objects(other_user, other_list, skip_field_configuration: true)
 
             home_page.share other_list.name
 
-            list_user = share_list_page.find_shared_user(shared_state: "accepted", user_id: other_user.id)
+            share_list_page.find_shared_user(shared_state: "accepted", user_id: other_user.id)
 
-            expect(list_user).to have_no_css share_list_page.write_badge_css
-            expect(list_user).to have_no_css share_list_page.read_badge_css
+            expect(share_list_page).not_to have_write_badge
+            expect(share_list_page).not_to have_read_badge
           end
         end
 
@@ -291,11 +292,11 @@ RSpec.shared_examples "a list" do |list_type|
 
             home_page.confirm_delete_button.click
 
-            wait_for { !home_page.incomplete_list_names.map(&:text).include?(other_list.name) }
+            wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
             expect(home_page).to have_incomplete_lists
             expect(home_page).to have_list_deleted_alert
-            expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
+            expect(home_page.incomplete_list_names).not_to include other_list.name
 
             # users_list should be refused
             users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -318,10 +319,10 @@ RSpec.shared_examples "a list" do |list_type|
         end
 
         it "is not visible" do
-          wait_for { !home_page.pending_list_names.map(&:text).include? other_list.name }
+          wait_for { !home_page.pending_list_names.include? other_list.name }
 
-          expect(home_page.incomplete_list_names.map(&:text)).not_to include other_list.name
-          expect(home_page.pending_list_names.map(&:text)).not_to include other_list.name
+          expect(home_page.incomplete_list_names).not_to include other_list.name
+          expect(home_page.pending_list_names).not_to include other_list.name
         end
       end
     end
@@ -330,29 +331,29 @@ RSpec.shared_examples "a list" do |list_type|
   describe "that is complete" do
     before do
       home_page.wait_until_header_visible
-      wait_for { home_page.complete_list_names.map(&:text).include? completed_list.name }
+      wait_for { home_page.complete_list_names.include? completed_list.name }
     end
 
     it "is viewed" do
       home_page.select_list completed_list.name
 
-      expect(list_page).to have_purchased_items
-      expect(list_page.purchased_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page).to have_completed_items
+      expect(list_page.completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
     end
 
     it "is refreshed" do
       home_page.refresh completed_list.name
 
-      wait_for { home_page.incomplete_list_names.map(&:text).include? completed_list.name }
+      wait_for { home_page.incomplete_list_names.include? completed_list.name }
 
-      expect(home_page.incomplete_list_names.map(&:text)).to include completed_list.name
-      expect(home_page.complete_list_names.map(&:text)).to include "#{completed_list.name}*"
+      expect(home_page.incomplete_list_names).to include completed_list.name
+      expect(home_page.complete_list_names).to include "#{completed_list.name}*"
 
       home_page.select_list completed_list.name
 
-      expect(list_page).to have_not_purchased_items
-      expect(list_page.not_purchased_items.map(&:text)).to include @completed_list_items.first.pretty_title
-      expect(list_page.not_purchased_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page).to have_not_completed_items
+      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.first.pretty_title
+      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
     end
 
     it "is deleted" do
@@ -364,9 +365,9 @@ RSpec.shared_examples "a list" do |list_type|
 
       home_page.confirm_delete_button.click
 
-      wait_for { !home_page.complete_list_names.map(&:text).include?(completed_list.name) }
+      wait_for { !home_page.complete_list_names.include?(completed_list.name) }
 
-      expect(home_page.complete_list_names.map(&:text)).not_to include completed_list.name
+      expect(home_page.complete_list_names).not_to include completed_list.name
     end
 
     describe "that is shared" do
@@ -379,7 +380,7 @@ RSpec.shared_examples "a list" do |list_type|
         end
 
         it "cannot be refreshed" do
-          wait_for { home_page.complete_list_names.map(&:text).include? other_list.name }
+          wait_for { home_page.complete_list_names.include? other_list.name }
 
           write_list = home_page.find_complete_list(other_list.name)
 
@@ -396,11 +397,13 @@ RSpec.shared_examples "a list" do |list_type|
 
           home_page.confirm_delete_button.click
 
-          wait_for { !home_page.complete_list_names.map(&:text).include?(other_list.name) }
+          sleep 1
 
-          expect(home_page).to have_complete_lists
+          wait_for { !home_page.complete_list_names.include?(other_list.name) }
+
+          expect(home_page).to have_completed_lists
           expect(home_page).to have_list_deleted_alert
-          expect(home_page.complete_list_names.map(&:text)).not_to include other_list.name
+          expect(home_page.complete_list_names).not_to include other_list.name
 
           # users_list should be refused
           users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -438,11 +441,11 @@ RSpec.shared_examples "a list" do |list_type|
 
           home_page.confirm_delete_button.click
 
-          wait_for { !home_page.complete_list_names.map(&:text).include?(other_list.name) }
+          wait_for { !home_page.complete_list_names.include?(other_list.name) }
 
-          expect(home_page).to have_complete_lists
+          expect(home_page).to have_completed_lists
           expect(home_page).to have_list_deleted_alert
-          expect(home_page.complete_list_names.map(&:text)).not_to include other_list.name
+          expect(home_page.complete_list_names).not_to include other_list.name
 
           # users_list should be refused
           users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -474,12 +477,13 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.complete list.name
 
-        wait_for { !home_page.incomplete_list_names.map(&:text).include?(list.name) }
+        wait_for { !home_page.incomplete_list_names.include?(list.name) }
+        wait_for { home_page.complete_list_names.include?(other_completed_list.name) }
 
-        expect(home_page.complete_list_names.map(&:text)).to include list.name
-        expect(home_page.complete_list_names.map(&:text)).not_to include other_list.name
-        expect(home_page.complete_list_names.map(&:text)).to include completed_list.name
-        expect(home_page.complete_list_names.map(&:text)).to include other_completed_list.name
+        expect(home_page.complete_list_names).to include list.name
+        expect(home_page.complete_list_names).not_to include other_list.name
+        expect(home_page.complete_list_names).to include completed_list.name
+        expect(home_page.complete_list_names).to include other_completed_list.name
       end
     end
 
@@ -489,20 +493,142 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        expect(home_page).to have_no_share_button
-        expect(home_page).to have_no_edit_button
+        expect(home_page).not_to have_share_button
+        expect(home_page).not_to have_edit_button
 
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "new merged list"
         home_page.confirm_merge_button.click
 
-        wait_for { home_page.incomplete_list_names.map(&:text).include?("new merged list") }
+        wait_for { home_page.incomplete_list_names.include?("new merged list") }
 
         home_page.select_list "new merged list"
 
-        list_page.wait_until_not_purchased_items_visible
+        list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_purchased_items.map(&:text)
+        new_merged_list_items = list_page.not_completed_items.map(&:text)
+        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+      end
+
+      it "shows warning when lists of different types are selected" do
+        # Create a list of different type for testing
+        different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
+        create_associated_list_objects(user, different_type_list)
+
+        # need to pick up the data changes
+        home_page.load
+
+        wait_for { home_page.multi_select_buttons.first.visible? }
+
+        home_page.multi_select_buttons.first.click
+
+        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+
+        home_page.multi_select_list list.name
+        home_page.multi_select_list different_type_list.name
+
+        wait_for { home_page.merge_button(list.name).visible? }
+
+        home_page.merge list.name
+
+        expect(home_page).to have_merge_warning
+        expect(home_page.merge_warning_text).to include("Only lists of the same type can be merged")
+        expect(home_page.merge_warning_text).to include(list.type)
+        expect(home_page.merge_warning_text).to include("will be merged")
+        expect(home_page.merge_warning_text).to include("excluded")
+      end
+
+      it "shows detailed breakdown when lists of different types are selected" do
+        # Create a list of different type for testing
+        different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
+        create_associated_list_objects(user, different_type_list)
+
+        # need to pick up the data changes
+        home_page.load
+
+        wait_for { home_page.multi_select_buttons.first.visible? }
+
+        home_page.multi_select_buttons.first.click
+
+        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+        home_page.multi_select_list different_type_list.name
+
+        home_page.merge list.name
+
+        expect(home_page).to have_merge_breakdown
+        expect(home_page.merge_breakdown_text).to include("Lists to be merged (2):")
+        expect(home_page.merge_breakdown_text).to include("Lists excluded (1):")
+        expect(home_page.merge_breakdown_text).to include(list.name)
+        expect(home_page.merge_breakdown_text).to include(other_list.name)
+        expect(home_page.merge_breakdown_text).to include(different_type_list.name)
+        expect(home_page.merge_breakdown_text).to include(list.type)
+        expect(home_page.merge_breakdown_text).to include(different_type_list.type)
+      end
+
+      it "does not show warning when all selected lists are the same type" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
+        home_page.merge list.name
+
+        expect(home_page).not_to have_merge_warning
+        expect(home_page).not_to have_merge_breakdown
+      end
+
+      it "allows canceling merge modal" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
+        home_page.merge list.name
+
+        expect(home_page).to have_clear_merge_button
+        home_page.clear_merge_button.click
+
+        wait_for { !home_page.has_merge_warning? }
+
+        expect(home_page).not_to have_confirm_merge
+        expect(home_page).not_to have_merge_warning
+      end
+
+      it "requires merge name before allowing confirmation" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
+        home_page.merge list.name
+
+        wait_for { home_page.confirm_merge_button.disabled? }
+
+        # Initially, confirm button should be disabled
+        expect(home_page.confirm_merge_button).to be_disabled
+
+        # After entering a name, confirm button should be enabled
+        home_page.new_merged_list_name_input.set "test merged list"
+        expect(home_page.confirm_merge_button).not_to be_disabled
+      end
+
+      it "successfully merges lists of same type with proper name" do
+        home_page.multi_select_buttons.first.click
+        home_page.multi_select_list list.name
+        home_page.multi_select_list other_list.name
+
+        home_page.merge list.name
+        home_page.new_merged_list_name_input.set "comprehensive merged list"
+        home_page.confirm_merge_button.click
+
+        wait_for { home_page.incomplete_list_names.include?("comprehensive merged list") }
+
+        home_page.select_list "comprehensive merged list"
+
+        list_page.wait_until_not_completed_items_visible
+
+        new_merged_list_items = list_page.not_completed_items.map(&:text)
         @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
         @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
       end
@@ -521,7 +647,7 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.confirm_delete_button.click
 
-        sleep 1 # Super lame
+        wait_for { home_page.incomplete_lists.none? }
 
         expect(home_page.incomplete_lists.length).to eq 0
         # users_list should be refused
@@ -538,15 +664,11 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name
 
-        sleep 1 # Super lame
+        # TODO: this seems to wait the entire max wait time
+        wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
 
-        expect(home_page.incomplete_list_names.map(&:text)).to include list.name
-        expect(home_page.incomplete_list_names.map(&:text)).to include other_list.name
-        expect(home_page.incomplete_list_names.map(&:text)).to include completed_list.name
-        expect(home_page.complete_list_names.map(&:text)).to include "#{completed_list.name}*"
-        expect(home_page.complete_list_names.map(&:text)).not_to include completed_list.name
-        expect(home_page.complete_list_names.map(&:text)).to include other_completed_list.name
-        expect(home_page.complete_list_names.map(&:text)).not_to include "#{other_completed_list.name}*"
+        expect(home_page.incomplete_list_names).to contain_exactly(list.name, other_list.name, completed_list.name)
+        expect(home_page.complete_list_names).to contain_exactly("#{completed_list.name}*", other_completed_list.name)
       end
     end
   end

@@ -40,5 +40,9 @@ module Pages
     def remove_share(user_id:, shared_state: "accepted")
       find_shared_user(shared_state:, user_id:).find("[data-test-id='remove-share']").click
     end
+
+    def shared_list_names
+      all("[data-test-id='shared-list-name']").map(&:text)
+    end
   end
 end

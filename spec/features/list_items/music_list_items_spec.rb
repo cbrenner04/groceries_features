@@ -46,9 +46,9 @@ RSpec.describe "A music list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "can create, purchase, edit, and destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.title)
-      purchased_item = list_page.find_list_item(@list_items.last.title, purchased: true)
+    it "can create, complete, edit, and destroy" do
+      not_completed_item = list_page.find_list_item(@list_items.first.title)
+      completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_title_input
@@ -56,10 +56,10 @@ RSpec.describe "A music list item", type: :feature do
       expect(list_page).to have_album_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
-      expect(not_purchased_item).to have_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_css list_page.edit_button_css
-      expect(not_purchased_item).to have_css list_page.delete_button_css
-      expect(purchased_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.complete_button_css
+      expect(not_completed_item).to have_css list_page.edit_button_css
+      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.delete_button_css
     end
   end
 
@@ -71,19 +71,19 @@ RSpec.describe "A music list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "cannot create, purchase, edit, or destroy" do
-      not_purchased_item = list_page.find_list_item(@list_items.first.title)
-      purchased_item = list_page.find_list_item(@list_items.last.title, purchased: true)
+    it "cannot create, complete, edit, or destroy" do
+      not_completed_item = list_page.find_list_item(@list_items.first.title)
+      completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
 
       expect(list_page).to have_no_title_input
       expect(list_page).to have_no_artist_input
       expect(list_page).to have_no_album_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
-      expect(not_purchased_item).to have_no_css list_page.purchase_button_css
-      expect(not_purchased_item).to have_no_css list_page.edit_button_css
-      expect(not_purchased_item).to have_no_css list_page.delete_button_css
-      expect(purchased_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.complete_button_css
+      expect(not_completed_item).to have_no_css list_page.edit_button_css
+      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.delete_button_css
     end
   end
 end
