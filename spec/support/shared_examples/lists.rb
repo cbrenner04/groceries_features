@@ -664,8 +664,8 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name
 
-        # TODO: this seems to wait the entire max wait time
         wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
+        wait_for { home_page.incomplete_list_names.include?(completed_list.name) }
 
         expect(home_page.incomplete_list_names).to contain_exactly(list.name, other_list.name, completed_list.name)
         expect(home_page.complete_list_names).to contain_exactly("#{completed_list.name}*", other_completed_list.name)

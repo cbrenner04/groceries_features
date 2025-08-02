@@ -31,7 +31,7 @@ RSpec.describe "A to do list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "#{item.task} Assigned To: #{item.assignee_email} Due By: February 2, 2020"
+    "#{item.task}\nAssigned To: #{item.assignee_email} Due By: February 2, 2020"
   end
 
   before do

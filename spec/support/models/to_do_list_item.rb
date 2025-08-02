@@ -27,7 +27,7 @@ module Models
     def pretty_title
       adjusted_due_by = due_by - (5 * ONE_HOUR)
       assignee = "Assigned To: #{assignee_email}"
-      "#{task} #{assignee} Due By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
+      "#{task}\n#{assignee} Due By: #{adjusted_due_by.strftime('%B %-d, %Y')}"
     end
 
     private
