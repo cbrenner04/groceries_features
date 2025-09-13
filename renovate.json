@@ -1,5 +1,10 @@
 {
-  "extends": [
-    "config:base"
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchManagers": ["bundler"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "dependencies (non-major)"
+    }
   ]
 }
