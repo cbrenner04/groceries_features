@@ -28,6 +28,7 @@ module Pages
     element :due_by_input, "#due_by"
     element :content_input, "#content"
     element :product_input, "#product"
+    element :completed_checkbox, "#completed"
     element :submit_button, "button[type='submit']"
     element :filter_button, "#filter-by-category-button"
 

@@ -4,17 +4,35 @@ module Helpers
   # helpers for waiting
   module WaitHelper
     def wait_for
-      @counter ||= 0
-      until (yield if block_given?) || wait_time_lapsed?
+      counter = 0
+      original_wait_time = Capybara.default_max_wait_time
+
+      until wait_time_lapsed?(counter, original_wait_time)
+        begin
+          Capybara.default_max_wait_time = 0
+
+          return if yield if block_given?
+        rescue
+          # noop - just gonna retry
+        ensure
+          Capybara.default_max_wait_time = original_wait_time
+          counter += 1
+        end
         sleep 1
-        @counter += 1
+        puts "Waited for #{counter} seconds"
       end
+    ensure
+      Capybara.default_max_wait_time = original_wait_time
     end
 
     private
 
-    def wait_time_lapsed?
-      @counter > Capybara.default_max_wait_time
+    def wait_time_lapsed?(counter, original_wait_time)
+      if counter > original_wait_time
+        throw "full wait time lapsed"
+      end
+
+      false
     end
   end
 end

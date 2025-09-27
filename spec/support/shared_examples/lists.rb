@@ -61,7 +61,8 @@ RSpec.shared_examples "a list" do |list_type|
 
         it "only shows filtered items" do
           expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
+          not_completed_texts = list_page.not_completed_items.map(&:text)
+          expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
         end
 
         it "can clear filter" do
@@ -109,7 +110,7 @@ RSpec.shared_examples "a list" do |list_type|
 
       home_page.share list.name
 
-      wait_for { share_list_page.shared_list_names.include? other_user.email }
+      wait_for { share_list_page.find_share_list_with(other_user.id).visible? }
 
       share_list_page.share_list_with other_user.id
 
@@ -140,7 +141,7 @@ RSpec.shared_examples "a list" do |list_type|
 
       edit_list_page.submit.click
 
-      wait_for { !home_page.incomplete_list_names.include?(list.name) }
+      wait_for { home_page.incomplete_list_names.include?(list.name) }
 
       expect(home_page.incomplete_list_names).to include list.name
     end
@@ -158,7 +159,9 @@ RSpec.shared_examples "a list" do |list_type|
 
       expect(home_page).to have_incomplete_lists
       expect(home_page).to have_list_deleted_alert
-      expect(home_page.incomplete_list_names).not_to include list.name
+      # Verify list is actually gone by checking remaining lists don't include it
+      remaining_lists = home_page.incomplete_list_names
+      expect(remaining_lists.select { |name| name == list.name }).to be_empty
     end
 
     describe "that is shared" do
@@ -205,8 +208,12 @@ RSpec.shared_examples "a list" do |list_type|
               !home_page.pending_list_names.include?(other_list.name)
           end
 
-          expect(home_page.incomplete_list_names).not_to include other_list.name
-          expect(home_page.pending_list_names).not_to include other_list.name
+
+          # Verify lists are actually gone by checking remaining lists
+          remaining_incomplete = home_page.incomplete_list_names_immediate
+          remaining_pending = home_page.pending_list_names_immediate
+          expect(remaining_incomplete.select { |name| name == other_list.name }).to be_empty
+          expect(remaining_pending.select { |name| name == other_list.name }).to be_empty
         end
       end
 
@@ -242,7 +249,8 @@ RSpec.shared_examples "a list" do |list_type|
 
             expect(home_page).to have_incomplete_lists
             expect(home_page).to have_list_deleted_alert
-            expect(home_page.incomplete_list_names).not_to include other_list.name
+            remaining_lists = home_page.incomplete_list_names
+            expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
             # users_list should be refused
             users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -262,8 +270,8 @@ RSpec.shared_examples "a list" do |list_type|
 
             share_list_page.find_shared_user(shared_state: "accepted", user_id: other_user.id)
 
-            expect(share_list_page).not_to have_write_badge
-            expect(share_list_page).not_to have_read_badge
+            expect(share_list_page).to have_no_write_badge
+            expect(share_list_page).to have_no_read_badge
           end
         end
 
@@ -296,7 +304,8 @@ RSpec.shared_examples "a list" do |list_type|
 
             expect(home_page).to have_incomplete_lists
             expect(home_page).to have_list_deleted_alert
-            expect(home_page.incomplete_list_names).not_to include other_list.name
+            remaining_lists = home_page.incomplete_list_names
+            expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
             # users_list should be refused
             users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -321,8 +330,12 @@ RSpec.shared_examples "a list" do |list_type|
         it "is not visible" do
           wait_for { !home_page.pending_list_names.include? other_list.name }
 
-          expect(home_page.incomplete_list_names).not_to include other_list.name
-          expect(home_page.pending_list_names).not_to include other_list.name
+
+          # Verify lists are actually gone by checking remaining lists
+          remaining_incomplete = home_page.incomplete_list_names_immediate
+          remaining_pending = home_page.pending_list_names_immediate
+          expect(remaining_incomplete.select { |name| name == other_list.name }).to be_empty
+          expect(remaining_pending.select { |name| name == other_list.name }).to be_empty
         end
       end
     end
@@ -367,7 +380,8 @@ RSpec.shared_examples "a list" do |list_type|
 
       wait_for { !home_page.complete_list_names.include?(completed_list.name) }
 
-      expect(home_page.complete_list_names).not_to include completed_list.name
+      remaining_lists = home_page.complete_list_names_immediate
+      expect(remaining_lists.select { |name| name == completed_list.name }).to be_empty
     end
 
     describe "that is shared" do
@@ -403,7 +417,8 @@ RSpec.shared_examples "a list" do |list_type|
 
           expect(home_page).to have_completed_lists
           expect(home_page).to have_list_deleted_alert
-          expect(home_page.complete_list_names).not_to include other_list.name
+          remaining_lists = home_page.complete_list_names
+          expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
           # users_list should be refused
           users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -445,7 +460,8 @@ RSpec.shared_examples "a list" do |list_type|
 
           expect(home_page).to have_completed_lists
           expect(home_page).to have_list_deleted_alert
-          expect(home_page.complete_list_names).not_to include other_list.name
+          remaining_lists = home_page.complete_list_names
+          expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
           # users_list should be refused
           users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
@@ -467,6 +483,7 @@ RSpec.shared_examples "a list" do |list_type|
     before do
       @other_completed_list_items = create_associated_list_objects(user, other_completed_list)
       DB[:users_lists].where(user_id: user.id, list_id: other_list.id).update(permissions: "read")
+      page.refresh
     end
 
     describe "complete" do
@@ -481,9 +498,10 @@ RSpec.shared_examples "a list" do |list_type|
         wait_for { home_page.complete_list_names.include?(other_completed_list.name) }
 
         expect(home_page.complete_list_names).to include list.name
-        expect(home_page.complete_list_names).not_to include other_list.name
-        expect(home_page.complete_list_names).to include completed_list.name
-        expect(home_page.complete_list_names).to include other_completed_list.name
+        complete_list_names = home_page.complete_list_names
+        expect(complete_list_names.select { |name| name == other_list.name }).to be_empty
+        expect(complete_list_names).to include completed_list.name
+        expect(complete_list_names).to include other_completed_list.name
       end
     end
 
@@ -493,8 +511,8 @@ RSpec.shared_examples "a list" do |list_type|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        expect(home_page).not_to have_share_button
-        expect(home_page).not_to have_edit_button
+        expect(home_page).to have_no_share_button
+        expect(home_page).to have_no_edit_button
 
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "new merged list"
@@ -576,8 +594,8 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.merge list.name
 
-        expect(home_page).not_to have_merge_warning
-        expect(home_page).not_to have_merge_breakdown
+        expect(home_page).to have_no_merge_warning
+        expect(home_page).to have_no_merge_breakdown
       end
 
       it "allows canceling merge modal" do
@@ -590,10 +608,10 @@ RSpec.shared_examples "a list" do |list_type|
         expect(home_page).to have_clear_merge_button
         home_page.clear_merge_button.click
 
-        wait_for { !home_page.has_merge_warning? }
+        wait_for { home_page.has_no_merge_warning? }
 
-        expect(home_page).not_to have_confirm_merge
-        expect(home_page).not_to have_merge_warning
+        expect(home_page).to have_no_confirm_merge
+        expect(home_page).to have_no_merge_warning
       end
 
       it "requires merge name before allowing confirmation" do
@@ -647,9 +665,9 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.confirm_delete_button.click
 
-        wait_for { home_page.incomplete_lists.none? }
+        wait_for { home_page.incomplete_lists.length.zero? }
 
-        expect(home_page.incomplete_lists.length).to eq 0
+        expect(home_page.incomplete_lists_immediate.length).to eq 0
         # users_list should be refused
         users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
 

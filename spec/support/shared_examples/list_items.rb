@@ -47,13 +47,41 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
       expect(category_headers.first).to eq new_list_item.category.capitalize
     end
 
+    it "is created as completed when checkbox is checked" do
+      initial_completed_items_count = list_page.completed_items.count
+      new_list_item = item_class.new(user_id: user.id, list_id: list.id, create_item: false, category: "foo",
+                                     list_item_configuration_id: list.list_item_configuration.id)
+
+      list_page.expand_list_item_form
+
+      # Input item attributes
+      send("input_new_item_attributes", new_list_item)
+      list_page.category_input.set new_list_item.category
+
+      # Check the completed checkbox
+      list_page.completed_checkbox.click
+
+      list_page.submit_button.click
+
+      # Item should appear in completed items, not in not_completed_items
+      wait_for { list_page.completed_items.count == initial_completed_items_count + 1 }
+
+      expect(list_page.completed_items.map(&:text)).to include new_list_item.pretty_title
+      expect(list_page.not_completed_items.count).to eq @initial_list_item_count
+
+      # Verify form is cleared including the checkbox
+      send("confirm_form_cleared")
+      expect(list_page.completed_checkbox).not_to be_checked
+    end
+
     describe "that is not completed" do
       it "is completed" do
+        initial_completed_items_count = list_page.completed_items.count
         item_name = @list_items.first.pretty_title
 
         list_page.complete item_name
 
-        wait_for { list_page.completed_items.count == @initial_list_item_count + 1 }
+        wait_for { list_page.completed_items.count == initial_completed_items_count + 1 }
 
         expect(list_page.completed_items.map(&:text)).to include item_name
       end
@@ -91,7 +119,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
         wait_for { list_page.item_deleted_alert.visible? }
 
         expect(list_page.not_completed_items.count).to eq @initial_list_item_count - 1
-        expect(list_page.not_completed_items.map(&:text)).not_to include item_name
+        not_completed_texts = list_page.not_completed_items.map(&:text)
+        expect(not_completed_texts.select { |text| text == item_name }).to be_empty
       end
 
       describe "when a filter is applied" do
@@ -133,8 +162,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             expect(list_page.not_completed_items.count).to eq incomplete_item_count_start - 1
             expect(list_page.completed_items.count).to eq completed_item_count_start + 1
-            expect(list_page.not_completed_items.map(&:text)).not_to include item_name
-            expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
+            not_completed_texts = list_page.not_completed_items.map(&:text)
+            expect(not_completed_texts.select { |text| text == item_name }).to be_empty
+            expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
             expect(list_page.completed_items.map(&:text)).to include item_name
 
             # no longer filtered
@@ -159,8 +189,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             wait_for { list_page.not_completed_items.count == incomplete_item_count_start - 1 }
 
             expect(list_page.not_completed_items.count).to eq incomplete_item_count_start - 1
-            expect(list_page.not_completed_items.map(&:text)).not_to include item_name
-            expect(list_page.not_completed_items.map(&:text)).not_to include @list_items[1].pretty_title
+            not_completed_texts = list_page.not_completed_items.map(&:text)
+            expect(not_completed_texts.select { |text| text == item_name }).to be_empty
+            expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
 
             # no longer filtered
             list_page.clear_filter_button.click
@@ -176,7 +207,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           before do
             @another_list_item = item_class.new(user_id: user.id, list_id: list.id, category: "foo",
                                                 list_item_configuration_id: list.list_item_configuration.id)
-            @initial_list_item_count += 1
             # need to wait for the item to be added
             # TODO: do something better
             sleep 1
@@ -188,17 +218,18 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           end
 
           it "is completed" do
+            initial_completed_count = list_page.completed_items.count
             item_name = @list_items.first.pretty_title
 
             list_page.complete item_name
 
-            wait_for { list_page.completed_items.count == @initial_list_item_count + 1 }
+            wait_for { list_page.completed_items.count == initial_completed_count + 1 }
 
             not_completed_list_items = list_page.not_completed_items.map(&:text)
 
             expect(list_page.completed_items.map(&:text)).to include item_name
             expect(not_completed_list_items).to include @another_list_item.pretty_title
-            expect(not_completed_list_items).not_to include item_name
+            expect(not_completed_list_items.select { |text| text == item_name }).to be_empty
           end
 
           it "is destroyed" do
@@ -218,9 +249,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
             expect(list_page.not_completed_items.count).to eq initial_list_item_count - 1
             expect(list_page).to have_item_deleted_alert
-            expect(list_page.not_completed_items.map(&:text)).not_to include item_name
-            expect(list_page.not_completed_items.map(&:text)).to include @another_list_item.pretty_title
-            expect(list_page.not_completed_items.map(&:text)).not_to include item_name
+            not_completed_texts = list_page.not_completed_items.map(&:text)
+            expect(not_completed_texts.select { |text| text == item_name }).to be_empty
+            expect(not_completed_texts).to include @another_list_item.pretty_title
           end
         end
       end
@@ -241,7 +272,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         wait_for { list_page.completed_items.count == initial_completed_items_count - 1 }
 
-        expect(list_page.completed_items.map(&:text)).not_to include item_name
+        completed_texts = list_page.completed_items.map(&:text)
+        expect(completed_texts.select { |text| text == item_name }).to be_empty
       end
     end
 
@@ -318,7 +350,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           # cannot choose existing list when no other lists exist
           all_link_text = change_other_list_modal.all_links.map(&:text)
 
-          expect(all_link_text).not_to include "Choose existing list"
+          expect(all_link_text.select { |text| text == "Choose existing list" }).to be_empty
 
           # create new list
           change_other_list_modal.new_list_name_input.set "foobar"
@@ -387,7 +419,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
           # cannot choose existing list when no other lists exist
           all_link_text = change_other_list_modal.all_links.map(&:text)
 
-          expect(all_link_text).not_to include "Choose existing list"
+          expect(all_link_text.select { |text| text == "Choose existing list" }).to be_empty
 
           # create new list
           change_other_list_modal.new_list_name_input.set "foobar"
