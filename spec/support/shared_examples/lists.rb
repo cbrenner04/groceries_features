@@ -208,7 +208,6 @@ RSpec.shared_examples "a list" do |list_type|
               !home_page.pending_list_names.include?(other_list.name)
           end
 
-
           # Verify lists are actually gone by checking remaining lists
           remaining_incomplete = home_page.incomplete_list_names_immediate
           remaining_pending = home_page.pending_list_names_immediate
@@ -329,7 +328,6 @@ RSpec.shared_examples "a list" do |list_type|
 
         it "is not visible" do
           wait_for { !home_page.pending_list_names.include? other_list.name }
-
 
           # Verify lists are actually gone by checking remaining lists
           remaining_incomplete = home_page.incomplete_list_names_immediate
@@ -665,7 +663,7 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.confirm_delete_button.click
 
-        wait_for { home_page.incomplete_lists.length.zero? }
+        wait_for { home_page.incomplete_lists.empty? }
 
         expect(home_page.incomplete_lists_immediate.length).to eq 0
         # users_list should be refused

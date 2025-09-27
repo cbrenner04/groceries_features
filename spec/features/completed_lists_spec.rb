@@ -72,11 +72,11 @@ RSpec.describe "Completed lists page", type: :feature do
 
       completed_lists_page.confirm_delete_button.click
 
-    wait_for { !completed_lists_page.complete_list_names.include?(other_list.name) }
+      wait_for { !completed_lists_page.complete_list_names.include?(other_list.name) }
 
-    expect(completed_lists_page).to have_list_deleted_alert
-    remaining_lists = completed_lists_page.complete_list_names_immediate
-    expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
+      expect(completed_lists_page).to have_list_deleted_alert
+      remaining_lists = completed_lists_page.complete_list_names_immediate
+      expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
       # users_list should be refused
       users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first

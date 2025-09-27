@@ -11,8 +11,8 @@ module Helpers
         begin
           Capybara.default_max_wait_time = 0
 
-          return if yield if block_given?
-        rescue
+          return if block_given? && yield
+        rescue StandardError
           # noop - just gonna retry
         ensure
           Capybara.default_max_wait_time = original_wait_time
@@ -28,9 +28,7 @@ module Helpers
     private
 
     def wait_time_lapsed?(counter, original_wait_time)
-      if counter > original_wait_time
-        throw "full wait time lapsed"
-      end
+      throw "full wait time lapsed" if counter > original_wait_time
 
       false
     end
