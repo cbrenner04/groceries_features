@@ -19,7 +19,6 @@ module Helpers
           counter += 1
         end
         sleep 1
-        puts "Waited for #{counter} seconds"
       end
     ensure
       Capybara.default_max_wait_time = original_wait_time
