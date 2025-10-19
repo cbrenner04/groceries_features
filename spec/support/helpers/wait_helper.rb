@@ -8,6 +8,7 @@ module Helpers
       original_wait_time = Capybara.default_max_wait_time
 
       until wait_time_lapsed?(counter, original_wait_time)
+        increment = 0.5
         begin
           Capybara.default_max_wait_time = 0
 
@@ -16,9 +17,9 @@ module Helpers
           # noop - just gonna retry
         ensure
           Capybara.default_max_wait_time = original_wait_time
-          counter += 1
+          counter += increment
         end
-        sleep 1
+        sleep increment
       end
     ensure
       Capybara.default_max_wait_time = original_wait_time

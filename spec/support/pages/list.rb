@@ -6,12 +6,12 @@ module Pages
     include TestSelectors
     include Helpers::WaitHelper
 
-    UNREAD_BUTTON = ".far.fa-bookmark"
-    READ_BUTTON = ".fas.fa-bookmark"
-    COMPLETE_BUTTON = ".fa.fa-check"
-    EDIT_BUTTON = ".fa.fa-edit"
-    DELETE_BUTTON = ".fa.fa-trash"
-    REFRESH_BUTTON = ".fa.fa-redo"
+    UNREAD_BUTTON = "[data-test-id='unread-bookmark-icon']"
+    READ_BUTTON = "[data-test-id='read-bookmark-icon']"
+    COMPLETE_BUTTON = "[data-test-id='check-icon']"
+    EDIT_BUTTON = "[data-test-id='edit-icon']"
+    DELETE_BUTTON = "[data-test-id='trash-icon']"
+    REFRESH_BUTTON = "[data-test-id='redo-icon']"
 
     set_url "lists/{id}"
 
