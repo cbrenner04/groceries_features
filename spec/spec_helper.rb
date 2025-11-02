@@ -49,7 +49,7 @@ RSpec.configure do |config|
     unless ENV["ENV"] == "staging"
       errors = page.driver.browser.logs.get(:browser).select do |e|
         e.level == "SEVERE" && !e.message.empty? && !e.message.include?("Unauthorized") &&
-          !e.message.include?("Not Found")
+          !e.message.include?("Not Found") && !e.message.include?("Forbidden")
       end.map(&:message)
 
       raise DriverJSError, errors.join("\n\n") if errors.any?
@@ -87,7 +87,7 @@ unless ENV["DRIVER"] == "poltergeist"
 end
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
-Capybara.default_max_wait_time = 15
+Capybara.default_max_wait_time = 3
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|

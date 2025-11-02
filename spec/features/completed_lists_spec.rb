@@ -29,7 +29,7 @@ RSpec.describe "Completed lists page", type: :feature do
     completed_lists_names = completed_lists_page.complete_list_names
 
     expect(completed_lists_names).to include "#{list.name}*"
-    expect(completed_lists_names).not_to include list.name
+    expect(completed_lists_names.select { |name| name == list.name }).to be_empty
 
     home_page.load
 
@@ -58,7 +58,8 @@ RSpec.describe "Completed lists page", type: :feature do
 
     wait_for { !completed_lists_page.complete_list_names.include?(list.name) }
 
-    expect(completed_lists_page.complete_list_names).not_to include list.name
+    remaining_lists = completed_lists_page.complete_list_names_immediate
+    expect(remaining_lists.select { |name| name == list.name }).to be_empty
   end
 
   describe "shared list" do
@@ -74,7 +75,8 @@ RSpec.describe "Completed lists page", type: :feature do
       wait_for { !completed_lists_page.complete_list_names.include?(other_list.name) }
 
       expect(completed_lists_page).to have_list_deleted_alert
-      expect(completed_lists_page.complete_list_names).not_to include other_list.name
+      remaining_lists = completed_lists_page.complete_list_names_immediate
+      expect(remaining_lists.select { |name| name == other_list.name }).to be_empty
 
       # users_list should be refused
       users_list = DB[:users_lists].where(user_id: user.id, list_id: other_list.id).first
