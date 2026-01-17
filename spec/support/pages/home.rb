@@ -73,6 +73,14 @@ module Pages
       has_no_test_class?("pending-list")
     end
 
+    def has_no_share_button?
+      has_no_test_id?("incomplete-list-share")
+    end
+
+    def has_no_edit_button?
+      has_no_test_id?("incomplete-list-edit")
+    end
+
     def go_to_completed_lists
       click_on "See all completed lists here"
     end
@@ -115,6 +123,23 @@ module Pages
 
     def pending_list_names
       all_by_test_class("pending-list").map { |list| list.find("h5").text }
+    end
+
+    # Immediate versions for post-wait_for assertions (no Capybara waiting)
+    def incomplete_list_names_immediate
+      all("[data-test-class='incomplete-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+    end
+
+    def pending_list_names_immediate
+      all("[data-test-class='pending-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+    end
+
+    def complete_list_names_immediate
+      all("[data-test-class='completed-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+    end
+
+    def incomplete_lists_immediate
+      all("[data-test-class='incomplete-list']", wait: 0)
     end
 
     def select_list(list_name)
@@ -262,6 +287,18 @@ module Pages
 
     def has_clear_merge_button?
       has_test_id?("clear-merge")
+    end
+
+    def has_no_merge_warning?
+      has_no_text?("Only lists of the same type can be merged")
+    end
+
+    def has_no_merge_breakdown?
+      has_no_text?("Lists to be merged") && has_no_text?("Lists excluded")
+    end
+
+    def has_no_confirm_merge?
+      has_no_test_id?("confirm-merge")
     end
 
     def clear_merge_button

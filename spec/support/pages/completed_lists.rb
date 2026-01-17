@@ -16,6 +16,11 @@ module Pages
       all_by_test_class("completed-list").map { |list| list.find("h5").text }
     end
 
+    # Immediate version for post-wait_for assertions (no Capybara waiting)
+    def complete_list_names_immediate
+      all("[data-test-class='completed-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+    end
+
     def delete(list_name)
       list_element = find_complete_list(list_name)
       find_by_test_id_within(list_element, "complete-list-trash").click

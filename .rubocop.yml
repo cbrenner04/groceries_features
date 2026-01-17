@@ -53,4 +53,4 @@ RSpec/InstanceVariable:
   Enabled: false
 
 RSpec/MultipleMemoizedHelpers:
-  Max: 10
+  Max: 12
