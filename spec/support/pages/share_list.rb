@@ -13,6 +13,15 @@ module Pages
     element :write_badge, WRITE_BADGE
     element :read_badge, READ_BADGE
 
+    # has_no_*? methods for negative assertions
+    def has_no_write_badge?
+      has_no_css?(WRITE_BADGE)
+    end
+
+    def has_no_read_badge?
+      has_no_css?(READ_BADGE)
+    end
+
     def write_badge_css
       WRITE_BADGE
     end
@@ -21,8 +30,12 @@ module Pages
       READ_BADGE
     end
 
+    def find_share_list_with(user_id)
+      find("[data-test-id='invite-user-#{user_id}']")
+    end
+
     def share_list_with(user_id)
-      find("[data-test-id='invite-user-#{user_id}']").click
+      find_share_list_with(user_id).click
     end
 
     def find_shared_user(user_id:, shared_state: "pending")
@@ -39,10 +52,6 @@ module Pages
 
     def remove_share(user_id:, shared_state: "accepted")
       find_shared_user(shared_state:, user_id:).find("[data-test-id='remove-share']").click
-    end
-
-    def shared_list_names
-      all("[data-test-id='shared-list-name']").map(&:text)
     end
   end
 end

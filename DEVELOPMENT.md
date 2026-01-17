@@ -15,20 +15,20 @@ This document outlines the development standards, patterns, and guardrails for t
 
 ### Directory Organization
 
-```
+```text
 spec/
-├── features/              # Feature test files
+├── features/           # Feature test files
 │   ├── lists/            # List-related features
 │   ├── list_items/       # List item features
 │   └── users/            # User-related features
-├── support/               # Test support files
+├── support/            # Test support files
 │   ├── helpers/          # Test helpers
 │   ├── models/           # Test models
 │   ├── pages/            # Page objects
 │   └── shared_examples/  # Shared test patterns
-├── output/               # Test output files
-├── screenshots/          # Failure screenshots
-└── tmp/                  # Temporary test files
+├── output/             # Test output files
+├── screenshots/        # Failure screenshots
+└── tmp/                # Temporary test files
 ```
 
 ### File Naming Conventions
@@ -64,14 +64,14 @@ Use SitePrism for page objects to encapsulate page interactions:
 ```ruby
 class HomePage < SitePrism::Page
   set_url '/'
-  
+
   element :lists_link, '[data-test-id="lists-link"]'
   element :new_list_button, '[data-test-id="new-list-button"]'
-  
+
   def navigate_to_lists
     lists_link.click
   end
-  
+
   def create_new_list
     new_list_button.click
   end
@@ -84,11 +84,11 @@ end
 RSpec.describe 'List Management', type: :feature do
   let(:user) { create_user }
   let(:list) { create_list(user: user) }
-  
+
   before do
     sign_in(user)
   end
-  
+
   it 'creates a new list' do
     # Test implementation
   end
@@ -104,7 +104,7 @@ RSpec.shared_examples 'list item behavior' do |list_type|
   it 'allows adding items' do
     # Common test logic
   end
-  
+
   it 'allows editing items' do
     # Common test logic
   end
@@ -122,7 +122,7 @@ module DataHelper
   def create_user(attributes = {})
     # User creation logic
   end
-  
+
   def create_list(attributes = {})
     # List creation logic
   end
@@ -284,18 +284,18 @@ ENV=staging rspec
 ```ruby
 RSpec.describe 'Feature Name', type: :feature do
   let(:user) { create_user }
-  
+
   before do
     sign_in(user)
   end
-  
+
   it 'performs the expected action' do
     # Test implementation using page objects
     home_page = HomePage.new
     home_page.load
-    
+
     home_page.navigate_to_lists
-    
+
     expect(page).to have_text('Lists')
   end
 end
@@ -306,19 +306,19 @@ end
 ```ruby
 class ListPage < SitePrism::Page
   set_url '/lists/{id}'
-  
+
   element :list_name, '[data-test-id="list-name"]'
   element :add_item_button, '[data-test-id="add-item-button"]'
   element :item_input, '[data-test-id="item-input"]'
-  
+
   sections :items, ItemSection, '[data-test-id="list-item"]'
-  
+
   def add_item(name)
     add_item_button.click
     item_input.set(name)
     item_input.send_keys(:enter)
   end
-  
+
   def has_item?(name)
     items.any? { |item| item.name.text == name }
   end
@@ -341,11 +341,11 @@ module AuthenticationHelper
     fill_in 'Password', with: user.password
     click_button 'Sign In'
   end
-  
+
   def sign_out
     click_link 'Sign Out'
   end
 end
 ```
 
-This document should be updated as the feature testing codebase evolves and new patterns emerge. 
+This document should be updated as the feature testing codebase evolves and new patterns emerge.

@@ -28,6 +28,7 @@ RSpec.describe "A to do list item", type: :feature do
     expect(list_page.assignee_input.value).to eq ""
     expect(list_page.due_by_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
+    expect(list_page.completed_checkbox).not_to be_checked
   end
 
   def bulk_updated_title(item)

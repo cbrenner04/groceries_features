@@ -23,6 +23,7 @@ RSpec.describe "A simple list item", type: :feature do
   def confirm_form_cleared
     expect(list_page.content_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
+    expect(list_page.completed_checkbox).not_to be_checked
   end
 
   def bulk_updated_title(item)

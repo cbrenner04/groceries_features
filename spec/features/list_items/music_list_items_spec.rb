@@ -26,6 +26,7 @@ RSpec.describe "A music list item", type: :feature do
     expect(list_page.artist_input.value).to eq ""
     expect(list_page.album_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
+    expect(list_page.completed_checkbox).not_to be_checked
   end
 
   def bulk_updated_title(item)
