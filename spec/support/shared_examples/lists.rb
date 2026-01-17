@@ -10,16 +10,16 @@ RSpec.shared_examples "a list" do |list_type|
   let(:other_list) { Models::List.new(type: list_type, owner_id: other_user.id) }
   let(:list) { Models::List.new(type: list_type, owner_id: user.id) }
   let(:completed_list) { Models::List.new(type: list_type, owner_id: user.id, completed: true) }
-
-  new_list_form_type = {
-    BookList: "books",
-    GroceryList: "groceries",
-    MusicList: "music",
-    SimpleList: "simple",
-    ToDoList: "to-do"
-  }[list_type.to_sym]
-
-  different_list_type = list_type == "ToDoList" ? "BookList" : "ToDoList"
+  let(:new_list_form_type) do
+    {
+      BookList: "books",
+      GroceryList: "groceries",
+      MusicList: "music",
+      SimpleList: "simple",
+      ToDoList: "to-do"
+    }[list_type.to_sym]
+  end
+  let(:different_list_type) { list_type == "ToDoList" ? "BookList" : "ToDoList" }
 
   before do
     @list_items = create_associated_list_objects(user, list)
