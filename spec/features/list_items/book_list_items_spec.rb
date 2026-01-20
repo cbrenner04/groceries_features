@@ -9,7 +9,7 @@ RSpec.describe "A book list item", type: :feature do
   let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: "BookList", owner_id: user.id) }
+  let(:list) { Models::List.new(template_name: "book list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
     list_page.author_input.set new_list_item.author
@@ -35,7 +35,7 @@ RSpec.describe "A book list item", type: :feature do
 
   before { @list_items = create_associated_list_objects(user, list) }
 
-  it_behaves_like "a list item", "title", "BookList", Models::BookListItem, ["author"]
+  it_behaves_like "a list item", "title", "book list template", Models::BookListItem, ["author"]
 
   describe "when logged in as owner" do
     before do

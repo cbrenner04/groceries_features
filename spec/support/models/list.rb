@@ -4,11 +4,11 @@ module Models
   # a list, not related to a user, holds items
   class List
     attr_accessor :name
-    attr_reader :id, :type, :completed, :owner_id, :list_item_configuration
+    attr_reader :id, :completed, :owner_id, :list_item_configuration, :template_name
 
-    def initialize(type:, owner_id:, completed: false, list_item_configuration: nil, create_list: true)
+    def initialize(template_name:, owner_id:, completed: false, list_item_configuration: nil, create_list: true)
       @name = SecureRandom.hex(16)
-      @type = type
+      @template_name = template_name
       @completed = completed
       @owner_id = owner_id
       @list_item_configuration = list_item_configuration
@@ -19,10 +19,8 @@ module Models
     private
 
     def create
-      @list_item_configuration ||=
-        ListItemConfiguration.new(name: SecureRandom.hex(16), archived_at: nil, user_id: owner_id,
-                                  create_configuration: true)
-      DB[:lists].insert(name:, type:, completed:, created_at: Time.now, updated_at: Time.now, owner_id:,
+      @list_item_configuration ||= ListItemConfiguration.find_by_name(owner_id, template_name)
+      DB[:lists].insert(name:, completed:, created_at: Time.now, updated_at: Time.now, owner_id:,
                         list_item_configuration_id: list_item_configuration.id)
     end
   end

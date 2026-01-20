@@ -8,10 +8,10 @@ RSpec.describe "Completed lists page", type: :feature do
   let(:share_list_page) { Pages::ShareList.new }
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
-  let(:list_type) { "GroceryList" }
+  let(:template_name) { "grocery list template" }
   let(:other_user) { Models::User.new }
-  let(:list) { Models::List.new(type: list_type, completed: true, owner_id: user.id) }
-  let(:other_list) { Models::List.new(type: list_type, owner_id: other_user.id, completed: true) }
+  let(:list) { Models::List.new(template_name: template_name, completed: true, owner_id: user.id) }
+  let(:other_list) { Models::List.new(template_name: template_name, owner_id: other_user.id, completed: true) }
 
   before do
     @list_items = create_associated_list_objects(user, list)

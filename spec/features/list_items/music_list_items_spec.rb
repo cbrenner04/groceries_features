@@ -9,7 +9,7 @@ RSpec.describe "A music list item", type: :feature do
   let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: "MusicList", owner_id: user.id) }
+  let(:list) { Models::List.new(template_name: "music list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
     list_page.title_input.set new_list_item.title
@@ -37,7 +37,7 @@ RSpec.describe "A music list item", type: :feature do
     @list_items = create_associated_list_objects(user, list)
   end
 
-  it_behaves_like "a list item", "title", "MusicList", Models::MusicListItem, %w[artist album]
+  it_behaves_like "a list item", "title", "music list template", Models::MusicListItem, %w[artist album]
 
   describe "when logged in as shared user with write access" do
     before do

@@ -9,7 +9,7 @@ RSpec.describe "A grocery list item", type: :feature do
   let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: "GroceryList", owner_id: user.id) }
+  let(:list) { Models::List.new(template_name: "grocery list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
     list_page.quantity_input.set new_list_item.quantity
@@ -34,7 +34,7 @@ RSpec.describe "A grocery list item", type: :feature do
     @list_items = create_associated_list_objects(user, list)
   end
 
-  it_behaves_like "a list item", "product", "GroceryList", Models::GroceryListItem, ["quantity"]
+  it_behaves_like "a list item", "product", "grocery list template", Models::GroceryListItem, ["quantity"]
   it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do

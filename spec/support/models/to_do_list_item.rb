@@ -41,14 +41,10 @@ module Models
 
     def create
       list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "task", value: task)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "due_by", value: due_by)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "assignee_email", value: assignee_email)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "category", value: category)
+      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "task", value: task)
+      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "due_by", value: due_by)
+      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "assignee", value: assignee_email)
+      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "category", value: category)
       list_item.id
     end
   end

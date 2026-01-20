@@ -11,7 +11,7 @@ module Pages
 
     element :signed_in_alert, ".Toastify", text: "Signed in successfully"
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
-    element :list_type, "#type"
+    element :list_template, "#list_item_configuration_id"
     element :header, "h1", text: "Lists"
     element :name, "#name"
     element :submit, "button[type='submit']"
