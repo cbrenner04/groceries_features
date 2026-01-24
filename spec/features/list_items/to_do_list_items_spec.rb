@@ -9,18 +9,16 @@ RSpec.describe "A to do list item", type: :feature do
   let(:edit_list_items_page) { Pages::EditListItems.new }
   let(:change_other_list_modal) { Pages::ChangeOtherListModal.new }
   let(:user) { Models::User.new }
-  let(:list) { Models::List.new(type: "ToDoList", owner_id: user.id) }
+  let(:list) { Models::List.new(template_name: "to do list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    date_format = "%m/%d/%Y"
-
     list_page.task_input.set new_list_item.task
     list_page.assignee_input.set new_list_item.assignee_email
-    fill_in "Due by", with: new_list_item.due_by.strftime(date_format)
+    fill_in "Due by", with: Time.parse(new_list_item.due_by).strftime("%m/%d/%Y")
 
     expect(list_page.task_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
-    expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime(date_format)
+    expect(list_page.due_by_input.value).to eq new_list_item.due_by
   end
 
   def confirm_form_cleared
@@ -32,14 +30,14 @@ RSpec.describe "A to do list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "#{item.task}\nAssigned To: #{item.assignee_email} Due By: February 2, 2020"
+    "#{item.task} #{item.assignee_email} 2020-02-02"
   end
 
   before do
     @list_items = create_associated_list_objects(user, list)
   end
 
-  it_behaves_like "a list item", "task", "ToDoList", Models::ToDoListItem, %w[assignee due_by]
+  it_behaves_like "a list item", "task", "to do list template", Models::ToDoListItem, %w[assignee due_by]
   it_behaves_like "a refreshable list item"
 
   describe "when logged in as shared user with write access" do

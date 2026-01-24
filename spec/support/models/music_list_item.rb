@@ -20,7 +20,7 @@ module Models
     end
 
     def pretty_title
-      "\"#{title}\" #{artist} - #{album}"
+      "#{title} #{artist} #{album}"
     end
 
     private

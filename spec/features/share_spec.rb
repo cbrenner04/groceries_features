@@ -11,7 +11,7 @@ RSpec.describe "Invite", type: :feature do
 
   before do
     login user
-    list = Models::List.new(type: "GroceryList", create_list: true, owner_id: user.id)
+    list = Models::List.new(template_name: "grocery list template", create_list: true, owner_id: user.id)
     create_associated_list_objects(user, list)
     Models::UsersList.new(user_id: pending_user.id, list_id: list.id, has_accepted: nil, permissions: "write")
     Models::UsersList.new(user_id: accepted_user.id, list_id: list.id, has_accepted: true, permissions: "read")

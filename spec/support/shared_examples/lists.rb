@@ -1,25 +1,20 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples "a list" do |list_type|
+RSpec.shared_examples "a list" do |template_name|
   let(:home_page) { Pages::Home.new }
   let(:edit_list_page) { Pages::EditList.new }
   let(:share_list_page) { Pages::ShareList.new }
   let(:list_page) { Pages::List.new }
   let(:user) { Models::User.new }
   let(:other_user) { Models::User.new }
-  let(:other_list) { Models::List.new(type: list_type, owner_id: other_user.id) }
-  let(:list) { Models::List.new(type: list_type, owner_id: user.id) }
-  let(:completed_list) { Models::List.new(type: list_type, owner_id: user.id, completed: true) }
-  let(:new_list_form_type) do
-    {
-      BookList: "books",
-      GroceryList: "groceries",
-      MusicList: "music",
-      SimpleList: "simple",
-      ToDoList: "to-do"
-    }[list_type.to_sym]
+  # Use user's configuration for other_list so merge works (same list_item_configuration_id)
+  let(:user_config) { Models::ListItemConfiguration.find_by_name(user.id, template_name) }
+  let(:other_list) { Models::List.new(template_name: template_name, owner_id: other_user.id, list_item_configuration: user_config) }
+  let(:list) { Models::List.new(template_name: template_name, owner_id: user.id) }
+  let(:completed_list) { Models::List.new(template_name: template_name, owner_id: user.id, completed: true) }
+  let(:different_template_name) do
+    template_name == "to do list template" ? "book list template" : "to do list template"
   end
-  let(:different_list_type) { list_type == "ToDoList" ? "BookList" : "ToDoList" }
 
   before do
     @list_items = create_associated_list_objects(user, list)
@@ -29,11 +24,11 @@ RSpec.shared_examples "a list" do |list_type|
   end
 
   it "is created" do
-    list = Models::List.new(type: list_type, create_list: false, owner_id: user.id)
+    list = Models::List.new(template_name: template_name, create_list: false, owner_id: user.id)
 
     home_page.expand_list_form
     home_page.name.set list.name
-    home_page.list_type.select new_list_form_type
+    home_page.list_template.select template_name
     home_page.submit.click
 
     wait_for { home_page.incomplete_list_names.include? list.name }
@@ -263,7 +258,7 @@ RSpec.shared_examples "a list" do |list_type|
           end
 
           it "cannot update permissions" do
-            create_associated_list_objects(other_user, other_list, skip_field_configuration: true)
+            create_associated_list_objects(other_user, other_list)
 
             home_page.share other_list.name
 
@@ -476,7 +471,7 @@ RSpec.shared_examples "a list" do |list_type|
   end
 
   describe "multiSelect" do
-    let(:other_completed_list) { Models::List.new(type: different_list_type, owner_id: other_user.id, completed: true) }
+    let(:other_completed_list) { Models::List.new(template_name: different_template_name, owner_id: other_user.id, completed: true) }
 
     before do
       @other_completed_list_items = create_associated_list_objects(user, other_completed_list)
@@ -527,10 +522,10 @@ RSpec.shared_examples "a list" do |list_type|
         @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
       end
 
-      it "shows warning when lists of different types are selected" do
-        # Create a list of different type for testing
-        different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
-        create_associated_list_objects(user, different_type_list)
+      it "shows warning when lists of different templates are selected" do
+        # Create a list of different template for testing
+        different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
+        create_associated_list_objects(user, different_template_list)
 
         # need to pick up the data changes
         home_page.load
@@ -539,10 +534,10 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.multi_select_buttons.first.click
 
-        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+        wait_for { home_page.multi_select_list_element(different_template_list.name).visible? }
 
         home_page.multi_select_list list.name
-        home_page.multi_select_list different_type_list.name
+        home_page.multi_select_list different_template_list.name
 
         wait_for { home_page.merge_button(list.name).visible? }
 
@@ -550,15 +545,13 @@ RSpec.shared_examples "a list" do |list_type|
 
         expect(home_page).to have_merge_warning
         expect(home_page.merge_warning_text).to include("Only lists of the same type can be merged")
-        expect(home_page.merge_warning_text).to include(list.type)
-        expect(home_page.merge_warning_text).to include("will be merged")
-        expect(home_page.merge_warning_text).to include("excluded")
+        expect(home_page.merge_warning_text).to include("Some lists will be excluded")
       end
 
-      it "shows detailed breakdown when lists of different types are selected" do
-        # Create a list of different type for testing
-        different_type_list = Models::List.new(type: different_list_type, owner_id: user.id)
-        create_associated_list_objects(user, different_type_list)
+      it "shows detailed breakdown when lists of different templates are selected" do
+        # Create a list of different template for testing
+        different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
+        create_associated_list_objects(user, different_template_list)
 
         # need to pick up the data changes
         home_page.load
@@ -567,11 +560,11 @@ RSpec.shared_examples "a list" do |list_type|
 
         home_page.multi_select_buttons.first.click
 
-        wait_for { home_page.multi_select_list_element(different_type_list.name).visible? }
+        wait_for { home_page.multi_select_list_element(different_template_list.name).visible? }
 
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
-        home_page.multi_select_list different_type_list.name
+        home_page.multi_select_list different_template_list.name
 
         home_page.merge list.name
 
@@ -580,9 +573,7 @@ RSpec.shared_examples "a list" do |list_type|
         expect(home_page.merge_breakdown_text).to include("Lists excluded (1):")
         expect(home_page.merge_breakdown_text).to include(list.name)
         expect(home_page.merge_breakdown_text).to include(other_list.name)
-        expect(home_page.merge_breakdown_text).to include(different_type_list.name)
-        expect(home_page.merge_breakdown_text).to include(list.type)
-        expect(home_page.merge_breakdown_text).to include(different_type_list.type)
+        expect(home_page.merge_breakdown_text).to include(different_template_list.name)
       end
 
       it "does not show warning when all selected lists are the same type" do

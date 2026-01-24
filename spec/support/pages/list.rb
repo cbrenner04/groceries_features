@@ -6,8 +6,6 @@ module Pages
     include TestSelectors
     include Helpers::WaitHelper
 
-    UNREAD_BUTTON = "[data-test-id='unread-bookmark-icon']"
-    READ_BUTTON = "[data-test-id='read-bookmark-icon']"
     COMPLETE_BUTTON = "[data-test-id='check-icon']"
     EDIT_BUTTON = "[data-test-id='edit-icon']"
     DELETE_BUTTON = "[data-test-id='trash-icon']"
@@ -24,7 +22,7 @@ module Pages
     element :artist_input, "#artist"
     element :album_input, "#album"
     element :task_input, "#task"
-    element :assignee_input, "#assignee_email"
+    element :assignee_input, "#assignee"
     element :due_by_input, "#due_by"
     element :content_input, "#content"
     element :product_input, "#product"
@@ -87,10 +85,6 @@ module Pages
       has_no_test_class?("category-header")
     end
 
-    def unread_button_css
-      UNREAD_BUTTON
-    end
-
     def complete_button_css
       COMPLETE_BUTTON
     end
@@ -134,16 +128,6 @@ module Pages
     def find_list_item(item_name, completed: false)
       test_class = completed ? "completed-item" : "non-completed-item"
       find_by_test_class(test_class, text: item_name)
-    end
-
-    def read(item_name, completed: false)
-      item_element = find_list_item(item_name, completed:)
-      item_element.find(UNREAD_BUTTON).click
-    end
-
-    def has_read_item?(item_name, completed: false)
-      item = find_list_item(item_name, completed:)
-      item.has_css?(READ_BUTTON) && item.has_no_css?(UNREAD_BUTTON)
     end
 
     def complete(item_name)

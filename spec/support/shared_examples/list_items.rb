@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, bulk_update_attrs|
+RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_class, bulk_update_attrs|
   def update_attrs(bulk_attrs)
     bulk_attrs.each do |attr|
       if attr == "assignee"
@@ -12,8 +12,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
     end
   end
 
-  def bulk_update_selector(item, type, attribute)
-    type == "ToDoList" ? send("bulk_updated_title", item) : item.send(attribute)
+  def bulk_update_selector(item, template, attribute)
+    template == "to do list template" ? send("bulk_updated_title", item) : item.send(attribute)
   end
 
   describe "when logged in as owner" do
@@ -373,7 +373,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         it "chooses existing list" do
           # create another list so option for existing list are available
-          new_list = Models::List.new(type: list_type, owner_id: user.id,
+          new_list = Models::List.new(template_name: template_name, owner_id: user.id,
                                       list_item_configuration: list.list_item_configuration)
           Models::UsersList.new(user_id: user.id, list_id: new_list.id)
 
@@ -443,7 +443,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
 
         it "chooses existing list" do
           # create another list so option for existing list are available
-          new_list = Models::List.new(type: list_type, owner_id: user.id,
+          new_list = Models::List.new(template_name: template_name, owner_id: user.id,
                                       list_item_configuration: list.list_item_configuration)
           Models::UsersList.new(user_id: user.id, list_id: new_list.id)
 
@@ -504,7 +504,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
             next if item.send("completed")
 
             label = list_page.find_list_item(
-              bulk_update_selector(item, list_type, edit_attribute), completed: false
+              bulk_update_selector(item, template_name, edit_attribute), completed: false
             ).text
 
             expect(label).to include send("bulk_updated_title", item)
@@ -537,7 +537,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, list_type, item_class, b
                     .find_list_item(item.send(edit_attribute), completed: false)
                     .text
 
-            if list_type == "ToDoList"
+            if template_name == "to do list template"
               expect(label).not_to include user.email
               expect(label).not_to include "February 2, 2020"
             else

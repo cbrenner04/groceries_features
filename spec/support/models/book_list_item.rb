@@ -22,7 +22,8 @@ module Models
     end
 
     def pretty_title
-      "\"#{title}\" #{author}"
+      read_value = read ? "true" : "false"
+      "#{author} #{title} #{number_in_series} read: #{read_value}"
     end
 
     private

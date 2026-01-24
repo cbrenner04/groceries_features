@@ -11,7 +11,6 @@ module Helpers
 
     def remove_test_data
       set_instance_variables
-      @users_lists.delete
       @user_ids.each do |user_id|
         list_item_configurations = @database[:list_item_configurations].where(user_id:)
 
@@ -29,6 +28,7 @@ module Helpers
           field_configurations.delete
         end
         list_item_configurations.delete
+        @database[:users_lists].where(user_id: user_id).delete
       end
       # rubocop:disable Style/CombinableLoops
       @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
@@ -43,8 +43,7 @@ module Helpers
     def set_instance_variables
       @users = @database[:users].where(is_test_account: true)
       @user_ids = @users.map { |user| user[:id] }
-      @users_lists = @database[:users_lists].where(user_id: @user_ids)
-      list_ids = @users_lists.map { |list| list[:list_id] }
+      list_ids = @database[:users_lists].where(user_id: @user_ids).map { |list| list[:list_id] }
       @lists = @database[:lists].where(id: list_ids)
     end
   end
