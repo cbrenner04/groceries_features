@@ -18,7 +18,7 @@ module Models
       @list_item_configuration_id = list_item_configuration_id
       @task = SecureRandom.hex(16)
       @assignee_email = assignee_email || DB[:users].first[:email]
-      @due_by = DUE_BY_DATE.strftime('%Y-%m-%d')
+      @due_by = DUE_BY_DATE.strftime("%Y-%m-%d")
       @completed = completed
       @refreshed = refreshed
       @category = category
