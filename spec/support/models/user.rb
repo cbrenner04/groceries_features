@@ -7,8 +7,8 @@ module Models
   class User
     TEMPLATE_DEFINITIONS = {
       "grocery list template" => [
-        { label: "product", data_type: "free_text", position: 1 },
-        { label: "quantity", data_type: "free_text", position: 2 },
+        { label: "quantity", data_type: "free_text", position: 1 },
+        { label: "product", data_type: "free_text", position: 2 },
         { label: "category", data_type: "free_text", position: 3 }
       ],
       "book list template" => [

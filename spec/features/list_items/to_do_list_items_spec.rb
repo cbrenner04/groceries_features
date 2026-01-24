@@ -14,11 +14,11 @@ RSpec.describe "A to do list item", type: :feature do
   def input_new_item_attributes(new_list_item)
     list_page.task_input.set new_list_item.task
     list_page.assignee_input.set new_list_item.assignee_email
-    fill_in "Due by", with: new_list_item.due_by.strftime("%m/%d/%Y")
+    fill_in "Due by", with: Time.parse(new_list_item.due_by).strftime("%m/%d/%Y")
 
     expect(list_page.task_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
-    expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime("%Y-%m-%d")
+    expect(list_page.due_by_input.value).to eq new_list_item.due_by
   end
 
   def confirm_form_cleared
@@ -30,7 +30,7 @@ RSpec.describe "A to do list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "#{item.task}\nAssigned To: #{item.assignee_email} Due By: February 2, 2020"
+    "#{item.task} #{item.assignee_email} 2020-02-02"
   end
 
   before do

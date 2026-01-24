@@ -30,76 +30,12 @@ RSpec.describe "A book list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "\"#{item.title}\" foobar"
+    "foobar #{item.title} #{item.number_in_series} read: #{item.read}"
   end
 
   before { @list_items = create_associated_list_objects(user, list) }
 
   it_behaves_like "a list item", "title", "book list template", Models::BookListItem, ["author"]
-
-  describe "when logged in as owner" do
-    before do
-      login user
-      list_page.load(id: list.id)
-      @initial_list_item_count = list_page.not_completed_items.count
-    end
-
-    describe "that is not completed" do
-      it "is read" do
-        item_name = @list_items.first.pretty_title
-
-        list_page.read item_name
-
-        wait_for { list_page.has_read_item?(item_name) }
-
-        expect(list_page).to have_read_item item_name
-      end
-
-      describe "when a filter is applied" do
-        before do
-          list_page.wait_until_completed_items_visible
-          list_page.filter_button.click
-          list_page.filter_option("foo").click
-        end
-
-        it "is read" do
-          item_name = @list_items.first.pretty_title
-
-          list_page.read item_name
-
-          expect(list_page).to have_read_item item_name
-        end
-      end
-    end
-
-    describe "that is completed" do
-      it "is read" do
-        item_name = @list_items.last.pretty_title
-
-        list_page.read item_name, completed: true
-
-        expect(list_page).to have_read_item item_name, completed: true
-      end
-    end
-
-    describe "when multiple selected" do
-      it "is read" do
-        list_page.multi_select_buttons.first.click
-        @list_items.each do |item|
-          next if item.completed
-
-          list_page.multi_select_item(item.pretty_title, completed: item.completed)
-        end
-        list_page.read(@list_items.first.pretty_title, completed: false)
-
-        @list_items.each do |item|
-          next if item.completed
-
-          expect(list_page).to have_read_item item.pretty_title, completed: item.completed
-        end
-      end
-    end
-  end
 
   describe "when logged in as shared user with write access" do
     before do
@@ -109,7 +45,7 @@ RSpec.describe "A book list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "can create, read, complete, edit, and destroy" do
+    it "can create, complete, edit, and destroy" do
       not_completed_item = list_page.find_list_item(@list_items.first.title)
       completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
 
@@ -119,11 +55,9 @@ RSpec.describe "A book list item", type: :feature do
       expect(list_page).to have_title_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
-      expect(not_completed_item).to have_css list_page.unread_button_css
       expect(not_completed_item).to have_css list_page.complete_button_css
       expect(not_completed_item).to have_css list_page.edit_button_css
       expect(not_completed_item).to have_css list_page.delete_button_css
-      expect(completed_item).to have_css list_page.unread_button_css
       expect(completed_item).to have_css list_page.delete_button_css
     end
   end
@@ -136,7 +70,7 @@ RSpec.describe "A book list item", type: :feature do
       list_page.load(id: list.id)
     end
 
-    it "cannot create, read, complete, edit, or destroy" do
+    it "cannot create, complete, edit, or destroy" do
       not_completed_item = list_page.find_list_item(@list_items.first.title)
       completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
 
@@ -144,11 +78,9 @@ RSpec.describe "A book list item", type: :feature do
       expect(list_page).to have_no_title_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
-      expect(not_completed_item).to have_no_css list_page.unread_button_css
       expect(not_completed_item).to have_no_css list_page.complete_button_css
       expect(not_completed_item).to have_no_css list_page.edit_button_css
       expect(not_completed_item).to have_no_css list_page.delete_button_css
-      expect(completed_item).to have_no_css list_page.unread_button_css
       expect(completed_item).to have_no_css list_page.delete_button_css
     end
   end

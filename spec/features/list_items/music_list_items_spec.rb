@@ -30,7 +30,7 @@ RSpec.describe "A music list item", type: :feature do
   end
 
   def bulk_updated_title(item)
-    "\"#{item.title}\" foobar - foobar"
+    "#{item.title} foobar foobar"
   end
 
   before do
