@@ -6,7 +6,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       if attr == "assignee"
         edit_list_items_page.assignee.set user.email
       else
-        value = attr == "due_by" ? "02/02/2020" : "foobar"
+        value = attr == "due by" ? "02/02/2020" : "foobar"
         edit_list_items_page.send(attr).set value
       end
     end
