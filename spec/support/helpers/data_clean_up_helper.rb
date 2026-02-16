@@ -32,6 +32,7 @@ module Helpers
       end
       # rubocop:disable Style/CombinableLoops
       @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
+      @user_ids.each { |id| @database[:lists].where(owner_id: id).each { |list| @database[:categories].where(list_id: list[:id]).delete } }
       @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
       # rubocop:enable Style/CombinableLoops
       @lists.delete

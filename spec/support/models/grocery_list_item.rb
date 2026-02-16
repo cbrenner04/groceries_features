@@ -3,8 +3,8 @@
 module Models
   # an item on a grocery list
   class GroceryListItem
-    attr_accessor :product
-    attr_reader :id, :user_id, :list_id, :quantity, :completed, :refreshed, :category, :list_item_configuration_id
+    attr_accessor :product, :quantity
+    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false,
                    list_item_configuration_id: nil, create_item: true)
@@ -20,7 +20,7 @@ module Models
     end
 
     def pretty_title
-      "#{quantity} #{product}"
+      "#{quantity}\nProduct: #{product}"
     end
 
     private
@@ -33,13 +33,11 @@ module Models
     end
 
     def create
-      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:)
+      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "quantity", value: quantity)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "product", value: product)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "category", value: category)
       list_item.id
     end
   end

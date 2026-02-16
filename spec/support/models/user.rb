@@ -8,31 +8,26 @@ module Models
     TEMPLATE_DEFINITIONS = {
       "grocery list template" => [
         { label: "quantity", data_type: "free_text", position: 1 },
-        { label: "product", data_type: "free_text", position: 2 },
-        { label: "category", data_type: "free_text", position: 3 }
+        { label: "product", data_type: "free_text", position: 2 }
       ],
       "book list template" => [
         { label: "author", data_type: "free_text", position: 1 },
         { label: "title", data_type: "free_text", position: 2 },
         { label: "number in series", data_type: "number", position: 3 },
-        { label: "read", data_type: "boolean", position: 4 },
-        { label: "category", data_type: "free_text", position: 5 }
+        { label: "read", data_type: "boolean", position: 4 }
       ],
       "music list template" => [
         { label: "title", data_type: "free_text", position: 1 },
         { label: "artist", data_type: "free_text", position: 2 },
-        { label: "album", data_type: "free_text", position: 3 },
-        { label: "category", data_type: "free_text", position: 4 }
+        { label: "album", data_type: "free_text", position: 3 }
       ],
       "to do list template" => [
         { label: "task", data_type: "free_text", position: 1 },
         { label: "assignee", data_type: "free_text", position: 2 },
-        { label: "due by", data_type: "date_time", position: 3 },
-        { label: "category", data_type: "free_text", position: 4 }
+        { label: "due by", data_type: "date_time", position: 3 }
       ],
       "simple list with category template" => [
-        { label: "content", data_type: "free_text", position: 1 },
-        { label: "category", data_type: "free_text", position: 2 }
+        { label: "content", data_type: "free_text", position: 1 }
       ]
     }.freeze
 

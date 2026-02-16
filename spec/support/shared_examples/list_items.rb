@@ -6,14 +6,33 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       if attr == "assignee"
         edit_list_items_page.assignee.set user.email
       else
-        value = attr == "due by" ? "02/02/2020" : "foobar"
+        value = ["due by", "due_by"].include?(attr) ? "02/02/2020" : "foobar"
         edit_list_items_page.send(attr).set value
       end
     end
   end
 
+  def bulk_updated_value(attr)
+    return user.email if attr == "assignee"
+    return "2020-02-02" if ["due_by", "due by"].include?(attr)
+
+    "foobar"
+  end
+
+  def apply_bulk_update_values(bulk_attrs)
+    bulk_attrs.each do |attr|
+      value = bulk_updated_value(attr)
+      setter = (attr == "assignee" ? "assignee_email=" : "#{attr}=")
+      @list_items.each do |item|
+        next if item.send("completed")
+
+        item.send(setter, value)
+      end
+    end
+  end
+
   def bulk_update_selector(item, template, attribute)
-    template == "to do list template" ? send("bulk_updated_title", item) : item.send(attribute)
+    template == "to do list template" ? item.pretty_title : item.send(attribute)
   end
 
   describe "when logged in as owner" do
@@ -492,6 +511,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           edit_list_items_page.category.set "foobaz"
           edit_list_items_page.submit.click
 
+          apply_bulk_update_values(bulk_update_attrs)
           list_page.wait_until_not_completed_items_visible
 
           # all items should now have the same category "foobaz"
@@ -507,7 +527,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
               bulk_update_selector(item, template_name, edit_attribute), completed: false
             ).text
 
-            expect(label).to include send("bulk_updated_title", item)
+            expect(label).to include item.pretty_title
           end
 
           # return to edit page for clearing below
@@ -515,9 +535,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(send("bulk_updated_title", item), completed: false)
+            list_page.multi_select_item(item.pretty_title, completed: false)
           end
-          list_page.edit(bulk_updated_title(@list_items.first))
+          list_page.edit(@list_items.first.pretty_title)
 
           # clear attributes
           bulk_update_attrs.each { |attr| edit_list_items_page.send("clear_#{attr}").click }
