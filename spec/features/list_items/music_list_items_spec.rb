@@ -29,10 +29,6 @@ RSpec.describe "A music list item", type: :feature do
     expect(list_page.completed_checkbox).not_to be_checked
   end
 
-  def bulk_updated_title(item)
-    "#{item.title} foobar foobar"
-  end
-
   before do
     @list_items = create_associated_list_objects(user, list)
   end

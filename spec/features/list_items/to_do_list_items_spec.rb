@@ -29,10 +29,6 @@ RSpec.describe "A to do list item", type: :feature do
     expect(list_page.completed_checkbox).not_to be_checked
   end
 
-  def bulk_updated_title(item)
-    "#{item.task} #{item.assignee_email} 2020-02-02"
-  end
-
   before do
     @list_items = create_associated_list_objects(user, list)
   end
