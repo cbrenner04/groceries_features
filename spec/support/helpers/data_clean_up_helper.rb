@@ -9,6 +9,7 @@ module Helpers
       @database = database
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def remove_test_data
       set_instance_variables
       @user_ids.each do |user_id|
@@ -32,11 +33,17 @@ module Helpers
       end
       # rubocop:disable Style/CombinableLoops
       @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
+      @user_ids.each do |id|
+        @database[:lists].where(owner_id: id).each do |list|
+          @database[:categories].where(list_id: list[:id]).delete
+        end
+      end
       @user_ids.each { |id| @database[:lists].where(owner_id: id).delete }
       # rubocop:enable Style/CombinableLoops
       @lists.delete
       @users.delete
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     private
 

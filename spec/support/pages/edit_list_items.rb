@@ -18,8 +18,8 @@ module Pages
     element :clear_author, "#clear_author"
     element :category, "#category"
     element :clear_category, "#clear_category"
-    element :due_by, "#due_by"
-    element :clear_due_by, "#clear_due_by"
+    element :due_by, "#due\\ by"
+    element :clear_due_by, "#clear_due\\ by"
     element :quantity, "#quantity"
     element :clear_quantity, "#clear_quantity"
 

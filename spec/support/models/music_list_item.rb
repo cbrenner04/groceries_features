@@ -3,8 +3,8 @@
 module Models
   # an item on a music list
   class MusicListItem
-    attr_accessor :title
-    attr_reader :id, :user_id, :list_id, :artist, :album, :completed, :category, :list_item_configuration_id
+    attr_accessor :title, :artist, :album
+    attr_reader :id, :user_id, :list_id, :completed, :category, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, category: nil, list_item_configuration_id: nil,
                    create_item: true)
@@ -20,7 +20,7 @@ module Models
     end
 
     def pretty_title
-      "#{title} #{artist} #{album}"
+      "#{title}\nArtist: #{artist}•Album: #{album}"
     end
 
     private
@@ -33,15 +33,13 @@ module Models
     end
 
     def create
-      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:)
+      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "title", value: title)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "artist", value: artist)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "album", value: album)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "category", value: category)
       list_item.id
     end
   end

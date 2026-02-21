@@ -32,11 +32,9 @@ module Models
     end
 
     def create
-      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:)
+      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "content", value: content)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "category", value: category)
       list_item.id
     end
   end

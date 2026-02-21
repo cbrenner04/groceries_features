@@ -3,8 +3,8 @@
 module Models
   # an item on a book list
   class BookListItem
-    attr_accessor :title
-    attr_reader :id, :user_id, :list_id, :author, :completed, :read, :number_in_series, :category,
+    attr_accessor :title, :author
+    attr_reader :id, :user_id, :list_id, :completed, :read, :number_in_series, :category,
                 :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, read: false, category: nil, list_item_configuration_id: nil,
@@ -23,7 +23,7 @@ module Models
 
     def pretty_title
       read_value = read ? "true" : "false"
-      "#{author} #{title} #{number_in_series} read: #{read_value}"
+      "#{author}\nTitle: #{title}•Number in series: #{number_in_series}•Read: #{read_value}"
     end
 
     private
@@ -36,7 +36,7 @@ module Models
     end
 
     def create
-      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:)
+      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "author", value: author)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
@@ -44,9 +44,7 @@ module Models
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
                                attribute: "read", value: read)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "number_in_series", value: number_in_series)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id: list_item_configuration_id,
-                               attribute: "category", value: category)
+                               attribute: "number in series", value: number_in_series)
       list_item.id
     end
   end

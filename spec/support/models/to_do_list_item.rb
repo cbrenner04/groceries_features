@@ -26,8 +26,7 @@ module Models
     end
 
     def pretty_title
-      adjusted_due_by = DUE_BY_DATE - (5 * ONE_HOUR)
-      "#{task} #{assignee_email} #{adjusted_due_by.strftime('%Y-%m-%d')}"
+      "#{task}\nAssignee: #{assignee_email}•Due by: #{due_by}"
     end
 
     private
@@ -40,14 +39,12 @@ module Models
     end
 
     def create
-      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:)
+      list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "task", value: task)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "due_by",
+      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "due by",
                                value: due_by)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "assignee",
                                value: assignee_email)
-      create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "category",
-                               value: category)
       list_item.id
     end
   end

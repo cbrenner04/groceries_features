@@ -29,10 +29,6 @@ RSpec.describe "A book list item", type: :feature do
     expect(list_page.completed_checkbox).not_to be_checked
   end
 
-  def bulk_updated_title(item)
-    "foobar #{item.title} #{item.number_in_series} read: #{item.read}"
-  end
-
   before { @list_items = create_associated_list_objects(user, list) }
 
   it_behaves_like "a list item", "title", "book list template", Models::BookListItem, ["author"]

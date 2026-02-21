@@ -13,6 +13,9 @@ module Helpers
     def create_associated_items(user, list)
       list_item_configuration_id = DB[:lists].where(id: list.id).first[:list_item_configuration_id]
 
+      # Seed category in categories table for test data
+      seed_category(list.id, "foo")
+
       case list.template_name
       when "book list template"
         create_book_list_items(user, list, list_item_configuration_id)
@@ -25,6 +28,17 @@ module Helpers
       when "to do list template"
         create_todo_list_items(user, list, list_item_configuration_id)
       end
+    end
+
+    def seed_category(list_id, category_name)
+      return if category_name.nil? || category_name.empty?
+
+      # Check if category already exists for this list
+      existing = DB[:categories].where(list_id:, name: category_name).first
+      return if existing
+
+      # Insert category
+      DB[:categories].insert(list_id:, name: category_name, created_at: Time.now, updated_at: Time.now)
     end
 
     def create_book_list_items(user, list, list_item_configuration_id)
