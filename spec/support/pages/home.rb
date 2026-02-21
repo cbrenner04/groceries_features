@@ -2,7 +2,6 @@
 
 module Pages
   # app home page, displayed after log in, displays lists
-  # rubocop:disable Metrics/ClassLength
   class Home < SitePrism::Page
     include TestSelectors
     include Helpers::WaitHelper
@@ -305,5 +304,4 @@ module Pages
       find_by_test_id("clear-merge")
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
