@@ -7,27 +7,27 @@ module Models
   class User
     TEMPLATE_DEFINITIONS = {
       "grocery list template" => [
-        { label: "quantity", data_type: "free_text", position: 1 },
-        { label: "product", data_type: "free_text", position: 2 }
+        { label: "quantity", data_type: "free_text", position: 1, primary: true },
+        { label: "product", data_type: "free_text", position: 2, primary: false }
       ],
       "book list template" => [
-        { label: "author", data_type: "free_text", position: 1 },
-        { label: "title", data_type: "free_text", position: 2 },
-        { label: "number in series", data_type: "number", position: 3 },
-        { label: "read", data_type: "boolean", position: 4 }
+        { label: "author", data_type: "free_text", position: 1, primary: true },
+        { label: "title", data_type: "free_text", position: 2, primary: false },
+        { label: "number in series", data_type: "number", position: 3, primary: false  },
+        { label: "read", data_type: "boolean", position: 4, primary: false }
       ],
       "music list template" => [
-        { label: "title", data_type: "free_text", position: 1 },
-        { label: "artist", data_type: "free_text", position: 2 },
-        { label: "album", data_type: "free_text", position: 3 }
+        { label: "title", data_type: "free_text", position: 1, primary: true },
+        { label: "artist", data_type: "free_text", position: 2, primary: false },
+        { label: "album", data_type: "free_text", position: 3, primary: false }
       ],
       "to do list template" => [
-        { label: "task", data_type: "free_text", position: 1 },
-        { label: "assignee", data_type: "free_text", position: 2 },
-        { label: "due by", data_type: "date_time", position: 3 }
+        { label: "task", data_type: "free_text", position: 1, primary: true },
+        { label: "assignee", data_type: "free_text", position: 2, primary: false },
+        { label: "due by", data_type: "date_time", position: 3, primary: false }
       ],
       "simple list with category template" => [
-        { label: "content", data_type: "free_text", position: 1 }
+        { label: "content", data_type: "free_text", position: 1, primary: true }
       ]
     }.freeze
 
@@ -55,8 +55,8 @@ module Models
         )
         fields.each do |field|
           DB[:list_item_field_configurations].insert(
-            label: field[:label], data_type: field[:data_type], position: field[:position],
-            list_item_configuration_id: config_id, created_at: Time.now, updated_at: Time.now
+            label: field[:label], data_type: field[:data_type], position: field[:position], primary: field[:primary],
+            list_item_configuration_id: config_id, archived_at: nil, created_at: Time.now, updated_at: Time.now
           )
         end
       end

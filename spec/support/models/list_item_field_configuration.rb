@@ -20,8 +20,10 @@ module Models
     private
 
     def create
-      DB[:list_item_field_configurations].insert(label:, data_type:, archived_at:, list_item_configuration_id:,
-                                                 position:, created_at: Time.now, updated_at: Time.now)
+      DB[:list_item_field_configurations].insert(
+        label:, data_type:, archived_at:, list_item_configuration_id:,
+        position:, primary: @primary, created_at: Time.now, updated_at: Time.now
+      )
     end
   end
 end
