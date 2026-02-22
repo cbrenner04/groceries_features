@@ -53,7 +53,7 @@ RSpec.describe "Templates", type: :feature do
         templates_page.expand_template_form
         # Leave name blank, try to submit
         templates_page.field_label_input(0).set("item name")
-        
+
         expect(templates_page.submit).to be_disabled
       end
     end

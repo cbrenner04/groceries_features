@@ -13,7 +13,7 @@ module Models
       "book list template" => [
         { label: "author", data_type: "free_text", position: 1, primary: true },
         { label: "title", data_type: "free_text", position: 2, primary: false },
-        { label: "number in series", data_type: "number", position: 3, primary: false  },
+        { label: "number in series", data_type: "number", position: 3, primary: false },
         { label: "read", data_type: "boolean", position: 4, primary: false }
       ],
       "music list template" => [
