@@ -33,7 +33,7 @@ RSpec.describe "Templates", type: :feature do
 
       # First field row should already exist with primary checked
       templates_page.field_label_input(0).set("item name")
-      templates_page.field_data_type_select(0).select("Free Text")
+      templates_page.field_data_type_select(0).select("Text")
 
       # Add a second field
       templates_page.add_field_button.click
@@ -86,7 +86,7 @@ RSpec.describe "Templates", type: :feature do
       new_index = initial_field_count
 
       edit_template_page.field_label_input(new_index).set("new field")
-      edit_template_page.field_data_type_select(new_index).select("Boolean")
+      edit_template_page.field_data_type_select(new_index).select("True/False")
       edit_template_page.submit.click
 
       expect(templates_page).to have_header

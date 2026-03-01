@@ -18,7 +18,7 @@ module Models
       @list_item_configuration_id = list_item_configuration_id
       @task = SecureRandom.hex(16)
       @assignee_email = assignee_email || DB[:users].first[:email]
-      @due_by = DUE_BY_DATE.strftime("%Y-%m-%d")
+      @due_by = DUE_BY_DATE
       @completed = completed
       @refreshed = refreshed
       @category = category
@@ -26,7 +26,7 @@ module Models
     end
 
     def pretty_title
-      "#{task}\nAssignee: #{assignee_email}•Due by: #{due_by}"
+      "#{task}\nAssignee: #{assignee_email}•Due by: #{due_by.strftime('%B %-d, %Y')}"
     end
 
     private
@@ -42,7 +42,7 @@ module Models
       list_item = ListItem.new(user_id:, list_id:, create_item: true, completed:, refreshed:, category:)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "task", value: task)
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "due by",
-                               value: due_by)
+                               value: due_by.strftime("%Y-%m-%d"))
       create_individual_fields(list_item_id: list_item.id, list_item_configuration_id:, attribute: "assignee",
                                value: assignee_email)
       list_item.id
