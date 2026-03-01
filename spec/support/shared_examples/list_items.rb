@@ -14,7 +14,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
   def bulk_updated_value(attr)
     return user.email if attr == "assignee"
-    return "2020-02-02" if ["due_by", "due by"].include?(attr)
+    return Time.parse("February 2, 2020") if ["due_by", "due by"].include?(attr)
 
     "foobar"
   end
@@ -508,6 +508,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         it "updates all attributes for items" do
           # change attributes to new attributes
           update_attrs(bulk_update_attrs)
+          # need to escape in to do list because of the date picker
+          find("body").send_keys :escape
           edit_list_items_page.category.set "foobaz"
           edit_list_items_page.submit.click
 
@@ -517,7 +519,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           # all items should now have the same category "foobaz"
           category_headers = list_page.category_header.map(&:text)
           expect(category_headers.count).to eq 1
-          expect(category_headers[0]).to eq "Foobaz"
+          expect(category_headers).to include "Foobaz"
 
           # all items should now have the same attributes set to "foobar"
           @list_items.each do |item|
