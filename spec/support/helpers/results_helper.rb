@@ -9,13 +9,11 @@ module Helpers
   # helpers for post results
   class ResultsHelper
     def sign_in
-      file = File.open(TOKEN_FILE_PATH, "w")
       response = RestClient.post("#{ENV.fetch('RESULTS_URL', nil)}/sign-in.json",
                                  user_login: { email: ENV.fetch("RESULTS_USER", nil),
                                                password: ENV.fetch("RESULTS_PASSWORD", nil) })
       @auth_token = JSON.parse(response.body)["auth_token"]
-      file.write(@auth_token)
-      file.close
+      File.write(TOKEN_FILE_PATH, @auth_token)
     rescue Errno::ECONNREFUSED
       # if can't connect to feature results, auth token doesn't matter
     end
