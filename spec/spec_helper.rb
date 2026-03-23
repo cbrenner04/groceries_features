@@ -73,7 +73,9 @@ CONSTANT_WINDOW_SIZE = [1728, 960].freeze
 
 # Capybara configuration options
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
+  client = Selenium::WebDriver::Remote::Http::Default.new
+  client.read_timeout = 30
+  Capybara::Selenium::Driver.new(app, browser: :chrome, http_client: client)
 end
 Capybara.register_driver :poltergeist do |app|
   options = { js: true, js_errors: false, window_size: CONSTANT_WINDOW_SIZE }
@@ -84,6 +86,7 @@ Capybara.default_driver = ENV["DRIVER"].nil? ? :selenium : ENV["DRIVER"].to_sym
 unless ENV["DRIVER"] == "poltergeist"
   Capybara.javascript_driver = :chrome
   Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
+  Capybara.page.driver.browser.manage.timeouts.page_load = 10
 end
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)

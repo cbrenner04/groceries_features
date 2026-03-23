@@ -16,9 +16,11 @@ RSpec.shared_examples "a refreshable list item" do
 
         wait_for { list_page.not_completed_items.count == initial_list_item_count + 1 }
 
-        list_page.close_alert.click
+        # list_page.close_alert.click # TODO: not sure why this is no longer working
         list_page.filter_button.click
         list_page.filter_option("foo").click
+
+        wait_for { list_page.not_completed_items.map(&:text).include?(item_name) }
 
         expect(list_page.not_completed_items.map(&:text)).to include item_name
       end

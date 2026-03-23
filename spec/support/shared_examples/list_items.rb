@@ -414,6 +414,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.load(id: new_list.id)
           list_page.wait_until_not_completed_items_visible
 
+          wait_for { list_page.not_completed_items.count == @list_items.count { |item| !item.send("completed") } }
+
           # all items should exist on this list
           @list_items.each do |item|
             next if item.send("completed")

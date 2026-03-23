@@ -527,6 +527,10 @@ RSpec.shared_examples "a list" do |template_name|
         different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
         create_associated_list_objects(user, different_template_list)
 
+        # Synchronize with browser before navigation to prevent renderer crash
+        # caused by in-flight polling/prefetch requests being interrupted
+        page.execute_script("void(0)")
+
         # need to pick up the data changes
         home_page.load
 
@@ -552,6 +556,10 @@ RSpec.shared_examples "a list" do |template_name|
         # Create a list of different template for testing
         different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
         create_associated_list_objects(user, different_template_list)
+
+        # Synchronize with browser before navigation to prevent renderer crash
+        # caused by in-flight polling/prefetch requests being interrupted
+        page.execute_script("void(0)")
 
         # need to pick up the data changes
         home_page.load
@@ -649,8 +657,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         home_page.delete list.name
 
-        expect(find(".modal-body").text).to include list.name
-        expect(find(".modal-body").text).to include other_list.name
+        modal_body = find("[data-test-id='confirm-modal-body']")
+        expect(modal_body.text).to include list.name
+        expect(modal_body.text).to include other_list.name
 
         home_page.confirm_delete_button.click
 

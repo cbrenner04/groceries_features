@@ -69,6 +69,9 @@ module Helpers
     rescue RestClient::Unauthorized
       sign_out
       sign_in
+    rescue RestClient::UnprocessableEntity
+      # if the result is already posted, don't post it again
+      nil
     rescue Errno::ECONNREFUSED
       # if can't connect to feature results, posting results doesn't matter
     end

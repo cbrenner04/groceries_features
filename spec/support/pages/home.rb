@@ -277,11 +277,11 @@ module Pages
     end
 
     def merge_warning_text
-      find(".alert-warning").text
+      find_by_test_id("merge-warning").text
     end
 
     def merge_breakdown_text
-      find(".alert-info").text
+      find_by_test_id("merge-breakdown").text
     end
 
     def has_clear_merge_button?
