@@ -26,11 +26,11 @@ module Pages
     element :submit, "button[type='submit']"
 
     def create_new_list_link
-      find(".btn.btn-link", text: "Create new list")
+      find_by_test_id("create-new-list-link")
     end
 
     def choose_existing_list_link
-      find(".btn.btn-link", text: "Choose existing list")
+      find_by_test_id("choose-existing-list-link")
     end
   end
 end

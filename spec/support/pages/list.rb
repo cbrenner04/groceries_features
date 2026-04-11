@@ -28,12 +28,9 @@ module Pages
     element :product_input, "#product"
     element :completed_checkbox, "#completed"
     element :submit_button, "button[type='submit']"
-    element :filter_button, "#filter-by-category-button"
-
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
-    elements :multi_select_buttons, :button, "Select"
-    element :copy_to_list, :button, text: "Copy to list"
-    element :move_to_list, :button, text: "Move to list"
+    element :select_button, "[data-test-id='select-button']"
+    element :multi_select_bar, "[data-test-id='multi-select-bar']"
 
     # has_*? methods for elements that use data-test-* selectors
     def has_filter_option?(filter_name)
@@ -151,12 +148,58 @@ module Pages
     end
 
     def expand_list_item_form
-      find(".btn.btn-link", text: "Add Item").click
+      find_by_test_id("quick-add-expand").click
     end
 
     def multi_select_item(item_name, completed: false)
       item_element = find_list_item(item_name, completed:)
       item_element.find("input").click
+    end
+
+    def toggle_multi_select
+      find_by_test_id("select-button").click
+    end
+
+    def edit_item_via_sheet(item_name)
+      item_element = find_list_item(item_name, completed: false)
+      item_element.find(EDIT_BUTTON).click
+      wait_for { has_test_id?("edit-item-sheet") }
+    end
+
+    def copy_to_list_button
+      find_by_test_id("copy-to-list")
+    end
+
+    def move_to_list_button
+      find_by_test_id("move-to-list")
+    end
+
+    def bulk_edit_button
+      find_by_test_id("bulk-edit")
+    end
+
+    def complete_selected_button
+      find_by_test_id("complete-selected")
+    end
+
+    def delete_selected_button
+      find_by_test_id("delete-selected")
+    end
+
+    def refresh_selected_button
+      find_by_test_id("refresh-selected")
+    end
+
+    def has_multi_select_bar?
+      has_test_id?("multi-select-bar")
+    end
+
+    def has_no_multi_select_bar?
+      has_no_test_id?("multi-select-bar")
+    end
+
+    def quick_add_input
+      find_by_test_id("quick-add-input")
     end
 
     def wait_until_confirm_delete_button_visible
