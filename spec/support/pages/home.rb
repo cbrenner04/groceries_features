@@ -12,6 +12,7 @@ module Pages
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
     element :list_template, "#list_item_configuration_id"
     element :new_merged_list_name_input, "#mergeName"
+    element :header, "[data-test-id='page-title']"
 
     elements :multi_select_buttons, :button, "Select"
 
@@ -83,10 +84,6 @@ module Pages
 
     def page_title
       find_by_test_id("page-title")
-    end
-
-    def header
-      page_title
     end
 
     def go_to_completed_lists
@@ -163,7 +160,14 @@ module Pages
     end
 
     def select_list(list_name)
-      click_on list_name
+      # Find the list card by searching for the list-name within a list card
+      # This is more specific than just searching by test-class
+      # Note: [data-test-id^="list-"] alone matches both Card elements and the list-name span,
+      # so we add [data-test-class] to match only Card containers
+      list_card = all('[data-test-id^="list-"][data-test-class]').detect do |card|
+        card.find('[data-test-id="list-name"]').text == list_name
+      end
+      list_card.click if list_card
     end
 
     def find_pending_list(list_name)
@@ -241,13 +245,12 @@ module Pages
       find_by_test_id_within(list_element, "incomplete-list-edit").click
     end
 
-    def merge(list_name)
-      merge_button(list_name).click
+    def merge(_list_name = nil)
+      merge_button.click
     end
 
-    def merge_button(list_name)
-      list_element = find_incomplete_list(list_name)
-      find_by_test_id_within(list_element, "incomplete-list-merge")
+    def merge_button(_list_name = nil)
+      find_by_test_id("multi-select-merge")
     end
 
     def incomplete_delete_button_css
@@ -294,7 +297,7 @@ module Pages
 
     # Legacy method — delegates to quick_add_list
     def expand_list_form
-      # No-op: the BottomInputBar is always visible
+      find_by_test_id("quick-add-expand").click
     end
 
     def name

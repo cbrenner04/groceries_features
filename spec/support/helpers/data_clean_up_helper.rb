@@ -7,7 +7,7 @@ module Helpers
       @database = database
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
     def remove_test_data
       set_instance_variables
       @user_ids.each do |user_id|
@@ -42,7 +42,7 @@ module Helpers
       @lists.delete
       @users.delete
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/MethodLength
 
     private
 

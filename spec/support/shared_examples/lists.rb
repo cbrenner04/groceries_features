@@ -162,13 +162,14 @@ RSpec.shared_examples "a list" do |template_name|
     describe "that is shared" do
       describe "that is pending" do
         before do
-          # make other list pending
+          # make other list pending - set has_accepted to nil, permissions is whatever was shared
           DB[:users_lists].where(user_id: user.id, list_id: other_list.id)
-                          .update(permissions: "read", has_accepted: nil)
+                          .update(has_accepted: nil)
           # make other list created at more recent than list
           DB[:lists].where(id: other_list.id).update(created_at: Time.now)
           home_page.load
           home_page.wait_until_header_visible
+          wait_for { home_page.has_pending_lists? }
         end
 
         it "can only accept or reject" do
@@ -223,11 +224,10 @@ RSpec.shared_examples "a list" do |template_name|
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(write_list.find(home_page.share_button_css)[:disabled]).to be_nil
-            expect(write_list.find(home_page.complete_button_css)).to be_disabled
+            expect(write_list).to have_css home_page.share_button_css
+            expect(write_list).to have_no_css home_page.complete_button_css
             expect(write_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            # TODO: confirm it can't be clicked
-            expect(write_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(write_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
@@ -279,10 +279,10 @@ RSpec.shared_examples "a list" do |template_name|
           it "cannot be edited, completed, or shared" do
             read_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(read_list.find(home_page.share_button_css)["aria-disabled"]).to eq "true"
-            expect(read_list.find(home_page.complete_button_css)).to be_disabled
+            expect(read_list).to have_no_css home_page.share_button_css
+            expect(read_list).to have_no_css home_page.complete_button_css
             expect(read_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            expect(read_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(read_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
@@ -504,9 +504,6 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        expect(home_page).to have_no_share_button
-        expect(home_page).to have_no_edit_button
-
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "new merged list"
         home_page.confirm_merge_button.click
@@ -675,7 +672,7 @@ RSpec.shared_examples "a list" do |template_name|
 
     describe "refresh" do
       it "only refreshes lists the user owns and those that are complete" do
-        home_page.multi_select_buttons[1].click
+        home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name

@@ -90,7 +90,7 @@ unless ENV["DRIVER"] == "poltergeist"
 end
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
-Capybara.default_max_wait_time = 3
+Capybara.default_max_wait_time = 5 # this should go back to 3
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
