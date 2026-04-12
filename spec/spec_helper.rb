@@ -83,14 +83,19 @@ Capybara.register_driver :poltergeist do |app|
 end
 # set `DRIVER=poltergeist` on the command line when you want to run headless
 Capybara.default_driver = ENV["DRIVER"].nil? ? :selenium : ENV["DRIVER"].to_sym
-unless ENV["DRIVER"] == "poltergeist"
-  Capybara.javascript_driver = :chrome
-  Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
-  Capybara.page.driver.browser.manage.timeouts.page_load = 10
-end
+Capybara.javascript_driver = :chrome unless ENV["DRIVER"] == "poltergeist"
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
 Capybara.default_max_wait_time = 5 # this should go back to 3
+
+RSpec.configure do |config|
+  config.before(:each, js: true) do
+    unless ENV["DRIVER"] == "poltergeist"
+      Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
+      Capybara.page.driver.browser.manage.timeouts.page_load = 10
+    end
+  end
+end
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
