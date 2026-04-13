@@ -42,9 +42,9 @@ RSpec.shared_examples "a list" do |template_name|
 
       it "displays list items" do
         expect(list_page).to have_not_completed_items
-        expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+        expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
         expect(list_page).to have_completed_items
-        expect(list_page.completed_items.map(&:text)).to include @list_items.last.pretty_title
+        expect(list_page.find_list_item(@list_items.last.pretty_title, completed: true)).to be_visible
       end
 
       describe "that is filtered" do
@@ -54,7 +54,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "only shows filtered items" do
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+          expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
           not_completed_texts = list_page.not_completed_items.map(&:text)
           expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
         end
@@ -62,8 +62,8 @@ RSpec.shared_examples "a list" do |template_name|
         it "can clear filter" do
           list_page.clear_filter_button.click
 
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
+          expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
+          expect(list_page.find_list_item(@list_items[1].pretty_title, completed: false)).to be_visible
         end
       end
     end
@@ -343,7 +343,7 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_completed_items
-      expect(list_page.completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page.find_list_item(@completed_list_items.last.pretty_title, completed: true)).to be_visible
     end
 
     it "is refreshed" do
@@ -357,8 +357,8 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_not_completed_items
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.first.pretty_title
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page.find_list_item(@completed_list_items.first.pretty_title, completed: false)).to be_visible
+      expect(list_page.find_list_item(@completed_list_items.last.pretty_title, completed: false)).to be_visible
     end
 
     it "is deleted" do
@@ -513,9 +513,12 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        @list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
+        @other_list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
       end
 
       it "shows warning when lists of different templates are selected" do
@@ -639,9 +642,12 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        @list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
+        @other_list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
       end
     end
 
