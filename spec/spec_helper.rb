@@ -32,6 +32,7 @@ RSpec.configure do |config|
   config.include Helpers::AuthenticationHelper
   config.include Helpers::DataHelper
   config.include Helpers::WaitHelper
+  config.include Helpers::ReactInput, type: :feature
   # rubocop:disable Lint/ConstantDefinitionInBlock
   config.before(:suite) do
     DB = Sequel.connect(ENV.fetch("DATABASE_URL", nil))

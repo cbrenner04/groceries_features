@@ -6,10 +6,7 @@ module Pages
     include TestSelectors
     include Helpers::WaitHelper
 
-    COMPLETE_BUTTON = "[data-test-id='check-icon']"
-    EDIT_BUTTON = "[data-test-id='edit-icon']"
-    DELETE_BUTTON = "[data-test-id='trash-icon']"
-    REFRESH_BUTTON = "[data-test-id='redo-icon']"
+    COMPLETE_BUTTON = "[data-test-id^='not-completed-item-complete-']"
 
     set_url "lists/{id}"
 
@@ -31,6 +28,9 @@ module Pages
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     element :select_button, "[data-test-id='select-button']"
     element :multi_select_bar, "[data-test-id='multi-select-bar']"
+    elements :multi_select_buttons, "[data-test-id='select-button']"
+    element :copy_to_list, "[data-test-id='copy-to-list']"
+    element :move_to_list, "[data-test-id='move-to-list']"
 
     # has_*? methods for elements that use data-test-* selectors
     def has_filter_option?(filter_name)
@@ -87,15 +87,15 @@ module Pages
     end
 
     def edit_button_css
-      EDIT_BUTTON
+      "[data-test-id^='not-completed-item-edit-']"
     end
 
     def delete_button_css
-      DELETE_BUTTON
+      "[data-test-id^='not-completed-item-delete-'], [data-test-id^='completed-item-delete-']"
     end
 
     def refresh_button_css
-      REFRESH_BUTTON
+      "[data-test-id^='completed-item-refresh-']"
     end
 
     def filter_option(filter_name)
@@ -122,29 +122,43 @@ module Pages
       all_by_test_class("category-header")
     end
 
+    # Row text order can differ from legacy pretty_title newlines; match every segment.
     def find_list_item(item_name, completed: false)
       test_class = completed ? "completed-item" : "non-completed-item"
-      find_by_test_class(test_class, text: item_name)
+      parts = item_name.to_s.split("\n").map(&:strip).reject(&:empty?)
+      raise ArgumentError, "find_list_item requires at least one text segment" if parts.empty?
+
+      result = nil
+      wait_for do
+        result = all(:css, "[data-test-class='#{test_class}']").find do |el|
+          text = el.text
+          parts.all? { |p| text.include?(p) }
+        end
+        result
+      end
+      result
     end
 
     def complete(item_name)
       item_element = find_list_item(item_name, completed: false)
-      item_element.find(COMPLETE_BUTTON).click
+      item_element.find(:css, COMPLETE_BUTTON).click
     end
 
     def edit(item_name)
       item_element = find_list_item(item_name, completed: false)
-      item_element.find(EDIT_BUTTON).click
+      item_element.find(:css, "[data-test-id^='not-completed-item-edit-']").click
     end
 
     def delete(item_name, completed: false)
       item_element = find_list_item(item_name, completed:)
-      item_element.find(DELETE_BUTTON).click
+      selector =
+        completed ? "[data-test-id^='completed-item-delete-']" : "[data-test-id^='not-completed-item-delete-']"
+      item_element.find(:css, selector).click
     end
 
     def refresh(item_name)
       item_element = find_list_item(item_name, completed: true)
-      item_element.find(REFRESH_BUTTON).click
+      item_element.find(:css, "[data-test-id^='completed-item-refresh-']").click
     end
 
     def expand_list_item_form
@@ -162,7 +176,7 @@ module Pages
 
     def edit_item_via_sheet(item_name)
       item_element = find_list_item(item_name, completed: false)
-      item_element.find(EDIT_BUTTON).click
+      item_element.find(:css, "[data-test-id^='not-completed-item-edit-']").click
       wait_for { has_test_id?("edit-item-sheet") }
     end
 

@@ -26,7 +26,8 @@ module Models
     end
 
     def pretty_title
-      "#{task}\nAssignee: #{assignee_email}•Due by: #{due_by.strftime('%B %-d, %Y')}"
+      base = "#{task}\n#{assignee_email}·#{due_by.strftime('%B %-d, %Y')}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

@@ -20,7 +20,8 @@ module Models
     end
 
     def pretty_title
-      "#{title}\nArtist: #{artist}•Album: #{album}"
+      base = "#{title}\n#{artist}·#{album}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

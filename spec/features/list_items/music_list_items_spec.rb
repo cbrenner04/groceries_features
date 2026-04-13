@@ -12,9 +12,9 @@ RSpec.describe "A music list item", type: :feature do
   let(:list) { Models::List.new(template_name: "music list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.title_input.set new_list_item.title
-    list_page.artist_input.set new_list_item.artist
-    list_page.album_input.set new_list_item.album
+    react_fill_in("#title", with: new_list_item.title)
+    react_fill_in("#artist", with: new_list_item.artist)
+    react_fill_in("#album", with: new_list_item.album)
 
     expect(list_page.title_input.value).to eq new_list_item.title
     expect(list_page.artist_input.value).to eq new_list_item.artist

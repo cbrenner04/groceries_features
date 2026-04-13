@@ -19,7 +19,7 @@ module Models
     end
 
     def pretty_title
-      content.to_s
+      category ? "#{content}\n#{category}" : content.to_s
     end
 
     private

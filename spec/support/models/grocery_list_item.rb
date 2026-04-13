@@ -20,7 +20,8 @@ module Models
     end
 
     def pretty_title
-      "#{quantity}\nProduct: #{product}"
+      base = "#{product}\n#{quantity}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

@@ -50,7 +50,6 @@ RSpec.shared_examples "a list" do |template_name|
       describe "that is filtered" do
         before do
           list_page.wait_until_completed_items_visible
-          list_page.filter_button.click
           list_page.filter_option("foo").click
         end
 

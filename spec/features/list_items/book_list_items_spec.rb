@@ -12,9 +12,9 @@ RSpec.describe "A book list item", type: :feature do
   let(:list) { Models::List.new(template_name: "book list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.author_input.set new_list_item.author
-    list_page.title_input.set new_list_item.title
-    list_page.number_in_series_input.set new_list_item.number_in_series
+    react_fill_in("input[name='author']", with: new_list_item.author)
+    react_fill_in("input[name='title']", with: new_list_item.title)
+    react_fill_in("input[name='number in series']", with: new_list_item.number_in_series.to_s)
 
     expect(list_page.author_input.value).to eq new_list_item.author
     expect(list_page.title_input.value).to eq new_list_item.title

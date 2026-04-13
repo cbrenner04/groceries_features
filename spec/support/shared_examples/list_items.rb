@@ -50,7 +50,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
       # `input_new_item_attribute` is defined in the spec that executes this shared example as it is different for each
       send("input_new_item_attributes", new_list_item)
-      list_page.category_input.set new_list_item.category
+      react_fill_in("input[name='category']", with: new_list_item.category)
 
       list_page.submit_button.click
 
@@ -75,7 +75,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
       # Input item attributes
       send("input_new_item_attributes", new_list_item)
-      list_page.category_input.set new_list_item.category
+      react_fill_in("input[name='category']", with: new_list_item.category)
 
       # Check the completed checkbox
       list_page.completed_checkbox.click
@@ -145,7 +145,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       describe "when a filter is applied" do
         before do
           list_page.wait_until_completed_items_visible
-          list_page.filter_button.click
           list_page.filter_option("foo").click
         end
 
@@ -163,7 +162,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           edit_list_item_page.submit.click
           list_page.wait_until_not_completed_items_visible
-          list_page.filter_button.click
           list_page.filter_option("foo").click
 
           expect(list_page.not_completed_items.map(&:text)).to include item.pretty_title
@@ -232,7 +230,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             # due to adding data above we need to reload page and filter again
             list_page.load(id: list.id)
             list_page.wait_until_completed_items_visible
-            list_page.filter_button.click
             list_page.filter_option("foo").click
           end
 
