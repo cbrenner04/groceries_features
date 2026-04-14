@@ -4,6 +4,7 @@ module Pages
   # edit list item — renders as a bottom sheet on the list page
   class EditListItem < SitePrism::Page
     include TestSelectors
+    include Helpers::WaitHelper
 
     set_url "lists/{list_id}/list_items/{id}/edit"
 
@@ -25,6 +26,12 @@ module Pages
 
     def wait_for_sheet
       wait_for { has_edit_sheet? }
+    end
+
+    # Fixed BottomInputBar can intercept native clicks; requestSubmit runs the form handler reliably.
+    def submit_form
+      form = find(:css, "[data-test-id='edit-item-sheet'] form", match: :first)
+      page.execute_script("arguments[0].requestSubmit();", form.native)
     end
   end
 end

@@ -122,17 +122,36 @@ module Pages
       all_by_test_class("category-header")
     end
 
+    # Split pretty_title on newlines and middle dots so row text matches ListItemRow
+    # (secondary values are joined with " · " regardless of field order).
+    def list_item_name_tokens(item_name)
+      raw = item_name.to_s.split(/[\n\u{00b7}]/).map(&:strip).reject(&:empty?)
+      # Due dates: Ruby strftime and client prettyDueBy/locale can differ — omit date-only tokens.
+      raw.grep_v(/\A[A-Za-z]+\s+\d{1,2},\s+\d{4}\z/)
+    end
+
+    def list_item_row_matches?(item_name, completed: false)
+      test_class = completed ? "completed-item" : "non-completed-item"
+      parts = list_item_name_tokens(item_name)
+      return false if parts.empty?
+
+      all(:css, "[data-test-class='#{test_class}']").any? do |el|
+        text = el.text.downcase
+        parts.all? { |p| text.include?(p.downcase) }
+      end
+    end
+
     # Row text order can differ from legacy pretty_title newlines; match every segment.
     def find_list_item(item_name, completed: false)
       test_class = completed ? "completed-item" : "non-completed-item"
-      parts = item_name.to_s.split("\n").map(&:strip).reject(&:empty?)
+      parts = list_item_name_tokens(item_name)
       raise ArgumentError, "find_list_item requires at least one text segment" if parts.empty?
 
       result = nil
       wait_for do
         result = all(:css, "[data-test-class='#{test_class}']").find do |el|
-          text = el.text
-          parts.all? { |p| text.include?(p) }
+          text = el.text.downcase
+          parts.all? { |p| text.include?(p.downcase) }
         end
         result
       end
@@ -226,6 +245,11 @@ module Pages
 
     def wait_until_not_completed_items_visible
       wait_for { has_test_class?("non-completed-item") }
+    end
+
+    def submit_add_item
+      form = find(:css, "[data-test-id='list-item-form']", match: :first)
+      page.execute_script("arguments[0].requestSubmit();", form.native)
     end
   end
 end

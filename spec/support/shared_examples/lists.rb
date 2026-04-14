@@ -29,7 +29,7 @@ RSpec.shared_examples "a list" do |template_name|
     home_page.expand_list_form
     home_page.name.set list.name
     home_page.list_template.select template_name
-    home_page.submit.click
+    home_page.submit
 
     wait_for { home_page.incomplete_list_names.include? list.name }
 

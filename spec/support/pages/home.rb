@@ -167,7 +167,7 @@ module Pages
       list_card = all('[data-test-id^="list-"][data-test-class]').detect do |card|
         card.find('[data-test-id="list-name"]').text == list_name
       end
-      list_card.click if list_card
+      list_card&.click
     end
 
     def find_pending_list(list_name)
