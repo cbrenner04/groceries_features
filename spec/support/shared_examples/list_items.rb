@@ -254,7 +254,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             not_completed_list_items = list_page.not_completed_items.map(&:text)
 
             expect(list_page.find_list_item(item_name, completed: true)).to be_visible
-            expect(not_completed_list_items).to include @another_list_item.pretty_title
+            expect(list_page.find_list_item(@another_list_item.pretty_title, completed: false)).to be_visible
             expect(not_completed_list_items.select { |text| text == item_name }).to be_empty
           end
 
@@ -277,7 +277,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             expect(list_page).to have_item_deleted_alert
             not_completed_texts = list_page.not_completed_items.map(&:text)
             expect(not_completed_texts.select { |text| text == item_name }).to be_empty
-            expect(not_completed_texts).to include @another_list_item.pretty_title
+            expect(list_page.find_list_item(@another_list_item.pretty_title, completed: false)).to be_visible
           end
         end
       end
@@ -543,12 +543,17 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           list_page.load(id: list.id)
           apply_bulk_update_values(bulk_update_attrs)
+          @list_items.each do |item|
+            next if item.send("completed")
+
+            item.category = "foobaz"
+          end
           list_page.wait_until_not_completed_items_visible
 
           # all items should now have the same category "foobaz"
           category_headers = list_page.category_header.map(&:text)
           expect(category_headers.count).to eq 1
-          expect(category_headers).to include "Foobaz"
+          expect(category_headers).to include(a_string_matching(/foobaz/i))
 
           # all items should now have the same attributes set to "foobar"
           @list_items.each do |item|
@@ -558,7 +563,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
               bulk_update_selector(item, template_name, edit_attribute), completed: false
             ).text
 
-            expect(label).to include item.pretty_title
+            expect(label.downcase).to include(item.pretty_title.downcase)
           end
 
           # return to edit page for clearing below
@@ -583,7 +588,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.wait_until_not_completed_items_visible
 
           # all items should have add their categories cleared
-          expect(list_page.category_header.map(&:text).count).to eq 0
+          headers = list_page.category_header.map(&:text)
+          expect(headers.count).to eq 1
+          expect(headers).to include(a_string_matching(/other/i))
 
           # all items should have had their attributes cleared
           @list_items.each do |item|

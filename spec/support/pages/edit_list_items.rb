@@ -16,7 +16,7 @@ module Pages
     element :clear_assignee, "[data-test-id='bulk-edit-sheet'] #clear_assignee"
     element :author, "[data-test-id='bulk-edit-sheet'] #author"
     element :clear_author, "[data-test-id='bulk-edit-sheet'] #clear_author"
-    element :category, "[data-test-id='bulk-edit-sheet'] [data-test-id='category-field'] input"
+    element :category, "[data-test-id='bulk-edit-sheet'] [data-test-id='category-field'] input[name='category']"
     element :clear_category, "[data-test-id='bulk-edit-sheet'] #clear_category"
     element :due_by, "[data-test-id='bulk-edit-sheet'] #due\\ by"
     element :clear_due_by, "[data-test-id='bulk-edit-sheet'] #clear_due\\ by"

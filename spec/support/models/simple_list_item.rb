@@ -3,8 +3,8 @@
 module Models
   # an item on a simple list
   class SimpleListItem
-    attr_accessor :content
-    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
+    attr_accessor :content, :category
+    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false,
                    list_item_configuration_id: nil, create_item: true)
