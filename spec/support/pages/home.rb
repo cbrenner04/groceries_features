@@ -18,11 +18,13 @@ module Pages
 
     # has_*? methods for elements that use data-test-* selectors
     def has_log_out?
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
       has_test_id?("log-out-link")
     end
 
     def has_invite?
-      has_test_id?("invite-link")
+      has_test_id?("nav-invite")
     end
 
     def has_confirm_delete?
@@ -55,7 +57,7 @@ module Pages
     end
 
     def has_no_invite?
-      has_no_test_id?("invite-link")
+      has_no_test_id?("nav-invite")
     end
 
     def has_no_completed_lists?
@@ -82,19 +84,25 @@ module Pages
       has_test_id?("page-title")
     end
 
+    def has_settings_nav?
+      has_test_id?("nav-settings")
+    end
+
     def page_title
       find_by_test_id("page-title")
     end
 
     def go_to_completed_lists
-      filter_by_status("completed")
+      find_by_test_id("nav-completed").click
     end
 
     def invite
-      find_by_test_id("invite-link")
+      find_by_test_id("nav-invite")
     end
 
     def log_out
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
       find_by_test_id("log-out-link")
     end
 
@@ -309,7 +317,13 @@ module Pages
     end
 
     def wait_until_log_out_visible
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
       wait_for { has_test_id?("log-out-link") }
+    end
+
+    def wait_until_settings_nav_visible
+      wait_for { has_test_id?("nav-settings") }
     end
 
     def wait_until_confirm_delete_button_visible

@@ -10,8 +10,8 @@ module Helpers
       login_page.submit.click
       return unless expect_success
 
-      home_page.wait_until_log_out_visible
-      expect(home_page).to have_log_out
+      home_page.wait_until_settings_nav_visible
+      expect(home_page).to have_settings_nav
     end
 
     def logout

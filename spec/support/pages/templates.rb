@@ -11,7 +11,7 @@ module Pages
     element :submit, "button[type='submit']"
 
     def manage_templates
-      find_by_test_id("manage-templates-link").click
+      find_by_test_id("nav-templates").click
     end
 
     def expand_template_form
