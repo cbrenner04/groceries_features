@@ -90,7 +90,7 @@ Capybara.app_host = ENV.fetch("HOST", nil)
 Capybara.default_max_wait_time = 5 # this should go back to 3
 
 RSpec.configure do |config|
-  config.before(:each, js: true) do
+  config.before(:each, :js) do
     unless ENV["DRIVER"] == "poltergeist"
       Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
       Capybara.page.driver.browser.manage.timeouts.page_load = 10

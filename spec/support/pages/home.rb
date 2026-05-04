@@ -19,7 +19,7 @@ module Pages
     # has_*? methods for elements that use data-test-* selectors
     def has_log_out?
       find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       has_test_id?("log-out-link")
     end
 
@@ -102,7 +102,7 @@ module Pages
 
     def log_out
       find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       find_by_test_id("log-out-link")
     end
 
@@ -318,7 +318,7 @@ module Pages
 
     def wait_until_log_out_visible
       find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                 has_css?("[data-test-id='settings-menu']", wait: 0)
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       wait_for { has_test_id?("log-out-link") }
     end
 
