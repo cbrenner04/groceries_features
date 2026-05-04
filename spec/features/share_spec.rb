@@ -57,8 +57,9 @@ RSpec.describe "Invite", type: :feature do
     share_list_page.refresh_share(user_id: refused_user.id)
 
     expect(share_list_page).to have_no_selector("[data-test-id='accepted-user-#{refused_user.id}']")
-    expect(share_list_page).to have_no_selector("[data-test-id='pending-user-#{refused_user.id}']")
     expect(share_list_page).to have_no_selector("[data-test-id='refused-user-#{refused_user.id}']")
+    # a refresh share should add the user back to the pending list
+    expect(share_list_page).to have_css("[data-test-id='pending-user-#{refused_user.id}']")
   end
 
   it "removes share" do
