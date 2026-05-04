@@ -27,7 +27,7 @@ module Pages
     end
 
     def template_names
-      all_by_test_class("template").map { |t| t.find("h5").text }
+      all_by_test_class("template").map { |t| t.find("h3").text }
     end
 
     def template_name_input
