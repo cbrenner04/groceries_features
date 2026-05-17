@@ -1,6 +1,6 @@
 # 01 - Fix Cluster A: restore single-row delete/reject confirm dialog (groceries-client)
 
-Seven of the nine failures (#1, #2 reject, #3, #4, #5, #6, #7) wait for `data-test-id="confirm-delete"` or `confirm-reject` to appear after clicking the trash/reject icon on a list row, and time out. The selector contract is intact in the client: `src/components/domain/ConfirmDialog.tsx:40` still emits `data-test-id={\`confirm-${title}\`}`, and `src/routes/lists/containers/ListsContainer.tsx` (currently around lines 564, 583) still mounts the dialog with `title="delete"` and `title="reject"`. The bug is that single-row trash/reject clicks no longer flip the dialog state to `true`.
+Seven of the nine failures (#1, #2 reject, #3, #4, #5, #6, #7) wait for `data-test-id="confirm-delete"` or `confirm-reject` to appear after clicking the trash/reject icon on a list row, and time out. The selector contract is intact in the client as of intent capture: `src/components/domain/ConfirmDialog.tsx` still emits `data-test-id={\`confirm-${title}\`}`, and `src/routes/lists/containers/ListsContainer.tsx` still mounts the dialog with `title="delete"` and `title="reject"`. Line numbers in the intent are point-in-time and may drift — re-grep on the current `groceries-client` HEAD before editing. The bug is that single-row trash/reject clicks no longer flip the dialog state to `true`.
 
 **This subspec is delivered as a PR against `groceries-client`, not this repo.** This file documents the change so it can be tracked and verified from the spec.
 

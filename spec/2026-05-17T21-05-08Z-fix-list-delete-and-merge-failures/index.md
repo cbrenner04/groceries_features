@@ -9,8 +9,17 @@ The `groceries_features` Capybara suite has 9 failing examples that all terminat
 
 Plan PR for this repo contains spec/plan files only. Client (and possibly service) fixes are tracked here but live in separate PRs against `groceries-client` / `groceries-service`.
 
+## Ordering
+
+- **00** is a diagnostic prerequisite: it produces the DOM/API evidence that disambiguates the root cause for **01** and **02**. Do not draft fixes before 00's evidence is in hand.
+- **01** and **02** are independent of each other and can proceed in parallel once 00 is complete. Each lands as its own PR in `groceries-client` (and possibly `groceries-service` for 02).
+- **03** is the only subspec that touches this (`groceries_features`) repo's code beyond plan files. Do not start until 01 and 02 are merged — running it earlier would either weaken specs against a real regression or mask it with longer waits.
+- **04** is optional polish, independent of the others. It can ship before or after 01–03 and does not block the 9 failing examples.
+
+## Subspecs
+
 - [ ] [00 - Reproduce failures and capture DOM evidence](./00-reproduce-and-capture-dom.md)
 - [ ] [01 - Fix Cluster A: restore single-row delete/reject confirm dialog (groceries-client)](./01-fix-cluster-a-confirm-dialog.md)
 - [ ] [02 - Fix Cluster B: merged list items render/return correctly (groceries-client / groceries-service)](./02-fix-cluster-b-merge-result.md)
-- [ ] [03 - Harden feature specs after client fixes land](./03-harden-feature-specs.md)
-- [ ] [04 - Document test-id contract between specs and client](./04-test-id-contract.md)
+- [ ] [03 - Harden feature specs after client fixes land (this repo)](./03-harden-feature-specs.md)
+- [ ] [04 - Document test-id contract between specs and client (optional)](./04-test-id-contract.md)
