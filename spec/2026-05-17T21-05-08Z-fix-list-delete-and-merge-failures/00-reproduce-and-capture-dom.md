@@ -2,10 +2,12 @@
 
 Before touching any code in `groceries-client` or `groceries-service`, reproduce all 9 failures locally against current HEAD of `groceries-client` + `groceries-service`, and capture the rendered HTML / a screenshot at the moment `wait_for` times out. This evidence drives the root-cause work in subspecs 01 and 02 and prevents a fix landing against a misdiagnosed symptom.
 
+This subspec is an **investigation prerequisite**, not a deliverable in this repo. It produces no files merged into `groceries_features`; its output is a written summary attached to the implementation PR(s) in `groceries-client` / `groceries-service`. Mark this index entry complete when the summary has been recorded against subspecs 01 and 02.
+
 ## Scope
 
-- This subspec produces **diagnostic artifacts only**. No production code changes, no spec changes that ship to master.
-- Add a temporary debug hook (e.g. an RSpec `around` block guarded by an env var, or a one-off `before` hook in a scratch file) that on failure calls `save_page` / `Capybara::Page#save_screenshot` and writes to `tmp/capybara/`. Remove the hook before merging the implementation PR.
+- Diagnostic artifacts only. No production code changes, no spec changes that ship to master in this repo.
+- Add a temporary debug hook locally (e.g. an RSpec `around` block guarded by an env var, or a one-off `before` hook in a scratch file) that on failure calls `save_page` / `Capybara::Page#save_screenshot` and writes to `tmp/capybara/`. Keep the hook on a throwaway local branch — do not open a PR for it.
 - Capture artifacts for at least one example from each failing line in `spec/support/shared_examples/lists.rb`: lines 143, 192, 232, 287, 364, 397, 442 (Cluster A) and 516, 646 (Cluster B).
 - For Cluster A, capture the DOM **after** the trash/reject click but before the timeout. Confirm whether `data-test-id="confirm-delete"` / `confirm-reject` is absent, present-but-hidden, or present under a different ancestor.
 - For Cluster B, capture the DOM **of the merged list page** at the point `find_list_item` is searching. Confirm whether expected item text is in the DOM at all, and if so, what `data-test-class` wraps it.
@@ -20,7 +22,7 @@ Before touching any code in `groceries-client` or `groceries-service`, reproduce
 ## Tasks
 
 - [ ] Start `groceries-service` and `groceries-client` from their current `master` HEADs locally.
-- [ ] Add temporary on-failure DOM/screenshot capture in this repo (do not commit to `master`).
+- [ ] Add temporary on-failure DOM/screenshot capture locally (throwaway branch; never opened as a PR).
 - [ ] Run each of the 9 failing examples individually and collect artifacts.
 - [ ] Summarize findings per cluster in a short note attached to the implementation PR (`groceries-client` PR description, or a comment on the spec PR). Identify which subspec's hypothesis the evidence supports or contradicts.
 - [ ] Inspect `groceries-client` `git log` since the failing-suite last passed for commits to `src/routes/lists/containers/ListsContainer.tsx`, `src/components/domain/ListCard.tsx`, `src/components/domain/ConfirmDialog.tsx`, and the merge endpoint handler. Note suspect commits in the same summary.
