@@ -2,7 +2,7 @@
 
 Two failures (#8, #9 in `multiSelect merge`) time out inside `Pages::List#find_list_item` while iterating expected items on the post-merge list. Other tests in the same describe block only verify modal behavior and stop before navigating to the merged list, so this is the only path that actually asserts on merged content.
 
-**The fix lives in `groceries-client` and/or `groceries-service`, not in this repo.** Subspec 00 must produce evidence identifying which layer regressed before this subspec is implemented.
+**The fix lives in `groceries-client` and/or `groceries-service`, not in this repo.** Subspec 00 must produce or record evidence identifying which layer regressed before this subspec is implemented. That evidence may come from `intent.md` plus code/API inspection, or from a targeted user-run diagnostic pass recorded in `evidence.md`.
 
 ## Hypotheses (resolve via subspec 00 evidence first)
 
@@ -23,15 +23,19 @@ Two failures (#8, #9 in `multiSelect merge`) time out inside `Pages::List#find_l
 
 ## Tasks
 
-- [ ] Using subspec 00 artifacts (DOM and API response), identify the diverged layer.
+- [ ] Review `evidence.md` from subspec 00. If it contains user-run diagnostics, explicitly account for them before editing; if it says code/API inspection was sufficient, proceed from that recorded conclusion.
+- [ ] Using subspec 00 evidence (DOM, API response, or code/API inspection), identify the diverged layer.
 - [ ] If the merge endpoint is wrong: fix `groceries-service` so the merged list contains the union of items from the selected lists, with names matching the source items.
 - [ ] If the client is wrong: fix `groceries-client` so the merged list page renders each item with `data-test-class="non-completed-item"` (or whichever class `Pages::List#find_list_item` expects) and text equal to the source item's `pretty_title`.
 - [ ] Add a `groceries-client` (or `groceries-service`) regression test at the appropriate layer that exercises the merge result.
+- [ ] Before claiming feature-suite verification, add a `## Blocker` asking the user to run the 2 Cluster B examples against the patched stack, record the commands/output in `evidence.md`, and remove the blocker.
+- [ ] After the user removes the blocker, review the recorded Cluster B output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against the diverged repo(s) referencing this subspec.
 
 ## Acceptance criteria
 
-- [ ] In a local run of `groceries_features` against the patched stack, both Cluster B failures (`lists_spec.rb[1:1:4:2:1]`, `[1:1:4:2:7]`) pass without retries.
+- [ ] Agent review in `evidence.md` says Cluster B evidence is sufficient and identifies the diverged layer.
+- [ ] User-recorded verification in `evidence.md` shows both Cluster B failures (`lists_spec.rb[1:1:4:2:1]`, `[1:1:4:2:7]`) pass against the patched stack without retries, and the agent review confirms the output is sufficient.
 - [ ] No test selector or assertion in `spec/support/shared_examples/lists.rb` or `spec/support/pages/list.rb` was changed to make these pass.
 - [ ] A regression test was added in the diverged repo asserting the post-merge list contains the expected items (or the merge endpoint returns them, depending on layer).
 - [ ] PR description names the diverged layer, links subspec 00's evidence, and lists the suspect commits.

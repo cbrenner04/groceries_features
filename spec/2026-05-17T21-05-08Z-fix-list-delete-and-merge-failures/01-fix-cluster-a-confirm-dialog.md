@@ -28,16 +28,19 @@ The fix should restore the single-row path: clicking the row's trash button must
 
 ## Tasks
 
-- [ ] Reproduce locally with the artifacts from subspec 00 and confirm which of the three hypotheses is correct.
+- [ ] Review `evidence.md` from subspec 00. If it contains user-run diagnostics, explicitly account for them before editing; if it says `intent.md` plus code inspection was sufficient, proceed from that recorded conclusion.
 - [ ] Fix `ListsContainer.tsx` and/or `ListCard.tsx` so that a single trash click on an incomplete, complete, or shared (write/read) list row opens the delete confirm dialog with that list as the target.
 - [ ] Fix the equivalent path so that a single reject click on a pending shared list opens the reject confirm dialog with that list as the target.
 - [ ] Add a `groceries-client` unit/component test asserting: after clicking the row trash button, `data-test-id="confirm-delete"` is present in the DOM. Add the equivalent test for `confirm-reject`.
 - [ ] Verify the bulk multi-select delete flow still works (manual smoke or existing tests).
+- [ ] Before claiming feature-suite verification, add a `## Blocker` asking the user to run the 7 Cluster A examples against the patched `groceries-client`, record the commands/output in `evidence.md`, and remove the blocker.
+- [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
 
 ## Acceptance criteria
 
-- [ ] In a local run of `groceries_features` against the patched `groceries-client`, all 7 Cluster A failures (`lists_spec.rb[1:1:2:6]`, `[1:1:2:7:1:3]`, `[1:1:2:7:2:1:2]`, `[1:1:2:7:2:2:2]`, `[1:1:3:3]`, `[1:1:3:4:1:2]`, `[1:1:3:4:2:2]`) pass without retries.
+- [ ] Agent review in `evidence.md` says Cluster A evidence is sufficient and identifies which hypothesis was pursued.
+- [ ] User-recorded verification in `evidence.md` shows all 7 Cluster A failures (`lists_spec.rb[1:1:2:6]`, `[1:1:2:7:1:3]`, `[1:1:2:7:2:1:2]`, `[1:1:2:7:2:2:2]`, `[1:1:3:3]`, `[1:1:3:4:1:2]`, `[1:1:3:4:2:2]`) pass against the patched `groceries-client` without retries, and the agent review confirms the output is sufficient.
 - [ ] No test selector in `groceries_features` was changed to make these pass.
 - [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.
 - [ ] A new `groceries-client` component test asserts that clicking a list row's trash button mounts `data-test-id="confirm-delete"`, and the parallel test exists for `confirm-reject`.
