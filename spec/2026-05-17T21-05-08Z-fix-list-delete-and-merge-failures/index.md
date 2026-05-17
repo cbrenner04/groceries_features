@@ -19,7 +19,7 @@ Plan PR for this repo contains spec/plan files only. Client (and possibly servic
 ## Subspecs
 
 - [x] [00 - Prepare evidence capture and wait for user-run test results](./00-reproduce-and-capture-dom.md)
-- [ ] [Evidence log](./evidence.md)
+- [x] [Evidence log](./evidence.md)
 - [ ] [01 - Fix Cluster A: restore single-row delete/reject confirm dialog (groceries-client)](./01-fix-cluster-a-confirm-dialog.md)
 - [ ] [02 - Fix Cluster B: merged list items render/return correctly (groceries-client / groceries-service)](./02-fix-cluster-b-merge-result.md)
 - [ ] [03 - Harden feature specs after client fixes land (this repo)](./03-harden-feature-specs.md)

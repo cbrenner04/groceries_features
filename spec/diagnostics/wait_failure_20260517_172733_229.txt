@@ -1,4 +1,0 @@
-Exception: "full wait time lapsed"
-
-Screenshot: spec/diagnostics/wait_failure_20260517_172733_229.png
-HTML dump: spec/diagnostics/wait_failure_20260517_172733_229.html

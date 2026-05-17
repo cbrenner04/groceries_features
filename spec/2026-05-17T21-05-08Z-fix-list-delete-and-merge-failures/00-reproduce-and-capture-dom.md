@@ -40,7 +40,7 @@ The user will run the requested tests, record the results in `evidence.md`, and 
 - [x] If more runtime evidence is needed, add the smallest targeted diagnostic hook/logging needed, add a new `## Blocker` with exact user-run instructions, and pause until the user records results in `evidence.md` and removes the blocker.
 - [ ] After the user run, review `evidence.md`, artifact paths, and any pasted logs/screenshots. Decide whether the evidence supports or contradicts each cluster hypothesis.
 - [x] Inspect `groceries-client` `git log` since the failing-suite last passed for commits to `src/routes/lists/containers/ListsContainer.tsx`, `src/components/domain/ListCard.tsx`, `src/components/domain/ConfirmDialog.tsx`, and the merge endpoint handler. Note suspect commits in `evidence.md`.
-- [ ] Remove any temporary diagnostic hook/logging before opening implementation PRs unless the diagnostics are intentionally part of a committed regression test.
+- [x] Remove any temporary diagnostic hook/logging before opening implementation PRs unless the diagnostics are intentionally part of a committed regression test.
 
 ## Acceptance criteria
 

@@ -37,6 +37,30 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
 
+## Blocker
+
+**Sandbox restriction preventing direct code modification.** The agent identified the exact fix but cannot apply it due to Claude Code's sandbox restrictions on the current worktree. The fix is documented in `evidence.md`. To proceed:
+
+1. In `/Users/christopherbrenner/Work/groceries/groceries-client`, revert `src/components/domain/ListCard.tsx` to commit e05ac67 by running:
+   ```
+   git checkout e05ac67 -- src/components/domain/ListCard.tsx
+   ```
+
+2. Verify the fix by reviewing the file has direct `onClick` handlers on IconButtons (no `handleActionClickCapture` or `onClickCapture`).
+
+3. Stage and commit the fix:
+   ```
+   git add src/components/domain/ListCard.tsx
+   git commit -m "Fix Cluster A: restore direct onClick handlers for delete/reject confirm dialogs"
+   ```
+
+4. Run the 7 Cluster A failing tests to verify they now pass:
+   ```
+   rspec spec/features/lists/lists_spec.rb[1:1:2:6] spec/features/lists/lists_spec.rb[1:1:2:7:1:3] spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] spec/features/lists/lists_spec.rb[1:1:3:3] spec/features/lists/lists_spec.rb[1:1:3:4:1:2] spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
+   ```
+
+5. Update `evidence.md` with the test results and remove this blocker.
+
 ## Acceptance criteria
 
 - [ ] Agent review in `evidence.md` says Cluster A evidence is sufficient and identifies which hypothesis was pursued.

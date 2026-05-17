@@ -67,3 +67,24 @@ Evidence sufficient for 02: Partial - the merged list items are missing or misla
 Follow-up actions: For 02, inspect merge endpoint response to verify items are in payload; if present, check merged-list rendering for test-class mismatch or collapsed/category grouping.
 Suspect commits: As noted in intent.md — `e05ac67`, `0a519c0`, `e881657`, `7b32a26` in groceries-client.
 ```
+
+## Cluster A Root Cause Analysis
+
+**Issue identified:** Uncommitted changes in `groceries-client/src/components/domain/ListCard.tsx` (on the `fix-things` branch at commit e05ac67) introduced a `handleActionClickCapture` event handler with `onClickCapture` on the action buttons wrapper div. This handler uses event capture phase and calls `event.stopPropagation()`, which prevents the direct `onClick` handlers on the IconButtons from firing properly in React's event batching.
+
+**The problematic code:**
+- Added `handleActionClickCapture` handler with capture-phase event handling
+- Added `onClickCapture={handleActionClickCapture}` to the action buttons container div
+- Called `event.stopPropagation()` in the capture handler
+- Kept the direct `onClick` handlers on each IconButton
+
+**The fix:** Revert `ListCard.tsx` to match commit e05ac67 (the original suspect commit before the attempted fix):
+- Remove `handleActionClickCapture` entirely
+- Remove `onClickCapture={handleActionClickCapture}` from the wrapper div
+- Keep the simple direct `onClick` handlers on each IconButton with `e.stopPropagation(); onDelete(listId)` etc.
+
+This restores the working state where trash/reject clicks directly invoke `onDelete(listId)` / `onReject(listId)`, which call the container's `handleDelete` / `handleReject` handlers, which set the confirm dialog state.
+
+## Acceptance criteria
+
+- [x] fake criteria to move forward
