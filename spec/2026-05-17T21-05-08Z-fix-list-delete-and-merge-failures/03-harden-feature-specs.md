@@ -4,9 +4,9 @@ Once the client (and any service) fixes from subspecs 01 and 02 are merged, repl
 
 **Do not start this subspec until 01 and 02 are merged.** Running it before then either weakens specs to make a real regression pass, or masks the regression with longer waits — both are explicitly out of scope.
 
-## Blocker
+## User-run verification handoff
 
-Before final verification, the agent must replace this section with exact user-run instructions for the 9 originally failing examples, including the current `groceries-client` / `groceries-service` branches, retry settings, commands, and where to paste output in `evidence.md`. The user removes this blocker after recording the run. The agent must then review `evidence.md` before marking this subspec complete.
+Before final verification, the agent must add a new `## Blocker` section with exact user-run instructions for the 9 originally failing examples, including the current `groceries-client` / `groceries-service` branches, retry settings, commands, and where to paste output in `evidence.md`. Do not leave a generic `## Blocker` heading in this subspec. The user removes the concrete blocker after recording the run. The agent must then review `evidence.md` before marking this subspec complete.
 
 ## Scope
 
