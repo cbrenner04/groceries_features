@@ -28,7 +28,11 @@ module Helpers
     private
 
     def wait_time_lapsed?(counter, original_wait_time)
-      throw "full wait time lapsed" if counter > original_wait_time
+      if counter > original_wait_time
+        exception = "full wait time lapsed"
+        Helpers::DiagnosticHelper.capture_on_wait_failure(exception, page)
+        throw exception
+      end
 
       false
     end
