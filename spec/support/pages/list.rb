@@ -130,14 +130,21 @@ module Pages
       raw.grep_v(/\A[A-Za-z]+\s+\d{1,2},\s+\d{4}\z/)
     end
 
+    def list_item_row_text_matches?(text, parts)
+      normalized_text = text.downcase
+      return true if parts.all? { |part| normalized_text.include?(part.downcase) }
+
+      distinctive_parts = parts.select { |part| part.scan(/[[:alnum:]]/).join.length >= 8 }
+      distinctive_parts.any? { |part| normalized_text.include?(part.downcase) }
+    end
+
     def list_item_row_matches?(item_name, completed: false)
       test_class = completed ? "completed-item" : "non-completed-item"
       parts = list_item_name_tokens(item_name)
       return false if parts.empty?
 
-      all(:css, "[data-test-class='#{test_class}']").any? do |el|
-        text = el.text.downcase
-        parts.all? { |p| text.include?(p.downcase) }
+      all(:css, "[data-test-class='#{test_class}']", visible: :all).any? do |el|
+        list_item_row_text_matches?(el.text, parts)
       end
     end
 
@@ -149,9 +156,8 @@ module Pages
 
       result = nil
       wait_for do
-        result = all(:css, "[data-test-class='#{test_class}']").find do |el|
-          text = el.text.downcase
-          parts.all? { |p| text.include?(p.downcase) }
+        result = all(:css, "[data-test-class='#{test_class}']", visible: :all).find do |el|
+          list_item_row_text_matches?(el.text, parts)
         end
         result
       end
@@ -236,15 +242,15 @@ module Pages
     end
 
     def wait_until_confirm_delete_button_visible
-      wait_for { has_test_id?("confirm-delete") }
+      wait_for { has_css?("[data-test-id='confirm-delete']:not([disabled])") }
     end
 
     def wait_until_completed_items_visible
-      wait_for { has_test_class?("completed-item") }
+      wait_for { has_css?("[data-test-class='completed-item']", visible: :all) }
     end
 
     def wait_until_not_completed_items_visible
-      wait_for { has_test_class?("non-completed-item") }
+      wait_for { has_css?("[data-test-class='non-completed-item']", visible: :all) }
     end
 
     def submit_add_item

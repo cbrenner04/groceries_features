@@ -128,11 +128,9 @@ RSpec.shared_examples "a list" do |template_name|
 
       list.name = SecureRandom.hex(16)
 
-      wait_for do
-        edit_list_page.name.set list.name
-        edit_list_page.name.value == list.name
-      end
+      edit_list_page.enter_name list.name
 
+      wait_for { !edit_list_page.submit.disabled? }
       edit_list_page.submit.click
 
       wait_for { home_page.incomplete_list_names.include?(list.name) }
@@ -505,6 +503,7 @@ RSpec.shared_examples "a list" do |template_name|
 
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "new merged list"
+        wait_for { !home_page.confirm_merge_button.disabled? }
         home_page.confirm_merge_button.click
 
         wait_for { home_page.incomplete_list_names.include?("new merged list") }
@@ -634,6 +633,7 @@ RSpec.shared_examples "a list" do |template_name|
 
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "comprehensive merged list"
+        wait_for { !home_page.confirm_merge_button.disabled? }
         home_page.confirm_merge_button.click
 
         wait_for { home_page.incomplete_list_names.include?("comprehensive merged list") }
@@ -660,8 +660,9 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.delete list.name
 
         modal_body = find("[data-test-id='confirm-modal-body']")
-        expect(modal_body.text).to include list.name
-        expect(modal_body.text).to include other_list.name
+        wait_for { modal_body.has_text?(list.name) && modal_body.has_text?(other_list.name) }
+        expect(modal_body).to have_text list.name
+        expect(modal_body).to have_text other_list.name
 
         home_page.confirm_delete_button.click
 

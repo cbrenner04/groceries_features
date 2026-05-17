@@ -69,9 +69,11 @@ RSpec.describe "Templates", type: :feature do
 
       edit_template_page.template_name_input.native.clear
       edit_template_page.template_name_input.set("updated template name")
+      wait_for { !edit_template_page.submit.disabled? }
       edit_template_page.submit.click
 
       expect(templates_page).to have_header
+      wait_for { templates_page.template_names.include?("updated template name") }
       expect(templates_page.template_names).to include("updated template name")
     end
 
@@ -83,10 +85,13 @@ RSpec.describe "Templates", type: :feature do
       initial_field_count = edit_template_page.field_rows.count
 
       edit_template_page.add_field_button.click
-      new_index = initial_field_count
+      wait_for { edit_template_page.field_rows.count > initial_field_count }
+      new_index = edit_template_page.field_rows.count - 1
 
       edit_template_page.field_label_input(new_index).set("new field")
       edit_template_page.field_data_type_select(new_index).select("True/False")
+      edit_template_page.field_position_input(new_index).set(new_index + 1)
+      wait_for { !edit_template_page.submit.disabled? }
       edit_template_page.submit.click
 
       expect(templates_page).to have_header

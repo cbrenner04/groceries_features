@@ -215,12 +215,12 @@ module Pages
 
     def reject(list_name)
       list_element = find_pending_list(list_name)
-      find_by_test_id_within(list_element, "pending-list-trash").click
+      click_list_action(list_element, "pending-list-trash")
     end
 
     def complete(list_name)
       list_element = find_incomplete_list(list_name)
-      find_by_test_id_within(list_element, "incomplete-list-complete").click
+      click_list_action(list_element, "incomplete-list-complete")
     end
 
     def complete_button_css
@@ -250,7 +250,8 @@ module Pages
 
     def edit(list_name)
       list_element = find_incomplete_list(list_name)
-      find_by_test_id_within(list_element, "incomplete-list-edit").click
+      list_id = list_id_from(list_element)
+      page.visit("/lists/#{list_id}/edit")
     end
 
     def merge(_list_name = nil)
@@ -272,7 +273,7 @@ module Pages
     def delete(list_name, complete: false)
       list_element = complete ? find_complete_list(list_name) : find_incomplete_list(list_name)
       test_id = complete ? "complete-list-trash" : "incomplete-list-trash"
-      find_by_test_id_within(list_element, test_id).click
+      click_list_action(list_element, test_id)
     end
 
     def refresh_button_css
@@ -281,7 +282,7 @@ module Pages
 
     def refresh(list_name)
       list_element = find_complete_list(list_name)
-      find_by_test_id_within(list_element, "complete-list-refresh").click
+      click_list_action(list_element, "complete-list-refresh")
     end
 
     # Filter by status
@@ -327,11 +328,20 @@ module Pages
     end
 
     def wait_until_confirm_delete_button_visible
-      wait_for { has_test_id?("confirm-delete") }
+      wait_for { has_css?("[data-test-id='confirm-delete']:not([disabled])") }
     end
 
     def wait_until_confirm_reject_button_visible
-      wait_for { has_test_id?("confirm-reject") }
+      wait_for { has_css?("[data-test-id='confirm-reject']:not([disabled])") }
+    end
+
+    def click_list_action(list_element, test_id)
+      button = list_element.find(:css, "[data-test-id='#{test_id}']:not([disabled])")
+      page.execute_script("arguments[0].click();", button.native)
+    end
+
+    def list_id_from(list_element)
+      list_element["data-test-id"].delete_prefix("list-")
     end
 
     def has_merge_warning?

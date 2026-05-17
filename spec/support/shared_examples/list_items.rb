@@ -245,17 +245,19 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           it "is completed" do
             initial_completed_count = list_page.completed_items.count
+            initial_not_completed_count = list_page.not_completed_items.count
             item_name = @list_items.first.pretty_title
 
             list_page.complete item_name
 
-            wait_for { list_page.completed_items.count == initial_completed_count + 1 }
-
-            not_completed_list_items = list_page.not_completed_items.map(&:text)
+            wait_for do
+              list_page.completed_items.count == initial_completed_count + 1 &&
+                list_page.not_completed_items.count == initial_not_completed_count - 1
+            end
 
             expect(list_page.find_list_item(item_name, completed: true)).to be_visible
             expect(list_page.find_list_item(@another_list_item.pretty_title, completed: false)).to be_visible
-            expect(not_completed_list_items.select { |text| text == item_name }).to be_empty
+            expect(list_page.list_item_row_matches?(item_name, completed: false)).to be false
           end
 
           it "is destroyed" do
