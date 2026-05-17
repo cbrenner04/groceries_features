@@ -3,6 +3,7 @@ name: fix-list-delete-and-merge-failures
 ---
 Our groceries_features are failing with the following failures. As part of this work, a review of the groceries-client code should be done as it is unlikely to be just test issues at this point.
 
+```text
 Failures:
 
    1) A list behaves like a list that is incomplete is deleted
@@ -187,6 +188,7 @@ Failures:
  rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:2:2] # A list behaves like a list that is complete that is shared with read access is deleted
  rspec ./spec/features/lists/lists_spec.rb[1:1:4:2:1] # A list behaves like a list multiSelect merge merges all selected lists regardless of ownership or permissions but only those of the same type
  rspec ./spec/features/lists/lists_spec.rb[1:1:4:2:7] # A list behaves like a list multiSelect merge successfully merges lists of same type with proper name
+```
 
 ## Interview turn 1
 
