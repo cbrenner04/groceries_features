@@ -11,7 +11,7 @@ module Pages
     element :submit, "button[type='submit']"
 
     def manage_templates
-      find_by_test_id("manage-templates-link").click
+      find_by_test_id("nav-templates").click
     end
 
     def expand_template_form
@@ -27,7 +27,7 @@ module Pages
     end
 
     def template_names
-      all_by_test_class("template").map { |t| t.find("h5").text }
+      all_by_test_class("template").map { |t| t.find("h3").text }
     end
 
     def template_name_input

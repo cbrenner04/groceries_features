@@ -12,9 +12,9 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list) { Models::List.new(template_name: "to do list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.task_input.set new_list_item.task
-    list_page.assignee_input.set new_list_item.assignee_email
-    fill_in "Due by", with: new_list_item.due_by.strftime("%m/%d/%Y")
+    react_fill_in("#task", with: new_list_item.task)
+    react_fill_in("#assignee", with: new_list_item.assignee_email)
+    react_fill_in("#due\\ by", with: new_list_item.due_by.strftime("%Y-%m-%d"))
 
     expect(list_page.task_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email

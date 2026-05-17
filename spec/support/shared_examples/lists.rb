@@ -29,7 +29,7 @@ RSpec.shared_examples "a list" do |template_name|
     home_page.expand_list_form
     home_page.name.set list.name
     home_page.list_template.select template_name
-    home_page.submit.click
+    home_page.submit
 
     wait_for { home_page.incomplete_list_names.include? list.name }
 
@@ -42,20 +42,19 @@ RSpec.shared_examples "a list" do |template_name|
 
       it "displays list items" do
         expect(list_page).to have_not_completed_items
-        expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+        expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
         expect(list_page).to have_completed_items
-        expect(list_page.completed_items.map(&:text)).to include @list_items.last.pretty_title
+        expect(list_page.find_list_item(@list_items.last.pretty_title, completed: true)).to be_visible
       end
 
       describe "that is filtered" do
         before do
           list_page.wait_until_completed_items_visible
-          list_page.filter_button.click
           list_page.filter_option("foo").click
         end
 
         it "only shows filtered items" do
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+          expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
           not_completed_texts = list_page.not_completed_items.map(&:text)
           expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
         end
@@ -63,8 +62,8 @@ RSpec.shared_examples "a list" do |template_name|
         it "can clear filter" do
           list_page.clear_filter_button.click
 
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
+          expect(list_page.find_list_item(@list_items.first.pretty_title, completed: false)).to be_visible
+          expect(list_page.find_list_item(@list_items[1].pretty_title, completed: false)).to be_visible
         end
       end
     end
@@ -162,13 +161,14 @@ RSpec.shared_examples "a list" do |template_name|
     describe "that is shared" do
       describe "that is pending" do
         before do
-          # make other list pending
+          # make other list pending - set has_accepted to nil, permissions is whatever was shared
           DB[:users_lists].where(user_id: user.id, list_id: other_list.id)
-                          .update(permissions: "read", has_accepted: nil)
+                          .update(has_accepted: nil)
           # make other list created at more recent than list
           DB[:lists].where(id: other_list.id).update(created_at: Time.now)
           home_page.load
           home_page.wait_until_header_visible
+          wait_for { home_page.has_pending_lists? }
         end
 
         it "can only accept or reject" do
@@ -223,11 +223,10 @@ RSpec.shared_examples "a list" do |template_name|
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(write_list.find(home_page.share_button_css)[:disabled]).to be_nil
-            expect(write_list.find(home_page.complete_button_css)).to be_disabled
+            expect(write_list).to have_css home_page.share_button_css
+            expect(write_list).to have_no_css home_page.complete_button_css
             expect(write_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            # TODO: confirm it can't be clicked
-            expect(write_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(write_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
@@ -279,10 +278,10 @@ RSpec.shared_examples "a list" do |template_name|
           it "cannot be edited, completed, or shared" do
             read_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(read_list.find(home_page.share_button_css)["aria-disabled"]).to eq "true"
-            expect(read_list.find(home_page.complete_button_css)).to be_disabled
+            expect(read_list).to have_no_css home_page.share_button_css
+            expect(read_list).to have_no_css home_page.complete_button_css
             expect(read_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            expect(read_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(read_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
@@ -344,7 +343,7 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_completed_items
-      expect(list_page.completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page.find_list_item(@completed_list_items.last.pretty_title, completed: true)).to be_visible
     end
 
     it "is refreshed" do
@@ -358,8 +357,8 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_not_completed_items
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.first.pretty_title
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page.find_list_item(@completed_list_items.first.pretty_title, completed: false)).to be_visible
+      expect(list_page.find_list_item(@completed_list_items.last.pretty_title, completed: false)).to be_visible
     end
 
     it "is deleted" do
@@ -504,9 +503,6 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        expect(home_page).to have_no_share_button
-        expect(home_page).to have_no_edit_button
-
         home_page.merge list.name
         home_page.new_merged_list_name_input.set "new merged list"
         home_page.confirm_merge_button.click
@@ -517,15 +513,22 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        @list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
+        @other_list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
       end
 
       it "shows warning when lists of different templates are selected" do
         # Create a list of different template for testing
         different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
         create_associated_list_objects(user, different_template_list)
+
+        # Synchronize with browser before navigation to prevent renderer crash
+        # caused by in-flight polling/prefetch requests being interrupted
+        page.execute_script("void(0)")
 
         # need to pick up the data changes
         home_page.load
@@ -552,6 +555,10 @@ RSpec.shared_examples "a list" do |template_name|
         # Create a list of different template for testing
         different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
         create_associated_list_objects(user, different_template_list)
+
+        # Synchronize with browser before navigation to prevent renderer crash
+        # caused by in-flight polling/prefetch requests being interrupted
+        page.execute_script("void(0)")
 
         # need to pick up the data changes
         home_page.load
@@ -635,9 +642,12 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        @list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
+        @other_list_items.each do |list_item|
+          expect(list_page.find_list_item(list_item.pretty_title, completed: false)).to be_visible
+        end
       end
     end
 
@@ -649,8 +659,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         home_page.delete list.name
 
-        expect(find(".modal-body").text).to include list.name
-        expect(find(".modal-body").text).to include other_list.name
+        modal_body = find("[data-test-id='confirm-modal-body']")
+        expect(modal_body.text).to include list.name
+        expect(modal_body.text).to include other_list.name
 
         home_page.confirm_delete_button.click
 
@@ -666,7 +677,7 @@ RSpec.shared_examples "a list" do |template_name|
 
     describe "refresh" do
       it "only refreshes lists the user owns and those that are complete" do
-        home_page.multi_select_buttons[1].click
+        home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name

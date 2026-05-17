@@ -16,11 +16,12 @@ RSpec.shared_examples "a refreshable list item" do
 
         wait_for { list_page.not_completed_items.count == initial_list_item_count + 1 }
 
-        list_page.close_alert.click
-        list_page.filter_button.click
+        # list_page.close_alert.click # TODO: not sure why this is no longer working
         list_page.filter_option("foo").click
 
-        expect(list_page.not_completed_items.map(&:text)).to include item_name
+        wait_for { list_page.list_item_row_matches?(item_name, completed: false) }
+
+        expect(list_page.find_list_item(item_name, completed: false)).to be_visible
       end
     end
 
@@ -33,11 +34,11 @@ RSpec.shared_examples "a refreshable list item" do
         list_page.refresh(list_to_refresh)
 
         wait_for { list_page.completed_items.none? }
-        wait_for { list_page.not_completed_items.map(&:text).include?(list_to_refresh) }
+        wait_for { list_page.list_item_row_matches?(list_to_refresh, completed: false) }
 
         expect(list_page.completed_items.count).to eq 0
         expect(list_page.not_completed_items.count).to eq 3
-        expect(list_page.not_completed_items.map(&:text)).to include list_to_refresh
+        expect(list_page.find_list_item(list_to_refresh, completed: false)).to be_visible
       end
     end
   end

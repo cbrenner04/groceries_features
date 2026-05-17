@@ -3,8 +3,8 @@
 module Models
   # an item on a book list
   class BookListItem
-    attr_accessor :title, :author
-    attr_reader :id, :user_id, :list_id, :completed, :read, :number_in_series, :category,
+    attr_accessor :title, :author, :category
+    attr_reader :id, :user_id, :list_id, :completed, :read, :number_in_series,
                 :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, read: false, category: nil, list_item_configuration_id: nil,
@@ -22,8 +22,10 @@ module Models
     end
 
     def pretty_title
-      read_value = read ? "true" : "false"
-      "#{author}\nTitle: #{title}•Number in series: #{number_in_series}•Read: #{read_value}"
+      read_str = read ? "true" : "false"
+      secondary = "#{title}·#{number_in_series}·#{read_str}"
+      base = "#{author}\n#{secondary}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

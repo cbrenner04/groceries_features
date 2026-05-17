@@ -11,20 +11,20 @@ module Pages
     element :signed_in_alert, ".Toastify", text: "Signed in successfully"
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
     element :list_template, "#list_item_configuration_id"
-    element :header, "h1", text: "Lists"
-    element :name, "#name"
-    element :submit, "button[type='submit']"
     element :new_merged_list_name_input, "#mergeName"
+    element :header, "[data-test-id='page-title']"
 
     elements :multi_select_buttons, :button, "Select"
 
     # has_*? methods for elements that use data-test-* selectors
     def has_log_out?
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       has_test_id?("log-out-link")
     end
 
     def has_invite?
-      has_test_id?("invite-link")
+      has_test_id?("nav-invite")
     end
 
     def has_confirm_delete?
@@ -57,7 +57,7 @@ module Pages
     end
 
     def has_no_invite?
-      has_no_test_id?("invite-link")
+      has_no_test_id?("nav-invite")
     end
 
     def has_no_completed_lists?
@@ -80,15 +80,29 @@ module Pages
       has_no_test_id?("incomplete-list-edit")
     end
 
+    def has_page_title?
+      has_test_id?("page-title")
+    end
+
+    def has_settings_nav?
+      has_test_id?("nav-settings")
+    end
+
+    def page_title
+      find_by_test_id("page-title")
+    end
+
     def go_to_completed_lists
-      click_on "See all completed lists here"
+      find_by_test_id("nav-completed").click
     end
 
     def invite
-      find_by_test_id("invite-link")
+      find_by_test_id("nav-invite")
     end
 
     def log_out
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       find_by_test_id("log-out-link")
     end
 
@@ -109,7 +123,9 @@ module Pages
     end
 
     def complete_list_names
-      all_by_test_class("completed-list").map { |list| list.find("h5").text }
+      all_by_test_class("completed-list").map do |list|
+        find_by_test_id_within(list, "list-name").text
+      end
     end
 
     def incomplete_lists
@@ -117,24 +133,34 @@ module Pages
     end
 
     def incomplete_list_names
-      all_by_test_class("incomplete-list").map { |list| list.find("h5").text }
+      all_by_test_class("incomplete-list").map do |list|
+        find_by_test_id_within(list, "list-name").text
+      end
     end
 
     def pending_list_names
-      all_by_test_class("pending-list").map { |list| list.find("h5").text }
+      all_by_test_class("pending-list").map do |list|
+        find_by_test_id_within(list, "list-name").text
+      end
     end
 
     # Immediate versions for post-wait_for assertions (no Capybara waiting)
     def incomplete_list_names_immediate
-      all("[data-test-class='incomplete-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+      all("[data-test-class='incomplete-list']", wait: 0).map do |list|
+        list.find("[data-test-id='list-name']", wait: 0).text
+      end
     end
 
     def pending_list_names_immediate
-      all("[data-test-class='pending-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+      all("[data-test-class='pending-list']", wait: 0).map do |list|
+        list.find("[data-test-id='list-name']", wait: 0).text
+      end
     end
 
     def complete_list_names_immediate
-      all("[data-test-class='completed-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+      all("[data-test-class='completed-list']", wait: 0).map do |list|
+        list.find("[data-test-id='list-name']", wait: 0).text
+      end
     end
 
     def incomplete_lists_immediate
@@ -142,7 +168,14 @@ module Pages
     end
 
     def select_list(list_name)
-      click_on list_name
+      # Find the list card by searching for the list-name within a list card
+      # This is more specific than just searching by test-class
+      # Note: [data-test-id^="list-"] alone matches both Card elements and the list-name span,
+      # so we add [data-test-class] to match only Card containers
+      list_card = all('[data-test-id^="list-"][data-test-class]').detect do |card|
+        card.find('[data-test-id="list-name"]').text == list_name
+      end
+      list_card&.click
     end
 
     def find_pending_list(list_name)
@@ -220,13 +253,12 @@ module Pages
       find_by_test_id_within(list_element, "incomplete-list-edit").click
     end
 
-    def merge(list_name)
-      merge_button(list_name).click
+    def merge(_list_name = nil)
+      merge_button.click
     end
 
-    def merge_button(list_name)
-      list_element = find_incomplete_list(list_name)
-      find_by_test_id_within(list_element, "incomplete-list-merge")
+    def merge_button(_list_name = nil)
+      find_by_test_id("multi-select-merge")
     end
 
     def incomplete_delete_button_css
@@ -252,12 +284,46 @@ module Pages
       find_by_test_id_within(list_element, "complete-list-refresh").click
     end
 
+    # Filter by status
+    def filter_by_status(status)
+      find_by_test_id("filter-#{status}").click
+    end
+
+    # Quick-add a list
+    def quick_add_list(name)
+      find_by_test_id("quick-add-input").set(name)
+      find_by_test_id("quick-add-input").send_keys(:enter)
+    end
+
+    # Quick-add with template
+    def quick_add_list_with_template(name, template_name)
+      find_by_test_id("quick-add-input").set(name)
+      find_by_test_id("quick-add-expand").click
+      find_by_id("list_item_configuration_id").select(template_name)
+      find_by_test_id("quick-add-input").send_keys(:enter)
+    end
+
+    # Legacy method — delegates to quick_add_list
     def expand_list_form
-      find(".btn.btn-link", text: "Add List").click
+      find_by_test_id("quick-add-expand").click
+    end
+
+    def name
+      find_by_test_id("quick-add-input")
+    end
+
+    def submit
+      find_by_test_id("quick-add-input").send_keys(:enter)
     end
 
     def wait_until_log_out_visible
+      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
+                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       wait_for { has_test_id?("log-out-link") }
+    end
+
+    def wait_until_settings_nav_visible
+      wait_for { has_test_id?("nav-settings") }
     end
 
     def wait_until_confirm_delete_button_visible
@@ -277,11 +343,11 @@ module Pages
     end
 
     def merge_warning_text
-      find(".alert-warning").text
+      find_by_test_id("merge-warning").text
     end
 
     def merge_breakdown_text
-      find(".alert-info").text
+      find_by_test_id("merge-breakdown").text
     end
 
     def has_clear_merge_button?

@@ -8,8 +8,8 @@ module Models
     ONE_DAY = ONE_HOUR * 24
     DUE_BY_DATE = Time.now + (rand(180) * ONE_DAY)
 
-    attr_accessor :task, :due_by, :assignee_email
-    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
+    attr_accessor :task, :due_by, :assignee_email, :category
+    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, assignee_email: nil, completed: false, category: nil, refreshed: false,
                    list_item_configuration_id: nil, create_item: true)
@@ -26,7 +26,8 @@ module Models
     end
 
     def pretty_title
-      "#{task}\nAssignee: #{assignee_email}•Due by: #{due_by.strftime('%B %-d, %Y')}"
+      base = "#{task}\n#{assignee_email}·#{due_by.strftime('%B %-d, %Y')}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

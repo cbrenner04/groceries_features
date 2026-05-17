@@ -13,7 +13,7 @@ RSpec.describe "A simple list item", type: :feature do
 
   def input_new_item_attributes(new_list_item)
     wait_for do
-      list_page.content_input.set new_list_item.content
+      react_fill_in("#content", with: new_list_item.content)
       list_page.content_input.value == new_list_item.content
     end
 

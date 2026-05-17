@@ -7,7 +7,7 @@ module Pages
 
     set_url "/templates/{id}/edit"
 
-    element :header, "h1", text: "Edit Template"
+    element :header, "h2", text: "Edit Template"
     element :submit, "button[type='submit']"
 
     def template_name_input

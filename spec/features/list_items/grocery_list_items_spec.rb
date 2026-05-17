@@ -12,8 +12,8 @@ RSpec.describe "A grocery list item", type: :feature do
   let(:list) { Models::List.new(template_name: "grocery list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.quantity_input.set new_list_item.quantity
-    list_page.product_input.set new_list_item.product
+    react_fill_in("#quantity", with: new_list_item.quantity)
+    react_fill_in("#product", with: new_list_item.product)
 
     expect(list_page.quantity_input.value).to eq new_list_item.quantity
     expect(list_page.product_input.value).to eq new_list_item.product
