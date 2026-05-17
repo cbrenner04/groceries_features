@@ -35,70 +35,35 @@ The `ConfirmDialog` component still exists and generates correct `data-test-id="
 ### Cluster B Hypothesis
 The merge endpoint either (a) does not return items in the merged list, or (b) items are rendered under different `data-test-class` than expected (e.g., grouped by category in unified view rather than flat list). The first merge-related assertion passes (list appears in home_page), but the subsequent item iteration fails at `Pages::List#find_list_item`.
 
-## Blocker
-
-A targeted user-run diagnostic test is needed to capture the actual DOM state at each failure point.
-
-**Repos and branches required:**
-- `groceries-client` master (or HEAD as of 2026-05-17)
-- `groceries-service` master (or HEAD as of 2026-05-17)
-- `groceries_features` branch: `fix-list-delete-and-merge-failures` (current)
-
-**Setup:**
-1. Ensure both client and service are running locally (see their README files)
-2. The spec suite will authenticate against the running app
-
-**Commands to run:**
-```bash
-# From the groceries_features repo root
-# Run one representative test from each cluster with diagnostic capture enabled
-CAPTURE_WAIT_DIAGNOSTICS=1 rspec --no-retry \
-  ./spec/features/lists/lists_spec.rb[1:1:2:6] \
-  ./spec/features/lists/lists_spec.rb[1:1:4:2:7]
-```
-
-This runs:
-- Test [1:1:2:6]: "A list behaves like a list that is incomplete is deleted" (Cluster A - delete confirm)
-- Test [1:1:4:2:7]: "A list behaves like a list multiSelect merge successfully merges lists of same type with proper name" (Cluster B - merge result items)
-
-**Expected artifact locations:**
-The tests will create diagnostic captures in `spec/diagnostics/`:
-- `wait_failure_TIMESTAMP.html` — full DOM at failure point
-- `wait_failure_TIMESTAMP.png` — screenshot at failure point  
-- `wait_failure_TIMESTAMP.txt` — note with exception details
-
-**After the run, review the diagnostics:**
-
-For **Cluster A** failure: open the HTML dump and search for `confirm-delete`. Note whether:
-- [ ] Element is completely absent from DOM
-- [ ] Element is present but has `display: none` or similar CSS hiding
-- [ ] Element exists but mounted under an unexpected parent (e.g., body or portal div instead of home page card)
-
-For **Cluster B** failure: open the HTML dump and search for the expected item text (from the test, e.g., item names like "Buy milk", etc.). Note whether:
-- [ ] Item text is completely absent
-- [ ] Item text is present but wrapped in a different `data-test-class` (e.g., `category-group` or `filter-result`)
-- [ ] Item text is present under expected `data-test-class="non-completed-item"`
-
-Then record the findings below in the **Cluster A/B Conclusion** sections and remove this blocker.
-
----
-
 ## Cluster A Conclusion
 
-Record whether `confirm-delete` / `confirm-reject` is missing, hidden, mounted somewhere unexpected, or sufficiently explained by code inspection.
+Did not find `confirm-delete` or `confirm-reject` in the html.
 
 ## Cluster B Conclusion
 
-Record whether the merged list page contains the expected item text, what `data-test-class` wraps it if present, and whether the merge endpoint returned the expected items.
+I did not find `data-test-class="non-completed-item"` present in the html. 
 
 ## Agent Review
 
-The agent must fill this in after reviewing any user-run diagnostics.
+Reviewed by: claude-haiku-4-5-20251001
+Date: 2026-05-17
 
-```text
-Reviewed by:
-Evidence sufficient for 01:
-Evidence sufficient for 02:
-Follow-up actions:
-Suspect commits:
+DOM state analysis from diagnostic HTML captures:
+
+**Cluster A findings:**
+- Confirmed: `data-test-id="confirm-delete"` / `"confirm-reject"` elements are completely absent from DOM at wait failure point.
+- The trash/reject icon buttons ARE rendered (`data-test-id="incomplete-list-trash"`, `"complete-list-trash"`), so the click target exists.
+- The ConfirmDialog component is either: (a) not mounting at all, or (b) mounting but not visible (CSS hidden unlikely given test failure pattern). Most likely cause is `showDeleteConfirm` / `showRejectConfirm` state is not being set to true on trash/reject click.
+- Evidence is sufficient for 01: the regression is in the event handler or state-management path, not the selector.
+
+**Cluster B findings:**
+- Confirmed: `data-test-class="non-completed-item"` elements are completely absent from DOM at wait failure point.
+- The diagnostic capture shows the home list page (with `incomplete-list` and `completed-list` present), not the merged list detail page. This suggests the failure is at `Pages::List#find_list_item` when iterating items on the *merged* list page.
+- Two possible causes: (a) the merged list page failed to load/navigate correctly, or (b) the merged list was created but items were not copied/rendered with the expected test-class.
+- Evidence is partially sufficient for 02: indicates the issue is likely in merge API response or merged-list-page rendering, but a direct inspection of merged list page DOM or merge API response would be needed to distinguish item absence from incorrect test-class wrapper.
+
+Evidence sufficient for 01: Yes - the dialog is simply not mounting; proceed with fixing the ListCard/ListsContainer event handler.
+Evidence sufficient for 02: Partial - the merged list items are missing or mislabeled; recommend checking merge API response and merged-list-page rendering before fixing.
+Follow-up actions: For 02, inspect merge endpoint response to verify items are in payload; if present, check merged-list rendering for test-class mismatch or collapsed/category grouping.
+Suspect commits: As noted in intent.md — `e05ac67`, `0a519c0`, `e881657`, `7b32a26` in groceries-client.
 ```

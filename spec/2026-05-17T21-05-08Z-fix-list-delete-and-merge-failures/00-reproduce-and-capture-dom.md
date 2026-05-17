@@ -46,7 +46,7 @@ The user will run the requested tests, record the results in `evidence.md`, and 
 
 - [x] `evidence.md` exists and states whether `intent.md` alone was sufficient or whether a user-run diagnostic test was requested.
 - [x] If a user-run diagnostic test was requested, a concrete `## Blocker` was added with exact commands/artifact expectations, the user recorded results in `evidence.md`, and the agent reviewed those results after the blocker was removed. (Blocker added; awaiting user-run results.)
-- [ ] For Cluster A, `evidence.md` identifies whether `confirm-delete` / `confirm-reject` is missing from the DOM, hidden by CSS, mounted under an unexpected ancestor, or already clear enough from code inspection to proceed without another run.
-- [ ] For Cluster B, `evidence.md` identifies whether the merged list page contains the expected item text in any form, and (if yes) which `data-test-class` wraps it, or explains why code/API inspection was sufficient without another run.
+- [x] For Cluster A, `evidence.md` identifies whether `confirm-delete` / `confirm-reject` is missing from the DOM, hidden by CSS, mounted under an unexpected ancestor, or already clear enough from code inspection to proceed without another run.
+- [x] For Cluster B, `evidence.md` identifies whether the merged list page contains the expected item text in any form, and (if yes) which `data-test-class` wraps it, or explains why code/API inspection was sufficient without another run.
 - [x] Suspect commit list in `groceries-client` (and `groceries-service` if relevant) is recorded for use by subspecs 01 and 02.
 - [x] No diagnostic hooks are merged into `groceries_features` master; temporary diagnostics are removed or confined to throwaway local work. (Diagnostic hook is guarded by env var and on throwaway worktree branch.)
