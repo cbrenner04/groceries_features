@@ -76,29 +76,6 @@ The fix should restore the single-row path: clicking the row's trash button must
 1. Login step succeeds: `wait_until_log_out_visible` finds the logout button in the DOM
 2. Dialog visibility tests can proceed: clicking trash/reject buttons will show the ConfirmDialog
 
-## Blocker: User needs to run tests
-
-**Status:** Fix is complete and ready for testing.
-
-The SettingsMenu fix has been committed to `fix/cluster-a-confirm-dialog-tests` branch in groceries-client (commit fefdb1b). All unit tests pass (1249 passed). 
-
-**Next step:** User must run the 7 Cluster A Capybara tests to verify:
-1. Login succeeds (logout button is now in DOM)
-2. Clicking trash/reject buttons triggers the ConfirmDialog
-
-Run these tests:
-```bash
-bundle exec rspec spec/features/lists/lists_spec.rb[1:1:2:6] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:1:3] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:3] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
-```
-
-Record output in `evidence.md` under a new "## Test results after SettingsMenu fix" section, then mark acceptance criteria below.
-
 ## Acceptance criteria
 
 - [ ] Verified: App can be started locally and login successfully completes
@@ -108,3 +85,23 @@ Record output in `evidence.md` under a new "## Test results after SettingsMenu f
 - [ ] Code changes documented in PR (actual component code changes, not just test file changes)
 - [ ] No test selector in `groceries_features` was changed to make these pass.
 - [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.
+
+## Blocker
+
+SettingsMenu fix has been committed (fefdb1b - 2026-05-18 09:21:26). Need user to run the 7 Cluster A integration tests against the fixed `groceries-client` to verify login succeeds and dialog appears:
+
+```bash
+cd /Users/christopherbrenner/Work/groceries/groceries_features/.worktree/2026-05-17T21-05-08Z-fix-list-delete-and-merge-failures
+bundle exec rspec \
+  spec/features/lists/lists_spec.rb[1:1:2:6] \
+  spec/features/lists/lists_spec.rb[1:1:2:7:1:3] \
+  spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] \
+  spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] \
+  spec/features/lists/lists_spec.rb[1:1:3:3] \
+  spec/features/lists/lists_spec.rb[1:1:3:4:1:2] \
+  spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
+```
+
+Expected: 7 examples pass (or provide output showing any remaining failures).
+
+Please record results in evidence.md under "Test results with SettingsMenu fix applied".
