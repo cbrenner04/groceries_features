@@ -844,3 +844,7 @@ rspec ./spec/features/lists/lists_spec.rb[1:1:3:3] # A list behaves like a list 
 rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:1:2] # A list behaves like a list that is complete that is shared with write access is deleted
 rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:2:2] # A list behaves like a list that is complete that is shared with read access is deleted
 ```
+
+## Follow up to previous run
+
+I don't disagree with the analysis about logout visible failures. But that means something has changed, either in tests or client, to create those failures. My guess is if I run the full suite, they'd all fail which was not the state it was in before this spec was being worked on. 
