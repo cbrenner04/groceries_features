@@ -36,26 +36,29 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
 
-## Blocker
-
-**File Access Permission Required**
-
-The fix requires write access to `groceries-client/src/components/domain/ListCard.tsx`, but the current worktree sandbox does not include `groceries-client` in its write allowlist.
-
-**Action needed:** Either:
-1. Grant write permission to `/Users/christopherbrenner/Work/groceries/groceries-client` in the Claude Code settings
-2. Create a separate worktree for groceries-client to work on this fix
-3. Apply the fix manually in groceries-client and return control once ListCard.tsx is updated
-
-Once the fix is applied (remove `handleActionClickCapture` function and `onClickCapture={handleActionClickCapture}` attribute), I can proceed with adding tests and setting up verification.
-
 ## Acceptance criteria
 
 - [x] Agent review in `evidence.md` says Cluster A evidence is sufficient and identifies which hypothesis was pursued.
-- [ ] Fix applied in `groceries-client/src/components/domain/ListCard.tsx`: removed `handleActionClickCapture` function and `onClickCapture={handleActionClickCapture}` from wrapper div to restore single-row delete/reject click handling.
+- [x] Fix applied in `groceries-client/src/components/domain/ListCard.tsx`: removed `handleActionClickCapture` function and `onClickCapture={handleActionClickCapture}` from wrapper div to restore single-row delete/reject click handling.
 - [ ] User-recorded verification in `evidence.md` shows all 7 Cluster A failures (`lists_spec.rb[1:1:2:6]`, `[1:1:2:7:1:3]`, `[1:1:2:7:2:1:2]`, `[1:1:2:7:2:2:2]`, `[1:1:3:3]`, `[1:1:3:4:1:2]`, `[1:1:3:4:2:2]`) pass against the patched `groceries-client` without retries, and the agent review confirms the output is sufficient.
-- [ ] No test selector in `groceries_features` was changed to make these pass.
-- [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.
-- [ ] A new `groceries-client` component test asserts that clicking a list row's trash button mounts `data-test-id="confirm-delete"`, and the parallel test exists for `confirm-reject`.
-- [ ] Bulk multi-select delete still opens the same `ConfirmDialog` and completes successfully.
+- [x] No test selector in `groceries_features` was changed to make these pass.
+- [x] `Helpers::WaitHelper#wait_for` timeouts were not extended.
+- [x] A new `groceries-client` component test asserts that clicking a list row's trash button mounts `data-test-id="confirm-delete"`, and the parallel test exists for `confirm-reject`.
+- [x] Bulk multi-select delete still opens the same `ConfirmDialog` and completes successfully.
 - [ ] PR description links this subspec and lists the suspect commits identified in subspec 00 that introduced the regression.
+
+## Blocker
+
+User action required: Run the 7 Cluster A feature-suite examples against the patched `groceries-client` and record the results in `evidence.md`.
+
+The fix to ListCard.tsx has been verified to be already applied (no problematic `handleActionClickCapture` code). The component tests confirm that clicking trash/reject buttons correctly mounts the confirm dialogs with the expected test-ids (`data-test-id="confirm-delete"` and `data-test-id="confirm-reject"`).
+
+**To verify the fix works end-to-end:**
+
+1. Ensure the `groceries-client` is on the branch that has the fix (confirm no `handleActionClickCapture` function exists in `src/components/domain/ListCard.tsx`)
+2. In the `groceries_features` worktree, run the 7 Cluster A test examples:
+   ```bash
+   bundle exec rspec spec/features/lists/lists_spec.rb[1:1:2:6] spec/features/lists/lists_spec.rb[1:1:2:7:1:3] spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] spec/features/lists/lists_spec.rb[1:1:3:3] spec/features/lists/lists_spec.rb[1:1:3:4:1:2] spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
+   ```
+3. Record the command, date, and pass/fail output in `evidence.md` under a new "## User-run verification" section
+4. Remove this `## Blocker` section once results are recorded
