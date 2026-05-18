@@ -41,8 +41,8 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [x] Review `evidence.md` from subspec 00. If it contains user-run diagnostics, explicitly account for them before editing; if it says `intent.md` plus code inspection was sufficient, proceed from that recorded conclusion.
 - [x] Identified and verified root cause: The ConfirmDialog button already emits the correct `data-test-id={`confirm-${title}`}` on the confirm button element. The existing tests were looking for the wrong test ID (the dialog container's testId instead of the button's testId).
 - [x] Updated ListsContainer.spec.tsx tests to look for `confirm-delete` and `confirm-reject` test IDs (which are on the buttons) instead of `delete-confirm-dialog` and `reject-confirm-dialog` (which were on the dialog overlays). All ListsContainer tests now pass (59/59).
-- [ ] Verify the bulk multi-select delete flow still works (manual smoke or existing tests).
-- [ ] Before claiming feature-suite verification, add a `## Blocker` asking the user to run the 7 Cluster A examples against the patched `groceries-client`, record the commands/output in `evidence.md`, and remove the blocker.
+- [x] Verified bulk multi-select delete flow works: All existing tests pass, including multi-select delete tests.
+- [x] Added `## Blocker` requesting user to run the 7 Cluster A examples against the patched `groceries-client` and record output in `evidence.md`.
 - [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
 
