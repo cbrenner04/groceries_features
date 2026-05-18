@@ -76,6 +76,29 @@ The fix should restore the single-row path: clicking the row's trash button must
 1. Login step succeeds: `wait_until_log_out_visible` finds the logout button in the DOM
 2. Dialog visibility tests can proceed: clicking trash/reject buttons will show the ConfirmDialog
 
+## Blocker
+
+**Status (2026-05-18):** Ready to test. Code changes applied:
+1. SettingsMenu.tsx: Always renders in DOM with conditional inline styles (opacity: 0, visibility: hidden, pointer-events: none when closed)
+2. ListsContainer.spec.tsx: Updated to look for correct test IDs on ConfirmDialog buttons (confirm-delete, confirm-reject)
+3. SettingsMenu.spec.tsx: Updated to verify inline styles instead of DOM presence
+4. AppRouter.spec.tsx: Updated to check visibility instead of DOM presence
+5. All 1249 unit tests pass in groceries-client
+
+**Action needed:** Please run the 7 Cluster A integration tests to verify the SettingsMenu fix allows login to succeed and the dialog appears on trash/reject click:
+
+```bash
+cd /Users/christopherbrenner/Work/groceries/groceries_features
+rspec spec/features/lists/lists_spec.rb
+```
+
+Then record the output in `evidence.md` with the header `## 2026-05-18 Post-SettingsMenu-Fix Test Run`.
+
+The test environment requires:
+- PostgreSQL running and configured in `config/env.yml`
+- Groceries client running (typically on localhost:3000)
+- Groceries service running (typically on localhost:4000)
+
 ## Acceptance criteria
 
 - [ ] Verified: App can be started locally and login successfully completes
@@ -85,23 +108,3 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [ ] Code changes documented in PR (actual component code changes, not just test file changes)
 - [ ] No test selector in `groceries_features` was changed to make these pass.
 - [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.
-
-## Blocker
-
-SettingsMenu fix has been committed (fefdb1b - 2026-05-18 09:21:26). Need user to run the 7 Cluster A integration tests against the fixed `groceries-client` to verify login succeeds and dialog appears:
-
-```bash
-cd /Users/christopherbrenner/Work/groceries/groceries_features/.worktree/2026-05-17T21-05-08Z-fix-list-delete-and-merge-failures
-bundle exec rspec \
-  spec/features/lists/lists_spec.rb[1:1:2:6] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:1:3] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:3] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
-```
-
-Expected: 7 examples pass (or provide output showing any remaining failures).
-
-Please record results in evidence.md under "Test results with SettingsMenu fix applied".
