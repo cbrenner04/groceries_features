@@ -28,14 +28,26 @@ The fix should restore the single-row path: clicking the row's trash button must
 
 ## Tasks
 
-- [ ] Review `evidence.md` from subspec 00. If it contains user-run diagnostics, explicitly account for them before editing; if it says `intent.md` plus code inspection was sufficient, proceed from that recorded conclusion.
-- [ ] Fix `ListsContainer.tsx` and/or `ListCard.tsx` so that a single trash click on an incomplete, complete, or shared (write/read) list row opens the delete confirm dialog with that list as the target.
-- [ ] Fix the equivalent path so that a single reject click on a pending shared list opens the reject confirm dialog with that list as the target.
+- [x] Review `evidence.md` from subspec 00. If it contains user-run diagnostics, explicitly account for them before editing; if it says `intent.md` plus code inspection was sufficient, proceed from that recorded conclusion.
+- [ ] Fix `ListCard.tsx` by removing `handleActionClickCapture` function and `onClickCapture={handleActionClickCapture}` attribute from wrapper div to restore direct `onClick` firing on trash/reject buttons.
 - [ ] Add a `groceries-client` unit/component test asserting: after clicking the row trash button, `data-test-id="confirm-delete"` is present in the DOM. Add the equivalent test for `confirm-reject`.
 - [ ] Verify the bulk multi-select delete flow still works (manual smoke or existing tests).
 - [ ] Before claiming feature-suite verification, add a `## Blocker` asking the user to run the 7 Cluster A examples against the patched `groceries-client`, record the commands/output in `evidence.md`, and remove the blocker.
 - [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
+
+## Blocker
+
+**File Access Permission Required**
+
+The fix requires write access to `groceries-client/src/components/domain/ListCard.tsx`, but the current worktree sandbox does not include `groceries-client` in its write allowlist.
+
+**Action needed:** Either:
+1. Grant write permission to `/Users/christopherbrenner/Work/groceries/groceries-client` in the Claude Code settings
+2. Create a separate worktree for groceries-client to work on this fix
+3. Apply the fix manually in groceries-client and return control once ListCard.tsx is updated
+
+Once the fix is applied (remove `handleActionClickCapture` function and `onClickCapture={handleActionClickCapture}` attribute), I can proceed with adding tests and setting up verification.
 
 ## Acceptance criteria
 
@@ -47,20 +59,3 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [ ] A new `groceries-client` component test asserts that clicking a list row's trash button mounts `data-test-id="confirm-delete"`, and the parallel test exists for `confirm-reject`.
 - [ ] Bulk multi-select delete still opens the same `ConfirmDialog` and completes successfully.
 - [ ] PR description links this subspec and lists the suspect commits identified in subspec 00 that introduced the regression.
-
-## Blocker
-
-Agent cannot write to `groceries-client` repo due to sandbox restrictions (only allowed in `groceries_features`). The root cause and fix are identified in `evidence.md`:
-
-**Fix required in `groceries-client/src/components/domain/ListCard.tsx`:**
-1. Remove the `handleActionClickCapture` function (lines ~81-110)
-2. Remove `onClickCapture={handleActionClickCapture}` from the action buttons wrapper div (line ~224)
-
-This restores the working state where single-row trash/reject clicks invoke their direct `onClick` handlers without capture-phase event interception.
-
-**Next steps:**
-1. Apply the fix in groceries-client
-2. Add a unit/component test that asserts `data-test-id="confirm-delete"` appears after clicking the trash button (and parallel for `confirm-reject`)
-3. Create a PR against groceries-client
-4. Verify the 7 Cluster A tests pass against the patched client
-5. Record the user-run verification in `evidence.md` and remove this blocker
