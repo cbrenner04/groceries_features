@@ -46,36 +46,30 @@ The fix should restore the single-row path: clicking the row's trash button must
 - [ ] After the user removes the blocker, review the recorded Cluster A output and account for any failures, retries, or changed symptoms.
 - [ ] Open a PR against `groceries-client` referencing this subspec.
 
-## Acceptance criteria
-
-- [x] Agent review in `evidence.md` says Cluster A evidence is sufficient and identifies which hypothesis was pursued. (Agent review confirms DOM analysis and identifies the root cause)
-- [x] Root cause identified: The ConfirmDialog button already emits the correct `data-test-id={`confirm-${title}`}` for the confirm button. No code changes needed; the issue was test code looking for the wrong test ID.
-- [x] Updated `ListsContainer.spec.tsx` tests to look for the correct test IDs (`confirm-delete`, `confirm-reject` on the buttons). All 59 tests pass.
-- [ ] Verify bulk multi-select delete still works correctly (existing tests already verify this; run full test suite before final verification).
-- [ ] User-recorded verification in `evidence.md` shows all 7 Cluster A failures pass against the patched `groceries-client` without retries.
-- [ ] No test selector in `groceries_features` was changed to make these pass.
-- [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.
-- [ ] PR description links this subspec and documents that the root cause was test-id lookup in ListsContainer tests, not a regression in ListCard or ConfirmDialog components.
-
 ## Blocker
 
-**User-run feature test verification required.** The JavaScript unit tests pass (59/59), and the ConfirmDialog buttons emit the correct test IDs. The Capybara feature tests should now pass, but this requires verification against the actual browser testing suite.
+The integration tests are failing during login (`wait_until_log_out_visible` timeout), not during the delete/reject dialog interaction. This indicates:
 
-**Action required:**
-1. Check out the `fix/cluster-a-confirm-dialog-tests` branch in groceries-client (commit 9016f8c)
-2. Run the 7 Cluster A failure examples in `groceries_features`:
+1. The previous analysis (that the fix was to update test IDs in ListsContainer.spec.tsx) was incorrect
+2. The actual problem is more fundamental - the app is not loading/authenticating properly in the test environment
+3. Only the test files in ListsContainer.spec.tsx were changed in the fix branch; no component code was modified
+4. The unit tests pass (59/59), but Capybara integration tests fail at login
 
-```bash
-bundle exec rspec \
-  spec/features/lists/lists_spec.rb[1:1:2:6] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:1:3] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:3] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:1:2] \
-  spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
-```
+Next steps:
+1. Verify that the client app actually runs locally and can successfully:
+   - Load the login page
+   - Accept login credentials and redirect to home page
+   - Display the logout button
+2. If the app works locally, the issue is test environment setup (Capybara HOST variable, API endpoint, etc.)
+3. If there are JavaScript errors in the app, they need to be fixed
+4. Once login works, verify the delete/reject dialog actually appears when buttons are clicked
 
-3. Record the full output and command in `evidence.md` under a new "## User Verification Run" section
-4. If all 7 tests pass without retries, remove this blocker and mark the acceptance criteria complete
-5. If any fail, record the failure modes and symptoms for root-cause analysis
+## Acceptance criteria
+
+- [ ] Verified: App can be started locally and login successfully completes
+- [ ] Verified: In browser, clicking trash/reject buttons on list cards triggers the ConfirmDialog to appear
+- [ ] Root cause of login failure identified and fixed (if needed)
+- [ ] All 7 Cluster A integration tests pass against patched `groceries-client`
+- [ ] Code changes documented in PR (actual component code changes, not just test file changes)
+- [ ] No test selector in `groceries_features` was changed to make these pass.
+- [ ] `Helpers::WaitHelper#wait_for` timeouts were not extended.

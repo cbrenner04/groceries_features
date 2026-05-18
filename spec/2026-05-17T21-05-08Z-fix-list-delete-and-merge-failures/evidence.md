@@ -651,3 +651,196 @@ rspec ./spec/features/lists/lists_spec.rb[1:1:3:3] # A list behaves like a list 
 rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:1:2] # A list behaves like a list that is complete that is shared with write access is deleted
 rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:2:2] # A list behaves like a list that is complete that is shared with read access is deleted
 ```
+
+## User run tests after updates in client on fix/cluster-a-confirm-dialog-tests
+
+```text
+christopherbrenner 2026-05-18 09:02:20
+ ruby-3.4.8 Python 3.14.5 node-v24.13.0 ~/Work/groceries/groceries_features/.worktree/2026-05-17T21-05-08Z-fix-list-delete-and-merge-failures
+  (2026-05-17T21-05-08Z-fix-list-delete-and-merge-failures) $ bundle exec rspec   spec/features/lists/lists_spec.rb[1:1:2:6]   spec/features/lists/lists_spec.rb[1:1:2:7:1:3]   spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2]   spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2]   spec/features/lists/lists_spec.rb[1:1:3:3]   spec/features/lists/lists_spec.rb[1:1:3:4:1:2]   spec/features/lists/lists_spec.rb[1:1:3:4:2:2]
+Run options: include {ids: {"./spec/features/lists/lists_spec.rb" => ["1:1:2:6", "1:1:2:7:1:3", "1:1:2:7:2:1:2", "1:1:2:7:2:2:2", "1:1:3:3", "1:1:3:4:1:2", "1:1:3:4:2:2"]}}
+
+A list
+  behaves like a list
+    that is incomplete
+      is deleted (FAILED - 1)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-29.744.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-29.744.png
+      that is shared
+        that is pending
+          rejects (FAILED - 2)
+  HTML screenshot: spec/screenshots/rejects_2026-05-18-09-02-37.048.html
+  Image screenshot: spec/screenshots/rejects_2026-05-18-09-02-37.048.png
+        that is accepted
+          with write access
+            is deleted (FAILED - 3)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-41.387.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-41.387.png
+          with read access
+            is deleted (FAILED - 4)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-45.721.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-45.721.png
+    that is complete
+      is deleted (FAILED - 5)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-50.085.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-50.085.png
+      that is shared
+        with write access
+          is deleted (FAILED - 6)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-54.416.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-54.416.png
+        with read access
+          is deleted (FAILED - 7)
+  HTML screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-58.809.html
+  Image screenshot: spec/screenshots/is-deleted_2026-05-18-09-02-58.809.png
+
+Failures:
+
+  1) A list behaves like a list that is incomplete is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  2) A list behaves like a list that is incomplete that is shared that is pending rejects
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  3) A list behaves like a list that is incomplete that is shared that is accepted with write access is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  4) A list behaves like a list that is incomplete that is shared that is accepted with read access is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  5) A list behaves like a list that is complete is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  6) A list behaves like a list that is complete that is shared with write access is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+  7) A list behaves like a list that is complete that is shared with read access is deleted
+     Failure/Error: throw exception
+
+     UncaughtThrowError:
+       uncaught throw "full wait time lapsed"
+     Shared Example Group: "a list" called from ./spec/features/lists/lists_spec.rb:6
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Kernel#throw'
+     # ./spec/support/helpers/wait_helper.rb:34:in 'Helpers::WaitHelper#wait_time_lapsed?'
+     # ./spec/support/helpers/wait_helper.rb:10:in 'Helpers::WaitHelper#wait_for'
+     # ./spec/support/pages/home.rb:260:in 'Pages::Home#wait_until_log_out_visible'
+     # ./spec/support/helpers/authentication_helper.rb:13:in 'Helpers::AuthenticationHelper#login'
+     # ./spec/support/shared_examples/lists.rb:23:in 'block (2 levels) in <top (required)>'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:124:in 'block in RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:110:in 'RSpec::Retry#run'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec_ext/rspec_ext.rb:12:in 'RSpec::Core::Example::Procsy#run_with_retry'
+     # /Users/christopherbrenner/.rvm/gems/ruby-3.4.8/gems/rspec-retry-0.6.2/lib/rspec/retry.rb:37:in 'block (2 levels) in RSpec::Retry.setup'
+
+Top 7 slowest examples (33.86 seconds, 99.3% of total time):
+  A list behaves like a list that is incomplete that is shared that is pending rejects
+    7.35 seconds ./spec/support/shared_examples/lists.rb:192
+  A list behaves like a list that is incomplete is deleted
+    4.78 seconds ./spec/support/shared_examples/lists.rb:144
+  A list behaves like a list that is complete that is shared with read access is deleted
+    4.37 seconds ./spec/support/shared_examples/lists.rb:443
+  A list behaves like a list that is complete is deleted
+    4.36 seconds ./spec/support/shared_examples/lists.rb:365
+  A list behaves like a list that is complete that is shared with write access is deleted
+    4.34 seconds ./spec/support/shared_examples/lists.rb:398
+  A list behaves like a list that is incomplete that is shared that is accepted with read access is deleted
+    4.34 seconds ./spec/support/shared_examples/lists.rb:288
+  A list behaves like a list that is incomplete that is shared that is accepted with write access is deleted
+    4.31 seconds ./spec/support/shared_examples/lists.rb:233
+
+Finished in 34.1 seconds (files took 2.68 seconds to load)
+7 examples, 7 failures
+
+Failed examples:
+
+rspec ./spec/features/lists/lists_spec.rb[1:1:2:6] # A list behaves like a list that is incomplete is deleted
+rspec ./spec/features/lists/lists_spec.rb[1:1:2:7:1:3] # A list behaves like a list that is incomplete that is shared that is pending rejects
+rspec ./spec/features/lists/lists_spec.rb[1:1:2:7:2:1:2] # A list behaves like a list that is incomplete that is shared that is accepted with write access is deleted
+rspec ./spec/features/lists/lists_spec.rb[1:1:2:7:2:2:2] # A list behaves like a list that is incomplete that is shared that is accepted with read access is deleted
+rspec ./spec/features/lists/lists_spec.rb[1:1:3:3] # A list behaves like a list that is complete is deleted
+rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:1:2] # A list behaves like a list that is complete that is shared with write access is deleted
+rspec ./spec/features/lists/lists_spec.rb[1:1:3:4:2:2] # A list behaves like a list that is complete that is shared with read access is deleted
+```
