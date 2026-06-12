@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "3.4.9"
+ruby "4.0.5"
 
 gem "bcrypt", "~> 3.1"
 gem "byebug", "~> 13.0", ">= 13.0.0"
