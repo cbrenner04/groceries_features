@@ -2,9 +2,9 @@
 
 source "https://rubygems.org"
 
-ruby "3.4.8"
+ruby "3.4.9"
 
-gem "bcrypt", "~> 3.1", ">= 3.1.20"
+gem "bcrypt", "~> 3.1"
 gem "byebug", "~> 13.0", ">= 13.0.0"
 gem "capybara", "~> 3.39", ">= 3.39.2"
 gem "capybara-screenshot", "~> 1.0", ">= 1.0.26"
