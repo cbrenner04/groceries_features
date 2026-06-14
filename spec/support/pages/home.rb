@@ -107,11 +107,11 @@ module Pages
     end
 
     def confirm_delete_button
-      find_by_test_id("confirm-delete")
+      find("[data-test-id='confirm-delete']", visible: :all)
     end
 
     def confirm_reject_button
-      find_by_test_id("confirm-reject")
+      find("[data-test-id='confirm-reject']", visible: :all)
     end
 
     def confirm_merge_button
@@ -250,8 +250,8 @@ module Pages
 
     def edit(list_name)
       list_element = find_incomplete_list(list_name)
-      list_id = list_id_from(list_element)
-      page.visit("/lists/#{list_id}/edit")
+      click_list_action(list_element, "incomplete-list-edit")
+      wait_for { has_css?("#name", visible: :all, wait: 0) }
     end
 
     def merge(_list_name = nil)
@@ -327,16 +327,39 @@ module Pages
       wait_for { has_test_id?("nav-settings") }
     end
 
-    def wait_until_confirm_delete_button_visible
-      wait_for { has_css?("[data-test-id='confirm-delete']:not([disabled])") }
+    def wait_until_confirm_delete_button_visible(list_name)
+      wait_for do
+        has_css?("[data-test-id='confirm-modal-body']", visible: :all, wait: 0) &&
+          find("[data-test-id='confirm-modal-body']", visible: :all, wait: 0).text.include?(list_name) &&
+          has_css?("[data-test-id='confirm-delete']", visible: :all, wait: 0)
+      rescue Capybara::ElementNotFound
+        false
+      end
     end
 
-    def wait_until_confirm_reject_button_visible
-      wait_for { has_css?("[data-test-id='confirm-reject']:not([disabled])") }
+    def wait_until_confirm_reject_button_visible(list_name)
+      wait_for do
+        has_css?("[data-test-id='confirm-modal-body']", visible: :all, wait: 0) &&
+          find("[data-test-id='confirm-modal-body']", visible: :all, wait: 0).text.include?(list_name) &&
+          has_css?("[data-test-id='confirm-reject']", visible: :all, wait: 0)
+      rescue Capybara::ElementNotFound
+        false
+      end
     end
 
     def click_list_action(list_element, test_id)
       button = list_element.find(:css, "[data-test-id='#{test_id}']:not([disabled])")
+      scroll_to(button)
+      page.execute_script("arguments[0].click();", button.native)
+    end
+
+    def click_confirm_delete
+      button = find("[data-test-id='confirm-delete']", visible: :all)
+      page.execute_script("arguments[0].click();", button.native)
+    end
+
+    def click_confirm_reject
+      button = find("[data-test-id='confirm-reject']", visible: :all)
       page.execute_script("arguments[0].click();", button.native)
     end
 

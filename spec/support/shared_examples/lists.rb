@@ -131,7 +131,7 @@ RSpec.shared_examples "a list" do |template_name|
       edit_list_page.enter_name list.name
 
       wait_for { !edit_list_page.submit.disabled? }
-      edit_list_page.submit.click
+      edit_list_page.click_submit
 
       wait_for { home_page.incomplete_list_names.include?(list.name) }
 
@@ -140,12 +140,9 @@ RSpec.shared_examples "a list" do |template_name|
 
     it "is deleted" do
       home_page.delete list.name
-      home_page.wait_until_confirm_delete_button_visible
+      home_page.wait_until_confirm_delete_button_visible(list.name)
 
-      # for some reason if the button is clicked to early it doesn't work
-      sleep 1
-
-      home_page.confirm_delete_button.click
+      home_page.click_confirm_delete
 
       wait_for { !home_page.incomplete_list_names.include?(list.name) }
 
@@ -189,12 +186,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "rejects" do
           home_page.reject other_list.name
-          home_page.wait_until_confirm_reject_button_visible
+          home_page.wait_until_confirm_reject_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_reject_button.click
+          home_page.click_confirm_reject
 
           wait_for do
             !home_page.incomplete_list_names.include?(other_list.name) &&
@@ -229,12 +223,9 @@ RSpec.shared_examples "a list" do |template_name|
 
           it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_delete_button_visible
+            home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-            # for some reason if the button is clicked to early it doesn't work
-            sleep 1
-
-            home_page.confirm_delete_button.click
+            home_page.click_confirm_delete
 
             wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
@@ -284,12 +275,9 @@ RSpec.shared_examples "a list" do |template_name|
 
           it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_delete_button_visible
+            home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-            # for some reason if the button is clicked to early it doesn't work
-            sleep 1
-
-            home_page.confirm_delete_button.click
+            home_page.click_confirm_delete
 
             wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
@@ -361,12 +349,9 @@ RSpec.shared_examples "a list" do |template_name|
 
     it "is deleted" do
       home_page.delete completed_list.name, complete: true
-      home_page.wait_until_confirm_delete_button_visible
+      home_page.wait_until_confirm_delete_button_visible(completed_list.name)
 
-      # for some reason if the button is clicked to early it doesn't work
-      sleep 1
-
-      home_page.confirm_delete_button.click
+      home_page.click_confirm_delete
 
       wait_for { !home_page.complete_list_names.include?(completed_list.name) }
 
@@ -394,14 +379,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_delete_button_visible
+          home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_delete_button.click
-
-          sleep 1
+          home_page.click_confirm_delete
 
           wait_for { !home_page.complete_list_names.include?(other_list.name) }
 
@@ -439,12 +419,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_delete_button_visible
+          home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_delete_button.click
+          home_page.click_confirm_delete
 
           wait_for { !home_page.complete_list_names.include?(other_list.name) }
 
@@ -664,7 +641,7 @@ RSpec.shared_examples "a list" do |template_name|
         expect(modal_body).to have_text list.name
         expect(modal_body).to have_text other_list.name
 
-        home_page.confirm_delete_button.click
+        home_page.click_confirm_delete
 
         wait_for { home_page.incomplete_lists.empty? }
 
