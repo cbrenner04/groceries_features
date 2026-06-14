@@ -24,6 +24,11 @@ module Pages
       has_no_css?(COPY_MOVE_ROOT)
     end
 
+    def wait_until_new_list_name_input_visible
+      wait_for { has_modal? }
+      wait_for { has_css?("#{COPY_MOVE_ROOT} #newListName") }
+    end
+
     def all_links
       find(:css, COPY_MOVE_ROOT, match: :first).all(:link)
     rescue Capybara::ElementNotFound

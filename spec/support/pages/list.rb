@@ -134,8 +134,17 @@ module Pages
       normalized_text = text.downcase
       return true if parts.all? { |part| normalized_text.include?(part.downcase) }
 
+      # Fallback when formatting differs (e.g. date locale). Require every distinctive token so
+      # shared secondary values (to-do assignee email) cannot match the wrong row.
       distinctive_parts = parts.select { |part| part.scan(/[[:alnum:]]/).join.length >= 8 }
-      distinctive_parts.any? { |part| normalized_text.include?(part.downcase) }
+      return false if distinctive_parts.empty?
+
+      distinctive_parts.all? { |part| normalized_text.include?(part.downcase) }
+    end
+
+    def list_item_match_count(text, parts)
+      normalized_text = text.downcase
+      parts.count { |part| normalized_text.include?(part.downcase) }
     end
 
     def list_item_row_matches?(item_name, completed: false)
@@ -156,9 +165,10 @@ module Pages
 
       result = nil
       wait_for do
-        result = all(:css, "[data-test-class='#{test_class}']", visible: :all).find do |el|
+        candidates = all(:css, "[data-test-class='#{test_class}']", visible: :all).select do |el|
           list_item_row_text_matches?(el.text, parts)
         end
+        result = candidates.max_by { |el| list_item_match_count(el.text, parts) }
         result
       end
       result
