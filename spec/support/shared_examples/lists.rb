@@ -26,10 +26,7 @@ RSpec.shared_examples "a list" do |template_name|
   it "is created" do
     list = Models::List.new(template_name: template_name, create_list: false, owner_id: user.id)
 
-    home_page.expand_list_form
-    home_page.name.set list.name
-    home_page.list_template.select template_name
-    home_page.submit
+    home_page.create_list(list.name, template_name: template_name)
 
     wait_for { home_page.incomplete_list_names.include? list.name }
 

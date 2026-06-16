@@ -5,6 +5,7 @@ module Pages
   class Home < SitePrism::Page
     include TestSelectors
     include Helpers::WaitHelper
+    include Helpers::ReactInput
 
     set_url "/"
 
@@ -249,9 +250,19 @@ module Pages
     end
 
     def edit(list_name)
-      list_element = find_incomplete_list(list_name)
-      click_list_action(list_element, "incomplete-list-edit")
-      wait_for { has_css?("#name", visible: :all, wait: 0) }
+      click_list_action(find_incomplete_list(list_name), "incomplete-list-edit")
+      wait_for do
+        if has_css?("[data-test-id='edit-list-sheet']", visible: :all, wait: 0) &&
+           has_css?("#name", visible: :all, wait: 0)
+          true
+        else
+          click_list_action(find_incomplete_list(list_name), "incomplete-list-edit")
+          false
+        end
+      rescue Capybara::ElementNotFound
+        click_list_action(find_incomplete_list(list_name), "incomplete-list-edit")
+        false
+      end
     end
 
     def merge(_list_name = nil)
@@ -292,16 +303,21 @@ module Pages
 
     # Quick-add a list
     def quick_add_list(name)
-      find_by_test_id("quick-add-input").set(name)
-      find_by_test_id("quick-add-input").send_keys(:enter)
+      react_fill_in("[data-test-id='quick-add-input']", with: name)
+      submit_list_form
     end
 
     # Quick-add with template
     def quick_add_list_with_template(name, template_name)
-      find_by_test_id("quick-add-input").set(name)
-      find_by_test_id("quick-add-expand").click
+      create_list(name, template_name: template_name)
+    end
+
+    def create_list(name, template_name:)
+      expand_list_form
+      wait_for { has_css?("#list_item_configuration_id", visible: :all, wait: 0) }
+      react_fill_in("[data-test-id='quick-add-input']", with: name)
       find_by_id("list_item_configuration_id").select(template_name)
-      find_by_test_id("quick-add-input").send_keys(:enter)
+      submit_list_form
     end
 
     # Legacy method — delegates to quick_add_list
@@ -314,6 +330,10 @@ module Pages
     end
 
     def submit
+      submit_list_form
+    end
+
+    def submit_list_form
       find_by_test_id("quick-add-input").send_keys(:enter)
     end
 
