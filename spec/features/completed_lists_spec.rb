@@ -41,10 +41,12 @@ RSpec.describe "Completed lists page", type: :feature do
 
     wait_for { list_page.not_completed_items.any? }
 
-    incomplete_items = @list_items.reject(&:completed)
-
-    expect(list_page.find_list_item(incomplete_items.first, completed: false)).to be_visible
-    expect(list_page.find_list_item(incomplete_items.last, completed: false)).to be_visible
+    # refreshing recreates the list and its items as new records with new ids; every item
+    # comes back as not-completed
+    refreshed_list_id = list_id_by_name(list.name, user.id, completed: false)
+    item_ids = []
+    wait_for { (item_ids = not_completed_item_ids(refreshed_list_id)).count == @list_items.count }
+    item_ids.each { |id| expect(list_page.find_list_item(id, completed: false)).to be_visible }
   end
 
   it "deletes list" do

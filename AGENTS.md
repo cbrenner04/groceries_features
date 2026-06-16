@@ -119,7 +119,7 @@ rspec
 rspec spec/features/lists/lists_spec.rb
 rspec spec/features/lists/lists_spec.rb:42
 ENV=staging rspec
-DRIVER=poltergeist rspec
+HEADLESS=true rspec
 bash run_tests.sh
 PARALLELS=10 bash run_tests.sh
 ```

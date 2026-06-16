@@ -31,8 +31,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
     end
   end
 
-  def bulk_update_selector(item, template, attribute)
-    template == "to do list template" ? item.pretty_title : item.send(attribute)
+  # Copy/move create new records, so assert the destination list shows the expected number of
+  # not-completed items and that each live record renders.
+  def expect_copied_items_on(list_id)
+    item_ids = not_completed_item_ids(list_id)
+    expect(item_ids.count).to eq(@list_items.count { |item| !item.send("completed") })
+    item_ids.each { |id| expect(list_page.find_list_item(id, completed: false)).to be_visible }
   end
 
   describe "when logged in as owner" do
@@ -255,7 +259,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
             expect(list_page.find_list_item(@list_items.first, completed: true)).to be_visible
             expect(list_page.find_list_item(@another_list_item, completed: false)).to be_visible
-            expect(list_page.list_item_row_matches?(@list_items.first, completed: false)).to be false
+            expect(list_page.has_no_list_item?(@list_items.first, completed: false)).to be true
           end
 
           it "is destroyed" do
@@ -391,11 +395,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.wait_until_not_completed_items_visible
 
           # all items should exist on this list
-          @list_items.each do |item|
-            next if item.send("completed")
-
-            expect(list_page.find_list_item(item, completed: false)).to be_visible
-          end
+          expect_copied_items_on(list_id_by_name("foobar", user.id))
         end
 
         it "chooses existing list" do
@@ -429,11 +429,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           wait_for { list_page.not_completed_items.count == @list_items.count { |item| !item.send("completed") } }
 
           # all items should exist on this list
-          @list_items.each do |item|
-            next if item.send("completed")
-
-            expect(list_page.find_list_item(item, completed: false)).to be_visible
-          end
+          expect_copied_items_on(new_list.id)
         end
       end
 
@@ -470,11 +466,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.wait_until_not_completed_items_visible
 
           # all items should exist on new list
-          @list_items.each do |item|
-            next if item.send("completed")
-
-            expect(list_page.find_list_item(item, completed: false)).to be_visible
-          end
+          expect_copied_items_on(list_id_by_name("foobar", user.id))
         end
 
         it "chooses existing list" do
@@ -506,11 +498,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.wait_until_not_completed_items_visible
 
           # all items should exist on this list
-          @list_items.each do |item|
-            next if item.send("completed")
-
-            expect(list_page.find_list_item(item, completed: false)).to be_visible
-          end
+          expect_copied_items_on(new_list.id)
         end
       end
 
@@ -530,12 +518,6 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           # change attributes to new attributes
           update_attrs(bulk_update_attrs)
-          # Blur the active control (e.g. type="date") — Escape closes the bulk-edit BottomSheet.
-          page.execute_script(<<~JS)
-            const sheet = document.querySelector("[data-test-id='bulk-edit-sheet']");
-            const ae = document.activeElement;
-            if (sheet && ae && sheet.contains(ae)) { ae.blur(); }
-          JS
           edit_list_items_page.category.set "foobaz"
           edit_list_items_page.submit.click
 

@@ -23,6 +23,13 @@ RSpec.shared_examples "a list" do |template_name|
     login user
   end
 
+  # Refresh and merge produce a new list whose items are new records (new ids), all not-completed.
+  def expect_not_completed_items_on(list_id, expected_count)
+    item_ids = []
+    wait_for { (item_ids = not_completed_item_ids(list_id)).count == expected_count }
+    item_ids.each { |id| expect(list_page.find_list_item(id, completed: false)).to be_visible }
+  end
+
   it "is created" do
     list = Models::List.new(template_name: template_name, create_list: false, owner_id: user.id)
 
@@ -344,8 +351,9 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_not_completed_items
-      expect(list_page.find_list_item(@completed_list_items.first, completed: false)).to be_visible
-      expect(list_page.find_list_item(@completed_list_items.last, completed: false)).to be_visible
+      # refreshing recreates the list and its items as new records, all not-completed
+      refreshed_list_id = list_id_by_name(completed_list.name, user.id, completed: false)
+      expect_not_completed_items_on(refreshed_list_id, @completed_list_items.count)
     end
 
     it "is deleted" do
@@ -490,12 +498,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        @list_items.each do |list_item|
-          expect(list_page.find_list_item(list_item, completed: false)).to be_visible
-        end
-        @other_list_items.each do |list_item|
-          expect(list_page.find_list_item(list_item, completed: false)).to be_visible
-        end
+        # merging recreates every item as a new not-completed record on the merged list
+        merged_list_id = list_id_by_name("new merged list", user.id, completed: false)
+        expect_not_completed_items_on(merged_list_id, @list_items.count + @other_list_items.count)
       end
 
       it "shows warning when lists of different templates are selected" do
@@ -612,12 +617,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        @list_items.each do |list_item|
-          expect(list_page.find_list_item(list_item, completed: false)).to be_visible
-        end
-        @other_list_items.each do |list_item|
-          expect(list_page.find_list_item(list_item, completed: false)).to be_visible
-        end
+        # merging recreates every item as a new not-completed record on the merged list
+        merged_list_id = list_id_by_name("comprehensive merged list", user.id, completed: false)
+        expect_not_completed_items_on(merged_list_id, @list_items.count + @other_list_items.count)
       end
     end
 

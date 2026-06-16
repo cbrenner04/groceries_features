@@ -134,27 +134,18 @@ module Pages
       all_by_test_class("category-header")
     end
 
+    # Each row exposes data-test-id="list-item-<id>" plus a data-test-class for its completed
+    # state, so an item is located directly by its id rather than matching on rendered text.
     def find_list_item(item, completed: false)
-      item_id = item.respond_to?(:id) ? item.id : item
-      status_class = completed ? "completed-item" : "non-completed-item"
-      prefix = completed ? "completed-item" : "not-completed-item"
-      selector = "[data-test-class='#{status_class}'] [data-test-id^='#{prefix}-'][data-test-id$='-#{item_id}']"
-
-      result = nil
-      wait_for do
-        button = find(:css, selector, visible: :all, wait: 0)
-        result = button.find(:xpath, "./ancestor::*[@data-test-class='#{status_class}'][1]")
-      rescue Capybara::ElementNotFound
-        false
-      end
-      result
+      find(:css, list_item_selector(item, completed:))
     end
 
-    def list_item_row_matches?(item, completed: false)
-      find_list_item(item, completed: completed)
-      true
-    rescue Capybara::ElementNotFound, Capybara::ExpectationNotMet
-      false
+    def has_list_item?(item, completed: false)
+      has_css?(list_item_selector(item, completed:))
+    end
+
+    def has_no_list_item?(item, completed: false)
+      has_no_css?(list_item_selector(item, completed:))
     end
 
     def complete(item)
@@ -247,6 +238,14 @@ module Pages
 
     def submit_add_item
       submit_button.click
+    end
+
+    private
+
+    def list_item_selector(item, completed:)
+      status_class = completed ? "completed-item" : "non-completed-item"
+      item_id = item.respond_to?(:id) ? item.id : item
+      "[data-test-class='#{status_class}'][data-test-id='list-item-#{item_id}']"
     end
   end
 end
