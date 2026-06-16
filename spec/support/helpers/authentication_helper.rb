@@ -15,11 +15,16 @@ module Helpers
     end
 
     def logout
+      open_settings_menu unless home_page.has_css?("[data-test-id='log-out-link']", wait: 0)
       home_page.log_out.click
       login_page.wait_for_email
     end
 
     private
+
+    def open_settings_menu
+      home_page.settings_nav.click
+    end
 
     def enter_email(user)
       login_page.email.set user.email

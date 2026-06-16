@@ -43,8 +43,8 @@ RSpec.describe "Completed lists page", type: :feature do
 
     incomplete_items = @list_items.reject(&:completed)
 
-    expect(list_page.find_list_item(incomplete_items.first.pretty_title, completed: false)).to be_visible
-    expect(list_page.find_list_item(incomplete_items.last.pretty_title, completed: false)).to be_visible
+    expect(list_page.find_list_item(incomplete_items.first, completed: false)).to be_visible
+    expect(list_page.find_list_item(incomplete_items.last, completed: false)).to be_visible
   end
 
   it "deletes list" do

@@ -27,11 +27,5 @@ module Pages
     def wait_for_sheet
       wait_for { has_edit_sheet? }
     end
-
-    # Fixed BottomInputBar can intercept native clicks; requestSubmit runs the form handler reliably.
-    def submit_form
-      form = find(:css, "[data-test-id='edit-item-sheet'] form", match: :first)
-      page.execute_script("arguments[0].requestSubmit();", form.native)
-    end
   end
 end

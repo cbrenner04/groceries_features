@@ -34,15 +34,5 @@ module Pages
     rescue Capybara::ElementNotFound
       []
     end
-
-    # Fixed BottomInputBar can intercept native clicks on sheet actions.
-    def click_complete
-      wait_for { has_modal? }
-      root = find(:css, COPY_MOVE_ROOT, match: :first)
-      within(root) do
-        btn = first(:button, text: "Complete")
-        page.execute_script("arguments[0].click();", btn.native)
-      end
-    end
   end
 end

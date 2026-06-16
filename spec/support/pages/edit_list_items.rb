@@ -18,8 +18,8 @@ module Pages
     element :clear_author, "[data-test-id='bulk-edit-sheet'] #clear_author"
     element :category, "[data-test-id='bulk-edit-sheet'] [data-test-id='category-field'] input[name='category']"
     element :clear_category, "[data-test-id='bulk-edit-sheet'] #clear_category"
-    element :due_by, "[data-test-id='bulk-edit-sheet'] #due\\ by"
-    element :clear_due_by, "[data-test-id='bulk-edit-sheet'] #clear_due\\ by"
+    element :due_by, "[data-test-id='bulk-edit-sheet'] #due\\\\ by"
+    element :clear_due_by, "[data-test-id='bulk-edit-sheet'] #clear_due\\\\ by"
     element :quantity, "[data-test-id='bulk-edit-sheet'] #quantity"
     element :clear_quantity, "[data-test-id='bulk-edit-sheet'] #clear_quantity"
 
@@ -31,12 +31,6 @@ module Pages
 
     def choose_existing_list_link
       find_by_test_id("choose-existing-list-link")
-    end
-
-    # Fixed BottomInputBar can intercept native clicks; requestSubmit runs the form handler reliably.
-    def submit_form
-      form = find(:css, "[data-test-id='bulk-edit-sheet'] form", match: :first)
-      page.execute_script("arguments[0].requestSubmit();", form.native)
     end
   end
 end

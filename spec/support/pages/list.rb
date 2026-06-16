@@ -7,6 +7,10 @@ module Pages
     include Helpers::WaitHelper
 
     COMPLETE_BUTTON = "[data-test-id^='not-completed-item-complete-']"
+    EDIT_BUTTON = "[data-test-id^='not-completed-item-edit-']"
+    NOT_COMPLETED_DELETE_BUTTON = "[data-test-id^='not-completed-item-delete-']"
+    COMPLETED_DELETE_BUTTON = "[data-test-id^='completed-item-delete-']"
+    REFRESH_BUTTON = "[data-test-id^='completed-item-refresh-']"
 
     set_url "lists/{id}"
 
@@ -87,15 +91,23 @@ module Pages
     end
 
     def edit_button_css
-      "[data-test-id^='not-completed-item-edit-']"
+      EDIT_BUTTON
+    end
+
+    def not_completed_delete_button_css
+      NOT_COMPLETED_DELETE_BUTTON
+    end
+
+    def completed_delete_button_css
+      COMPLETED_DELETE_BUTTON
     end
 
     def delete_button_css
-      "[data-test-id^='not-completed-item-delete-'], [data-test-id^='completed-item-delete-']"
+      NOT_COMPLETED_DELETE_BUTTON
     end
 
     def refresh_button_css
-      "[data-test-id^='completed-item-refresh-']"
+      REFRESH_BUTTON
     end
 
     def filter_option(filter_name)
@@ -122,86 +134,56 @@ module Pages
       all_by_test_class("category-header")
     end
 
-    # Split pretty_title on newlines and middle dots so row text matches ListItemRow
-    # (secondary values are joined with " · " regardless of field order).
-    def list_item_name_tokens(item_name)
-      raw = item_name.to_s.split(/[\n\u{00b7}]/).map(&:strip).reject(&:empty?)
-      # Due dates: Ruby strftime and client prettyDueBy/locale can differ — omit date-only tokens.
-      raw.grep_v(/\A[A-Za-z]+\s+\d{1,2},\s+\d{4}\z/)
-    end
-
-    def list_item_row_text_matches?(text, parts)
-      normalized_text = text.downcase
-      return true if parts.all? { |part| normalized_text.include?(part.downcase) }
-
-      # Fallback when formatting differs (e.g. date locale). Require every distinctive token so
-      # shared secondary values (to-do assignee email) cannot match the wrong row.
-      distinctive_parts = parts.select { |part| part.scan(/[[:alnum:]]/).join.length >= 8 }
-      return false if distinctive_parts.empty?
-
-      distinctive_parts.all? { |part| normalized_text.include?(part.downcase) }
-    end
-
-    def list_item_match_count(text, parts)
-      normalized_text = text.downcase
-      parts.count { |part| normalized_text.include?(part.downcase) }
-    end
-
-    def list_item_row_matches?(item_name, completed: false)
-      test_class = completed ? "completed-item" : "non-completed-item"
-      parts = list_item_name_tokens(item_name)
-      return false if parts.empty?
-
-      all(:css, "[data-test-class='#{test_class}']", visible: :all).any? do |el|
-        list_item_row_text_matches?(el.text, parts)
-      end
-    end
-
-    # Row text order can differ from legacy pretty_title newlines; match every segment.
-    def find_list_item(item_name, completed: false)
-      test_class = completed ? "completed-item" : "non-completed-item"
-      parts = list_item_name_tokens(item_name)
-      raise ArgumentError, "find_list_item requires at least one text segment" if parts.empty?
+    def find_list_item(item, completed: false)
+      item_id = item.respond_to?(:id) ? item.id : item
+      status_class = completed ? "completed-item" : "non-completed-item"
+      prefix = completed ? "completed-item" : "not-completed-item"
+      selector = "[data-test-class='#{status_class}'] [data-test-id^='#{prefix}-'][data-test-id$='-#{item_id}']"
 
       result = nil
       wait_for do
-        candidates = all(:css, "[data-test-class='#{test_class}']", visible: :all).select do |el|
-          list_item_row_text_matches?(el.text, parts)
-        end
-        result = candidates.max_by { |el| list_item_match_count(el.text, parts) }
-        result
+        button = find(:css, selector, visible: :all, wait: 0)
+        result = button.find(:xpath, "./ancestor::*[@data-test-class='#{status_class}'][1]")
+      rescue Capybara::ElementNotFound
+        false
       end
       result
     end
 
-    def complete(item_name)
-      item_element = find_list_item(item_name, completed: false)
+    def list_item_row_matches?(item, completed: false)
+      find_list_item(item, completed: completed)
+      true
+    rescue Capybara::ElementNotFound, Capybara::ExpectationNotMet
+      false
+    end
+
+    def complete(item)
+      item_element = find_list_item(item, completed: false)
       item_element.find(:css, COMPLETE_BUTTON).click
     end
 
-    def edit(item_name)
-      item_element = find_list_item(item_name, completed: false)
-      item_element.find(:css, "[data-test-id^='not-completed-item-edit-']").click
+    def edit(item)
+      item_element = find_list_item(item, completed: false)
+      item_element.find(:css, EDIT_BUTTON).click
     end
 
-    def delete(item_name, completed: false)
-      item_element = find_list_item(item_name, completed:)
-      selector =
-        completed ? "[data-test-id^='completed-item-delete-']" : "[data-test-id^='not-completed-item-delete-']"
+    def delete(item, completed: false)
+      item_element = find_list_item(item, completed:)
+      selector = completed ? COMPLETED_DELETE_BUTTON : NOT_COMPLETED_DELETE_BUTTON
       item_element.find(:css, selector).click
     end
 
-    def refresh(item_name)
-      item_element = find_list_item(item_name, completed: true)
-      item_element.find(:css, "[data-test-id^='completed-item-refresh-']").click
+    def refresh(item)
+      item_element = find_list_item(item, completed: true)
+      item_element.find(:css, REFRESH_BUTTON).click
     end
 
     def expand_list_item_form
       find_by_test_id("quick-add-expand").click
     end
 
-    def multi_select_item(item_name, completed: false)
-      item_element = find_list_item(item_name, completed:)
+    def multi_select_item(item, completed: false)
+      item_element = find_list_item(item, completed:)
       item_element.find("input").click
     end
 
@@ -209,9 +191,9 @@ module Pages
       find_by_test_id("select-button").click
     end
 
-    def edit_item_via_sheet(item_name)
-      item_element = find_list_item(item_name, completed: false)
-      item_element.find(:css, "[data-test-id^='not-completed-item-edit-']").click
+    def edit_item_via_sheet(item)
+      item_element = find_list_item(item, completed: false)
+      item_element.find(:css, EDIT_BUTTON).click
       wait_for { has_test_id?("edit-item-sheet") }
     end
 
@@ -264,8 +246,7 @@ module Pages
     end
 
     def submit_add_item
-      form = find(:css, "[data-test-id='list-item-form']", match: :first)
-      page.execute_script("arguments[0].requestSubmit();", form.native)
+      submit_button.click
     end
   end
 end

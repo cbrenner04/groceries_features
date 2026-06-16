@@ -32,7 +32,6 @@ RSpec.configure do |config|
   config.include Helpers::AuthenticationHelper
   config.include Helpers::DataHelper
   config.include Helpers::WaitHelper
-  config.include Helpers::ReactInput, type: :feature
   # rubocop:disable Lint/ConstantDefinitionInBlock
   config.before(:suite) do
     DB = Sequel.connect(ENV.fetch("DATABASE_URL", nil))
@@ -100,7 +99,7 @@ Capybara.default_driver = ENV["DRIVER"].nil? ? :selenium : ENV["DRIVER"].to_sym
 Capybara.javascript_driver = :selenium unless ENV["DRIVER"] == "poltergeist"
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
-Capybara.default_max_wait_time = 5 # this should go back to 3
+Capybara.default_max_wait_time = 3
 
 RSpec.configure do |config|
   config.before(:each, :js) do

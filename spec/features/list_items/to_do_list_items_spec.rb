@@ -12,9 +12,9 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list) { Models::List.new(template_name: "to do list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    react_fill_in("#task", with: new_list_item.task)
-    react_fill_in("#assignee", with: new_list_item.assignee_email)
-    react_fill_in("#due\\ by", with: new_list_item.due_by.strftime("%Y-%m-%d"))
+    list_page.task_input.set(new_list_item.task)
+    list_page.assignee_input.set(new_list_item.assignee_email)
+    list_page.due_by_input.set(new_list_item.due_by.strftime("%Y-%m-%d"))
 
     expect(list_page.task_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
@@ -45,8 +45,8 @@ RSpec.describe "A to do list item", type: :feature do
     end
 
     it "can create, complete, edit, refresh, and destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.task)
-      completed_item = list_page.find_list_item(@list_items.last.task, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_task_input
@@ -54,9 +54,9 @@ RSpec.describe "A to do list item", type: :feature do
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
       expect(not_completed_item).to have_css list_page.edit_button_css
-      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_css list_page.refresh_button_css
-      expect(completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.completed_delete_button_css
     end
   end
 
@@ -69,17 +69,17 @@ RSpec.describe "A to do list item", type: :feature do
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.task)
-      completed_item = list_page.find_list_item(@list_items.last.task, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       expect(list_page).to have_no_task_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css
       expect(not_completed_item).to have_no_css list_page.edit_button_css
-      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_no_css list_page.refresh_button_css
-      expect(completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.completed_delete_button_css
     end
   end
 end

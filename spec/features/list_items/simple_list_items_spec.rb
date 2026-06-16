@@ -13,7 +13,7 @@ RSpec.describe "A simple list item", type: :feature do
 
   def input_new_item_attributes(new_list_item)
     wait_for do
-      react_fill_in("#content", with: new_list_item.content)
+      list_page.content_input.set(new_list_item.content)
       list_page.content_input.value == new_list_item.content
     end
 
@@ -42,8 +42,8 @@ RSpec.describe "A simple list item", type: :feature do
     end
 
     it "can create, complete, edit, refresh, and destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.content)
-      completed_item = list_page.find_list_item(@list_items.last.content, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_content_input
@@ -51,9 +51,9 @@ RSpec.describe "A simple list item", type: :feature do
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
       expect(not_completed_item).to have_css list_page.edit_button_css
-      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_css list_page.refresh_button_css
-      expect(completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.completed_delete_button_css
     end
   end
 
@@ -66,17 +66,17 @@ RSpec.describe "A simple list item", type: :feature do
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.content)
-      completed_item = list_page.find_list_item(@list_items.last.content, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       expect(list_page).to have_no_content_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css
       expect(not_completed_item).to have_no_css list_page.edit_button_css
-      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_no_css list_page.refresh_button_css
-      expect(completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.completed_delete_button_css
     end
   end
 end

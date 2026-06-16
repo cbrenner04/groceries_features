@@ -50,7 +50,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
       # `input_new_item_attribute` is defined in the spec that executes this shared example as it is different for each
       send("input_new_item_attributes", new_list_item)
-      react_fill_in("input[name='category']", with: new_list_item.category)
+      list_page.category_input.set(new_list_item.category)
 
       list_page.submit_add_item
 
@@ -75,7 +75,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
       # Input item attributes
       send("input_new_item_attributes", new_list_item)
-      react_fill_in("input[name='category']", with: new_list_item.category)
+      list_page.category_input.set(new_list_item.category)
 
       # Check the completed checkbox
       list_page.completed_checkbox.click
@@ -96,19 +96,18 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
     describe "that is not completed" do
       it "is completed" do
         initial_completed_items_count = list_page.completed_items.count
-        item_name = @list_items.first.pretty_title
 
-        list_page.complete item_name
+        list_page.complete @list_items.first
 
         wait_for { list_page.completed_items.count == initial_completed_items_count + 1 }
 
-        expect(list_page.find_list_item(item_name, completed: true)).to be_visible
+        expect(list_page.find_list_item(@list_items.first, completed: true)).to be_visible
       end
 
       it "is edited" do
         item = @list_items.first
 
-        list_page.edit item.pretty_title
+        list_page.edit item
 
         item.send("#{edit_attribute}=", SecureRandom.hex(16))
 
@@ -117,20 +116,20 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           edit_list_item_page.send(edit_attribute).value == item.send(edit_attribute)
         end
 
-        edit_list_item_page.submit_form
+        edit_list_item_page.submit.click
 
         wait_for { page.has_text?("Item successfully updated") }
 
         list_page.load(id: list.id)
         list_page.wait_until_not_completed_items_visible
 
-        expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+        expect(list_page.find_list_item(item, completed: false)).to be_visible
       end
 
       it "is destroyed" do
         item_name = @list_items.first.pretty_title
 
-        list_page.delete item_name
+        list_page.delete @list_items.first
         list_page.wait_until_confirm_delete_button_visible
 
         # for some reason if the button is clicked to early it doesn't work
@@ -154,7 +153,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         it "is edited" do
           item = @list_items.first
 
-          list_page.edit item.pretty_title
+          list_page.edit item
 
           item.send("#{edit_attribute}=", SecureRandom.hex(16))
 
@@ -163,7 +162,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             edit_list_item_page.send(edit_attribute).value == item.send(edit_attribute)
           end
 
-          edit_list_item_page.submit_form
+          edit_list_item_page.submit.click
 
           wait_for { page.has_text?("Item successfully updated") }
 
@@ -172,7 +171,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           wait_for { list_page.has_filter_option?("foo") }
           list_page.filter_option("foo").click
 
-          expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+          expect(list_page.find_list_item(item, completed: false)).to be_visible
         end
 
         describe "when there is only one item for the selected category" do
@@ -181,7 +180,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             incomplete_item_count_start = list_page.not_completed_items.count
             completed_item_count_start = list_page.completed_items.count
 
-            list_page.complete item_name
+            list_page.complete @list_items.first
 
             wait_for { list_page.completed_items.count == incomplete_item_count_start + 1 }
 
@@ -191,14 +190,14 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             expect(not_completed_texts.select { |text| text == item_name }).to be_empty
             expected_parts = @list_items[1].pretty_title.split("\n").map(&:strip).reject(&:empty?)
             expect(not_completed_texts.any? { |text| expected_parts.all? { |part| text.include?(part) } }).to be(false)
-            expect(list_page.find_list_item(item_name, completed: true)).to be_visible
+            expect(list_page.find_list_item(@list_items.first, completed: true)).to be_visible
 
             # no longer filtered
             list_page.clear_filter_button.click
             wait_for { list_page.not_completed_items.one? }
 
             # After clearing filter, should see the remaining incomplete item
-            expect(list_page.find_list_item(@list_items[1].pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(@list_items[1], completed: false)).to be_visible
             expect(list_page.not_completed_items.count).to eq 1
           end
 
@@ -206,7 +205,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             item_name = @list_items.first.pretty_title
             incomplete_item_count_start = list_page.not_completed_items.count
 
-            list_page.delete item_name
+            list_page.delete @list_items.first
             list_page.wait_until_confirm_delete_button_visible
 
             list_page.confirm_delete_button.click
@@ -225,7 +224,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             wait_for { list_page.not_completed_items.one? }
 
             # After clearing filter, should see the remaining incomplete item
-            expect(list_page.find_list_item(@list_items[1].pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(@list_items[1], completed: false)).to be_visible
             expect(list_page.not_completed_items.count).to eq 1
           end
         end
@@ -246,25 +245,24 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           it "is completed" do
             initial_completed_count = list_page.completed_items.count
             initial_not_completed_count = list_page.not_completed_items.count
-            item_name = @list_items.first.pretty_title
 
-            list_page.complete item_name
+            list_page.complete @list_items.first
 
             wait_for do
               list_page.completed_items.count == initial_completed_count + 1 &&
                 list_page.not_completed_items.count == initial_not_completed_count - 1
             end
 
-            expect(list_page.find_list_item(item_name, completed: true)).to be_visible
-            expect(list_page.find_list_item(@another_list_item.pretty_title, completed: false)).to be_visible
-            expect(list_page.list_item_row_matches?(item_name, completed: false)).to be false
+            expect(list_page.find_list_item(@list_items.first, completed: true)).to be_visible
+            expect(list_page.find_list_item(@another_list_item, completed: false)).to be_visible
+            expect(list_page.list_item_row_matches?(@list_items.first, completed: false)).to be false
           end
 
           it "is destroyed" do
             initial_list_item_count = list_page.not_completed_items.count
             item_name = @list_items.first.pretty_title
 
-            list_page.delete item_name
+            list_page.delete @list_items.first
             list_page.wait_until_confirm_delete_button_visible
 
             # for some reason if the button is clicked to early it doesn't work
@@ -279,7 +277,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             expect(list_page).to have_item_deleted_alert
             not_completed_texts = list_page.not_completed_items.map(&:text)
             expect(not_completed_texts.select { |text| text == item_name }).to be_empty
-            expect(list_page.find_list_item(@another_list_item.pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(@another_list_item, completed: false)).to be_visible
           end
         end
       end
@@ -290,7 +288,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         initial_completed_items_count = list_page.completed_items.count
         item_name = @list_items.last.pretty_title
 
-        list_page.delete item_name, completed: true
+        list_page.delete @list_items.last, completed: true
         list_page.wait_until_confirm_delete_button_visible
 
         # for some reason if the button is clicked too early it doesn't work
@@ -311,10 +309,10 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         @list_items.each do |item|
           next if item.send("completed")
 
-          list_page.multi_select_item(item.pretty_title, completed: item.send("completed"))
+          list_page.multi_select_item(item, completed: item.send("completed"))
         end
 
-        list_page.complete(@list_items.first.pretty_title)
+        list_page.complete(@list_items.first)
 
         wait_for { list_page.not_completed_items.none? }
 
@@ -328,9 +326,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
-          list_page.delete(@list_items.first.pretty_title, completed: false)
+          list_page.delete(@list_items.first, completed: false)
           list_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked too early it doesn't work
@@ -348,8 +346,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         it "is destroyed" do
           list_page.multi_select_buttons.last.click
           completed_items = @list_items.filter { |item| item.send("completed") }
-          completed_items.each { |item| list_page.multi_select_item(item.pretty_title, completed: true) }
-          list_page.delete(completed_items.first.pretty_title, completed: true)
+          completed_items.each { |item| list_page.multi_select_item(item, completed: true) }
+          list_page.delete(completed_items.first, completed: true)
           list_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked too early it doesn't work
@@ -369,7 +367,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.copy_to_list.click
 
@@ -382,7 +380,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           # create new list
           change_other_list_modal.new_list_name_input.set "foobar"
-          change_other_list_modal.click_complete
+          change_other_list_modal.complete.click
 
           wait_for { page.has_text?("Items successfully updated") }
           wait_for { change_other_list_modal.has_no_modal? }
@@ -396,7 +394,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(item, completed: false)).to be_visible
           end
         end
 
@@ -411,12 +409,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.copy_to_list.click
 
           change_other_list_modal.existing_list_dropdown.select new_list.name
-          change_other_list_modal.click_complete
+          change_other_list_modal.complete.click
 
           wait_for { page.has_text?("Items successfully updated") }
           wait_for { change_other_list_modal.has_no_modal? }
@@ -434,7 +432,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(item, completed: false)).to be_visible
           end
         end
       end
@@ -445,7 +443,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.move_to_list.click
 
@@ -458,7 +456,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
           # create new list
           change_other_list_modal.new_list_name_input.set "foobar"
-          change_other_list_modal.click_complete
+          change_other_list_modal.complete.click
 
           wait_for { page.has_text?("Items successfully updated") }
           wait_for { change_other_list_modal.has_no_modal? }
@@ -475,7 +473,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(item, completed: false)).to be_visible
           end
         end
 
@@ -490,12 +488,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.move_to_list.click
 
           change_other_list_modal.existing_list_dropdown.select new_list.name
-          change_other_list_modal.click_complete
+          change_other_list_modal.complete.click
 
           wait_for { page.has_text?("Items successfully updated") }
           wait_for { change_other_list_modal.has_no_modal? }
@@ -511,7 +509,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            expect(list_page.find_list_item(item.pretty_title, completed: false)).to be_visible
+            expect(list_page.find_list_item(item, completed: false)).to be_visible
           end
         end
       end
@@ -522,7 +520,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.bulk_edit_button.click
         end
@@ -539,7 +537,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             if (sheet && ae && sheet.contains(ae)) { ae.blur(); }
           JS
           edit_list_items_page.category.set "foobaz"
-          edit_list_items_page.submit_form
+          edit_list_items_page.submit.click
 
           wait_for { page.has_text?("Items successfully updated") }
 
@@ -561,9 +559,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            label = list_page.find_list_item(
-              bulk_update_selector(item, template_name, edit_attribute), completed: false
-            ).text
+            label = list_page.find_list_item(item, completed: false).text
 
             expect(label.downcase).to include(item.pretty_title.downcase)
           end
@@ -573,7 +569,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           @list_items.each do |item|
             next if item.send("completed")
 
-            list_page.multi_select_item(item.pretty_title, completed: false)
+            list_page.multi_select_item(item, completed: false)
           end
           list_page.bulk_edit_button.click
 
@@ -582,7 +578,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           # clear attributes
           bulk_update_attrs.each { |attr| edit_list_items_page.send("clear_#{attr}").click }
           edit_list_items_page.clear_category.click
-          edit_list_items_page.submit_form
+          edit_list_items_page.submit.click
 
           wait_for { page.has_text?("Items successfully updated") }
 
@@ -599,7 +595,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             next if item.send("completed")
 
             label = list_page
-                    .find_list_item(item.send(edit_attribute), completed: false)
+                    .find_list_item(item, completed: false)
                     .text
 
             if template_name == "to do list template"

@@ -5,7 +5,6 @@ module Pages
   class Home < SitePrism::Page
     include TestSelectors
     include Helpers::WaitHelper
-    include Helpers::ReactInput
 
     set_url "/"
 
@@ -19,8 +18,6 @@ module Pages
 
     # has_*? methods for elements that use data-test-* selectors
     def has_log_out?
-      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       has_test_id?("log-out-link")
     end
 
@@ -93,8 +90,16 @@ module Pages
       find_by_test_id("page-title")
     end
 
+    def settings_nav
+      find_by_test_id("nav-settings")
+    end
+
+    def completed_lists_nav
+      find_by_test_id("nav-completed")
+    end
+
     def go_to_completed_lists
-      find_by_test_id("nav-completed").click
+      completed_lists_nav
     end
 
     def invite
@@ -102,8 +107,6 @@ module Pages
     end
 
     def log_out
-      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
       find_by_test_id("log-out-link")
     end
 
@@ -265,11 +268,7 @@ module Pages
       end
     end
 
-    def merge(_list_name = nil)
-      merge_button.click
-    end
-
-    def merge_button(_list_name = nil)
+    def merge_button
       find_by_test_id("multi-select-merge")
     end
 
@@ -296,51 +295,16 @@ module Pages
       click_list_action(list_element, "complete-list-refresh")
     end
 
-    # Filter by status
-    def filter_by_status(status)
-      find_by_test_id("filter-#{status}").click
+    def status_filter(status)
+      find_by_test_id("filter-#{status}")
     end
 
-    # Quick-add a list
-    def quick_add_list(name)
-      react_fill_in("[data-test-id='quick-add-input']", with: name)
-      submit_list_form
-    end
-
-    # Quick-add with template
-    def quick_add_list_with_template(name, template_name)
-      create_list(name, template_name: template_name)
-    end
-
-    def create_list(name, template_name:)
-      expand_list_form
-      wait_for { has_css?("#list_item_configuration_id", visible: :all, wait: 0) }
-      react_fill_in("[data-test-id='quick-add-input']", with: name)
-      find_by_id("list_item_configuration_id").select(template_name)
-      submit_list_form
-    end
-
-    # Legacy method — delegates to quick_add_list
-    def expand_list_form
-      find_by_test_id("quick-add-expand").click
+    def quick_add_expand
+      find_by_test_id("quick-add-expand")
     end
 
     def name
       find_by_test_id("quick-add-input")
-    end
-
-    def submit
-      submit_list_form
-    end
-
-    def submit_list_form
-      find_by_test_id("quick-add-input").send_keys(:enter)
-    end
-
-    def wait_until_log_out_visible
-      find_by_test_id("nav-settings").click unless has_css?("[data-test-id='log-out-link']", wait: 0) ||
-                                                   has_css?("[data-test-id='settings-menu']", wait: 0)
-      wait_for { has_test_id?("log-out-link") }
     end
 
     def wait_until_settings_nav_visible
