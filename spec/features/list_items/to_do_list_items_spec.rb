@@ -14,7 +14,7 @@ RSpec.describe "A to do list item", type: :feature do
   def input_new_item_attributes(new_list_item)
     list_page.task_input.set(new_list_item.task)
     list_page.assignee_input.set(new_list_item.assignee_email)
-    list_page.due_by_input.set(new_list_item.due_by.strftime("%Y-%m-%d"))
+    list_page.due_by_input.set(new_list_item.due_by.strftime("%m/%d/%Y"))
 
     expect(list_page.task_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
