@@ -12,9 +12,9 @@ RSpec.describe "A music list item", type: :feature do
   let(:list) { Models::List.new(template_name: "music list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.title_input.set new_list_item.title
-    list_page.artist_input.set new_list_item.artist
-    list_page.album_input.set new_list_item.album
+    list_page.title_input.set(new_list_item.title)
+    list_page.artist_input.set(new_list_item.artist)
+    list_page.album_input.set(new_list_item.album)
 
     expect(list_page.title_input.value).to eq new_list_item.title
     expect(list_page.artist_input.value).to eq new_list_item.artist
@@ -44,8 +44,8 @@ RSpec.describe "A music list item", type: :feature do
     end
 
     it "can create, complete, edit, and destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.title)
-      completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
       expect(list_page).to have_title_input
@@ -55,8 +55,8 @@ RSpec.describe "A music list item", type: :feature do
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
       expect(not_completed_item).to have_css list_page.edit_button_css
-      expect(not_completed_item).to have_css list_page.delete_button_css
-      expect(completed_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.not_completed_delete_button_css
+      expect(completed_item).to have_css list_page.completed_delete_button_css
     end
   end
 
@@ -69,8 +69,8 @@ RSpec.describe "A music list item", type: :feature do
     end
 
     it "cannot create, complete, edit, or destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.title)
-      completed_item = list_page.find_list_item(@list_items.last.title, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       expect(list_page).to have_no_title_input
       expect(list_page).to have_no_artist_input
@@ -79,8 +79,8 @@ RSpec.describe "A music list item", type: :feature do
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css
       expect(not_completed_item).to have_no_css list_page.edit_button_css
-      expect(not_completed_item).to have_no_css list_page.delete_button_css
-      expect(completed_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.not_completed_delete_button_css
+      expect(completed_item).to have_no_css list_page.completed_delete_button_css
     end
   end
 end

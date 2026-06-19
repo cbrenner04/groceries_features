@@ -1,143 +1,243 @@
-# Agent Instructions for groceries_features
+# AGENTS.md — groceries_features
 
-This is the end-to-end feature test suite for the Groceries application. Tests run via Capybara/Selenium against a live instance of the app.
+---
+
+# 🚨 Repository Operating Rules (MANDATORY)
+
+These rules extend the root AGENTS.md and must be followed.
+
+## Priority Order
+1. Active Spec (if present)
+2. Root AGENTS.md
+3. This file
+
+## Core Rules
+- You MUST follow the active spec exactly
+- Do NOT expand or reinterpret scope
+- Do NOT modify client or service code
+- Do NOT change API behavior
+- Do NOT read additional files unless required by the spec
+
+---
+
+## Execution Modes
+
+### PLAN MODE
+- Identify:
+  - Feature files to modify
+  - Page objects involved
+  - Test data requirements
+- Do NOT modify files
+- Call out:
+  - Required test data
+  - External dependencies (client/service behavior)
+
+### PATCH MODE
+- Modify ONLY files listed in the spec
+- Execute steps exactly as written
+- Do NOT add, remove, or reorder steps
+- If a step is unclear: STOP and ask
+
+---
+
+## 📄 Spec Integration
+
+- All non-trivial work must be driven by a spec in `/specs/`
+- This repository executes ONLY its portion of the spec
+- Ignore spec steps for other repositories unless instructed
+
+### File Scope Enforcement
+- Only modify files explicitly listed in the spec
+- If additional files seem required:
+  - STOP
+  - ASK before proceeding
+
+---
+
+## 🔒 Change Boundaries
+
+- Do NOT modify:
+  - Application code (client or service)
+  - API contracts
+  - Database schema
+- Do NOT rename or move files unless specified
+- Do NOT update unrelated tests
+
+---
+
+## 🧪 Test Data Rules (CRITICAL)
+
+- Test data is created directly in the service database via Sequel
+- Do NOT modify existing production data
+- Always clean up created data after tests
+
+### Safety
+- Prefer creating new records over modifying existing ones
+- Avoid shared/global state between tests
+- Ensure tests are isolated and repeatable
+
+---
+
+## 🎯 Selector Rules (CRITICAL)
+
+- MUST use:
+  - `data-test-id`
+  - `data-test-class`
+- NEVER use:
+  - CSS classes
+  - brittle DOM structure selectors
+
+Fallback:
+- Semantic selectors (e.g., `find('button', text: 'Save')`) only if necessary
+
+---
+
+## ⏱️ Waiting Rules
+
+- Do NOT use `sleep`
+- Use:
+  - Capybara matchers (`have_selector`, `have_text`)
+  - `wait_for` helper
+
+---
 
 ## Commands
 
 ### Environment Setup
-- `bundle install` - Install Ruby dependencies.
-- Copy `config/env.yml.example` to `config/env.yml` and configure for your environment.
+```bash
+bundle install
+```
+
+* Copy `config/env.yml.example` → `config/env.yml`
+
+---
 
 ### Running Tests
-- `rspec` - Run all feature tests locally against the default environment.
-- `rspec spec/features/lists/lists_spec.rb` - Run a specific spec file.
-- `rspec spec/features/lists/lists_spec.rb:42` - Run a single test at a specific line.
-- `ENV=staging rspec` - Run tests against the staging environment.
-- `DRIVER=poltergeist rspec` - Run tests headless.
-- `bash run_tests.sh` - Run tests in parallel (handles setup/cleanup).
-- `PARALLELS=10 bash run_tests.sh` - Run parallel tests with a specific process count.
+
+```bash
+rspec
+rspec spec/features/lists/lists_spec.rb
+rspec spec/features/lists/lists_spec.rb:42
+ENV=staging rspec
+HEADLESS=true rspec
+bash run_tests.sh
+PARALLELS=10 bash run_tests.sh
+```
+
+---
 
 ### Linting
-- `bundle exec rubocop` - Run RuboCop linting.
-- `bundle exec rubocop -a` - Auto-fix safe linting issues.
+
+```bash
+bundle exec rubocop
+bundle exec rubocop -a
+```
+
+---
+
+## Required After Changes (PATCH MODE)
+
+```bash
+bundle exec rubocop
+```
+
+* Do NOT run full test suite unless specified in the spec
+
+---
 
 ## Tech Stack
-- **Ruby:** 3.4.8
-- **Testing:** RSpec 3.12, Capybara 3.39+, Selenium WebDriver 4.16+
-- **Page Objects:** SitePrism 5.0+
-- **Database Access:** Sequel 5.76+ with PostgreSQL (for test data setup)
-- **Parallel Execution:** parallel_tests 5.0+
-- **Browser:** Chrome (default), Poltergeist (headless)
+
+* Ruby 3.4.8
+* RSpec, Capybara, Selenium
+* SitePrism (Page Objects)
+* Sequel (DB access)
+* parallel_tests
+
+---
 
 ## Project Structure
 
 ```
 spec/
-├── features/              # Feature test files
-│   ├── list_items/        # Tests per list item type (book, grocery, music, simple, to-do)
-│   ├── lists/             # List management tests
-│   ├── completed_lists_spec.rb
-│   ├── invite_spec.rb
-│   ├── login_spec.rb
-│   └── share_spec.rb
+├── features/
 ├── support/
-│   ├── helpers/           # Shared test helpers (auth, data, wait, results, cleanup)
-│   ├── models/            # Sequel-backed models for test data (User, List, ListItem, etc.)
-│   ├── pages/             # SitePrism page objects for UI interactions
-│   ├── shared_examples/   # Reusable RSpec shared example groups
-│   └── scripts/           # Test infrastructure scripts
-├── screenshots/           # Capybara failure screenshots
-└── spec_helper.rb         # RSpec/Capybara configuration
+│   ├── helpers/
+│   ├── models/
+│   ├── pages/
+│   ├── shared_examples/
+│   └── scripts/
+├── screenshots/
+└── spec_helper.rb
+
 config/
-├── env.yml                # Environment config (not committed)
-└── env.yml.example        # Template for env.yml
+├── env.yml
+└── env.yml.example
 ```
 
-## Code Style Guidelines
+---
 
-### General Ruby
-- **Indentation:** 2 spaces.
-- **Naming:** `snake_case` for methods and variables; `CamelCase` for classes and modules.
-- **Frozen String Literals:** Always include `# frozen_string_literal: true`.
-- **Line Length:** Maximum 120 characters.
-- **Strings:** Prefer double quotes.
-- **Method Length:** Maximum 20 lines.
+## Test Patterns
 
-### Test Patterns
-- **Page Object Pattern:** All UI interactions go through SitePrism page objects in `spec/support/pages/`. Use `SitePrism::Section` for repeated sub-components within a page.
-- **Test Selectors:** Use `data-test-id` and `data-test-class` attributes to locate elements. Never use CSS classes or fragile selectors. Semantic selectors (`find('button', text: 'Save')`) are acceptable as a fallback.
-- **Shared Examples:** Use `it_behaves_like` for behavior shared across list item types.
-- **Data Setup:** Create test data directly in the database via Sequel models in `spec/support/models/`. Clean up after tests.
-- **Authentication:** Use `AuthenticationHelper` for login/logout in test setup.
-- **Waiting:** Use the custom `wait_for` helper for explicit waits. Capybara default wait is 3 seconds.
+### Page Objects
 
-### Wait Strategies
-```ruby
-# Wait for element to be visible
-expect(page).to have_selector('[data-test-id="loading"]', visible: true)
+* All UI interactions MUST go through SitePrism page objects
+* Use `SitePrism::Section` for repeated components
 
-# Wait for element to disappear
-expect(page).to have_no_selector('[data-test-id="loading"]')
+### Data Setup
 
-# Wait for text to appear
-expect(page).to have_text("List created successfully")
-```
+* Use Sequel models in `spec/support/models/`
+* Do NOT create data via UI unless explicitly required
 
-### Test Structure
-```ruby
-RSpec.describe "Feature Name", type: :feature do
-  let(:user) { Models::User.new }
-  let(:list) { Models::List.new(user_id: user.id, name: "Test") }
+### Authentication
 
-  before do
-    login user
-  end
+* Use `AuthenticationHelper`
 
-  after do
-    # cleanup
-  end
+### Shared Behavior
 
-  it "performs the expected action" do
-    home_page.navigate_to_list(list)
-    expect(list_page).to have_expected_element
-  end
-end
-```
+* Use `it_behaves_like` for shared logic
 
-### Page Object with Sections
-```ruby
-class ListPage < SitePrism::Page
-  set_url "/lists/{id}"
+---
 
-  element :list_name, '[data-test-id="list-name"]'
-  element :add_item_button, '[data-test-id="add-item-button"]'
-  sections :items, ItemSection, '[data-test-id="list-item"]'
-end
+## Testing Standards
 
-class ItemSection < SitePrism::Section
-  element :name, '[data-test-id="item-name"]'
-  element :edit_button, '[data-test-id="edit-item"]'
-  element :delete_button, '[data-test-id="delete-item"]'
-end
-```
+### Rules
+
+* Only modify or add tests if required by the spec
+* Do NOT expand test scope
+* Do NOT rewrite tests to match unintended behavior
+
+### Coverage
+
+* Maintain high coverage expectations
+* Ensure new behavior is tested
+
+---
 
 ## Configuration
 
-- **Capybara window size:** 1728x960
-- **Default wait time:** 3 seconds
-- **Screenshot on failure:** Saved to `spec/screenshots/`
-- **RSpec retry:** Configurable via environment; default 1 attempt
-- **Environment targeting:** Set `ENV` variable to `staging` or `production`
+* Window size: 1728x960
+* Default wait: 3 seconds
+* Screenshots on failure → `spec/screenshots/`
+* Retry: configurable
+* ENV targeting via `ENV`
+
+---
 
 ## Code Review Checklist
-- Page objects used for UI interactions.
-- Proper wait strategies implemented (no `sleep`).
-- Tests clean up their own data.
-- Shared examples used where behavior is common across list types.
-- `data-test-id` selectors used (not CSS classes).
-- Test data created via Sequel models, not the UI.
 
-## Guardrails
-- Tests require a running Groceries application instance (client + service).
-- Test data is created directly in the service database — do not modify production data.
-- Results are posted to the `groceries_features_results` service when configured.
+* Page objects used correctly
+* No `sleep` usage
+* Proper wait strategies
+* Data cleaned up
+* Correct selectors used
+* Test data created via Sequel
+
+---
+
+## Do NOT
+
+* Modify application code (client/service)
+* Change API behavior
+* Use brittle selectors
+* Leave test data behind
+* Commit changes unless instructed

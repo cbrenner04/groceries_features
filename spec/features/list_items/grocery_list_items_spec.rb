@@ -12,8 +12,8 @@ RSpec.describe "A grocery list item", type: :feature do
   let(:list) { Models::List.new(template_name: "grocery list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.quantity_input.set new_list_item.quantity
-    list_page.product_input.set new_list_item.product
+    list_page.quantity_input.set(new_list_item.quantity)
+    list_page.product_input.set(new_list_item.product)
 
     expect(list_page.quantity_input.value).to eq new_list_item.quantity
     expect(list_page.product_input.value).to eq new_list_item.product
@@ -42,8 +42,8 @@ RSpec.describe "A grocery list item", type: :feature do
     end
 
     it "can create, complete, edit, refresh, and destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.product)
-      completed_item = list_page.find_list_item(@list_items.last.product, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
 
@@ -53,9 +53,9 @@ RSpec.describe "A grocery list item", type: :feature do
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
       expect(not_completed_item).to have_css list_page.edit_button_css
-      expect(not_completed_item).to have_css list_page.delete_button_css
+      expect(not_completed_item).to have_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_css list_page.refresh_button_css
-      expect(completed_item).to have_css list_page.delete_button_css
+      expect(completed_item).to have_css list_page.completed_delete_button_css
     end
   end
 
@@ -68,8 +68,8 @@ RSpec.describe "A grocery list item", type: :feature do
     end
 
     it "cannot create, complete, edit, refresh, or destroy" do
-      not_completed_item = list_page.find_list_item(@list_items.first.product)
-      completed_item = list_page.find_list_item(@list_items.last.product, completed: true)
+      not_completed_item = list_page.find_list_item(@list_items.first)
+      completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       expect(list_page).to have_no_quantity_input
       expect(list_page).to have_no_product_input
@@ -77,9 +77,9 @@ RSpec.describe "A grocery list item", type: :feature do
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css
       expect(not_completed_item).to have_no_css list_page.edit_button_css
-      expect(not_completed_item).to have_no_css list_page.delete_button_css
+      expect(not_completed_item).to have_no_css list_page.not_completed_delete_button_css
       expect(completed_item).to have_no_css list_page.refresh_button_css
-      expect(completed_item).to have_no_css list_page.delete_button_css
+      expect(completed_item).to have_no_css list_page.completed_delete_button_css
     end
   end
 end

@@ -3,7 +3,6 @@
 require "rspec"
 require "capybara"
 require "capybara/rspec"
-require "capybara/poltergeist"
 require "capybara-screenshot/rspec"
 require "selenium-webdriver"
 require "site_prism"
@@ -71,23 +70,35 @@ end
 
 CONSTANT_WINDOW_SIZE = [1728, 960].freeze
 
+def chrome_options
+  options = Selenium::WebDriver::Chrome::Options.new
+  if ENV["HEADLESS"] == "true"
+    options.add_argument("--headless=new")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=#{CONSTANT_WINDOW_SIZE.join(',')}")
+  end
+  options
+end
+
 # Capybara configuration options
+# set `HEADLESS=true` to run headless Chrome
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: chrome_options)
 end
-Capybara.register_driver :poltergeist do |app|
-  options = { js: true, js_errors: false, window_size: CONSTANT_WINDOW_SIZE }
-  Capybara::Poltergeist::Driver.new(app, options)
-end
-# set `DRIVER=poltergeist` on the command line when you want to run headless
-Capybara.default_driver = ENV["DRIVER"].nil? ? :selenium : ENV["DRIVER"].to_sym
-unless ENV["DRIVER"] == "poltergeist"
-  Capybara.javascript_driver = :chrome
-  Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
-end
+Capybara.default_driver = :selenium
+Capybara.javascript_driver = :selenium
 Capybara.save_path = "spec/screenshots/"
 Capybara.app_host = ENV.fetch("HOST", nil)
 Capybara.default_max_wait_time = 3
+
+RSpec.configure do |config|
+  config.before(:each, :js) do
+    Capybara.page.driver.browser.manage.window.resize_to(*CONSTANT_WINDOW_SIZE)
+    Capybara.page.driver.browser.manage.timeouts.page_load = 10
+  end
+end
 
 # capybara-screenshot configuration options
 Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|

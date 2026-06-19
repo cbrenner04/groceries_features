@@ -13,12 +13,16 @@ module Pages
     element :list_deleted_alert, ".Toastify", text: "List successfully deleted."
 
     def complete_list_names
-      all_by_test_class("completed-list").map { |list| list.find("h5").text }
+      all_by_test_class("completed-list").map do |list|
+        find_by_test_id_within(list, "list-name").text
+      end
     end
 
     # Immediate version for post-wait_for assertions (no Capybara waiting)
     def complete_list_names_immediate
-      all("[data-test-class='completed-list']", wait: 0).map { |list| list.find("h5", wait: 0).text }
+      all("[data-test-class='completed-list']", wait: 0).map do |list|
+        list.find("[data-test-id='list-name']", wait: 0).text
+      end
     end
 
     def delete(list_name)

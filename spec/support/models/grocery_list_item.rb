@@ -3,8 +3,8 @@
 module Models
   # an item on a grocery list
   class GroceryListItem
-    attr_accessor :product, :quantity
-    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :category, :list_item_configuration_id
+    attr_accessor :product, :quantity, :category
+    attr_reader :id, :user_id, :list_id, :completed, :refreshed, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, category: nil, refreshed: false,
                    list_item_configuration_id: nil, create_item: true)
@@ -20,7 +20,8 @@ module Models
     end
 
     def pretty_title
-      "#{quantity}\nProduct: #{product}"
+      base = "#{quantity}\n#{product}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

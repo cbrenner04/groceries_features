@@ -8,6 +8,18 @@ module Helpers
       create_associated_items(user, list)
     end
 
+    # Copy, move, refresh and merge create brand new list_items with new ids, so the original
+    # item objects can't be located on the destination list. These helpers read the live records.
+    def not_completed_item_ids(list_id)
+      DB[:list_items].where(list_id:, completed: false, archived_at: nil).select_map(:id)
+    end
+
+    def list_id_by_name(name, owner_id, completed: nil)
+      query = DB[:lists].where(name:, owner_id:)
+      query = query.where(completed:) unless completed.nil?
+      query.get(:id)
+    end
+
     private
 
     def create_associated_items(user, list)

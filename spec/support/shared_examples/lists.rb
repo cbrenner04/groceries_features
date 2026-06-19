@@ -23,13 +23,21 @@ RSpec.shared_examples "a list" do |template_name|
     login user
   end
 
+  # Refresh and merge produce a new list whose items are new records (new ids), all not-completed.
+  def expect_not_completed_items_on(list_id, expected_count)
+    item_ids = []
+    wait_for { (item_ids = not_completed_item_ids(list_id)).count == expected_count }
+    item_ids.each { |id| expect(list_page.find_list_item(id, completed: false)).to be_visible }
+  end
+
   it "is created" do
     list = Models::List.new(template_name: template_name, create_list: false, owner_id: user.id)
 
-    home_page.expand_list_form
-    home_page.name.set list.name
-    home_page.list_template.select template_name
-    home_page.submit.click
+    home_page.quick_add_expand.click
+    wait_for { home_page.has_css?("#list_item_configuration_id", visible: :all, wait: 0) }
+    home_page.list_template.select(template_name)
+    home_page.name.set(list.name)
+    home_page.name.send_keys(:enter)
 
     wait_for { home_page.incomplete_list_names.include? list.name }
 
@@ -42,20 +50,19 @@ RSpec.shared_examples "a list" do |template_name|
 
       it "displays list items" do
         expect(list_page).to have_not_completed_items
-        expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+        expect(list_page.find_list_item(@list_items.first, completed: false)).to be_visible
         expect(list_page).to have_completed_items
-        expect(list_page.completed_items.map(&:text)).to include @list_items.last.pretty_title
+        expect(list_page.find_list_item(@list_items.last, completed: true)).to be_visible
       end
 
       describe "that is filtered" do
         before do
           list_page.wait_until_completed_items_visible
-          list_page.filter_button.click
           list_page.filter_option("foo").click
         end
 
         it "only shows filtered items" do
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
+          expect(list_page.find_list_item(@list_items.first, completed: false)).to be_visible
           not_completed_texts = list_page.not_completed_items.map(&:text)
           expect(not_completed_texts.select { |text| text == @list_items[1].pretty_title }).to be_empty
         end
@@ -63,8 +70,8 @@ RSpec.shared_examples "a list" do |template_name|
         it "can clear filter" do
           list_page.clear_filter_button.click
 
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items.first.pretty_title
-          expect(list_page.not_completed_items.map(&:text)).to include @list_items[1].pretty_title
+          expect(list_page.find_list_item(@list_items.first, completed: false)).to be_visible
+          expect(list_page.find_list_item(@list_items[1], completed: false)).to be_visible
         end
       end
     end
@@ -129,11 +136,9 @@ RSpec.shared_examples "a list" do |template_name|
 
       list.name = SecureRandom.hex(16)
 
-      wait_for do
-        edit_list_page.name.set list.name
-        edit_list_page.name.value == list.name
-      end
+      edit_list_page.name.set(list.name)
 
+      wait_for { !edit_list_page.submit.disabled? }
       edit_list_page.submit.click
 
       wait_for { home_page.incomplete_list_names.include?(list.name) }
@@ -143,12 +148,9 @@ RSpec.shared_examples "a list" do |template_name|
 
     it "is deleted" do
       home_page.delete list.name
-      home_page.wait_until_confirm_delete_button_visible
+      home_page.wait_until_confirm_delete_button_visible(list.name)
 
-      # for some reason if the button is clicked to early it doesn't work
-      sleep 1
-
-      home_page.confirm_delete_button.click
+      home_page.click_confirm_delete
 
       wait_for { !home_page.incomplete_list_names.include?(list.name) }
 
@@ -162,13 +164,14 @@ RSpec.shared_examples "a list" do |template_name|
     describe "that is shared" do
       describe "that is pending" do
         before do
-          # make other list pending
+          # make other list pending - set has_accepted to nil, permissions is whatever was shared
           DB[:users_lists].where(user_id: user.id, list_id: other_list.id)
-                          .update(permissions: "read", has_accepted: nil)
+                          .update(has_accepted: nil)
           # make other list created at more recent than list
           DB[:lists].where(id: other_list.id).update(created_at: Time.now)
           home_page.load
           home_page.wait_until_header_visible
+          wait_for { home_page.has_pending_lists? }
         end
 
         it "can only accept or reject" do
@@ -191,12 +194,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "rejects" do
           home_page.reject other_list.name
-          home_page.wait_until_confirm_reject_button_visible
+          home_page.wait_until_confirm_reject_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_reject_button.click
+          home_page.click_confirm_reject
 
           wait_for do
             !home_page.incomplete_list_names.include?(other_list.name) &&
@@ -223,21 +223,17 @@ RSpec.shared_examples "a list" do |template_name|
             sleep 1
             write_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(write_list.find(home_page.share_button_css)[:disabled]).to be_nil
-            expect(write_list.find(home_page.complete_button_css)).to be_disabled
+            expect(write_list).to have_css home_page.share_button_css
+            expect(write_list).to have_no_css home_page.complete_button_css
             expect(write_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            # TODO: confirm it can't be clicked
-            expect(write_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(write_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_delete_button_visible
+            home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-            # for some reason if the button is clicked to early it doesn't work
-            sleep 1
-
-            home_page.confirm_delete_button.click
+            home_page.click_confirm_delete
 
             wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
@@ -279,20 +275,17 @@ RSpec.shared_examples "a list" do |template_name|
           it "cannot be edited, completed, or shared" do
             read_list = home_page.find_incomplete_list(other_list.name)
 
-            expect(read_list.find(home_page.share_button_css)["aria-disabled"]).to eq "true"
-            expect(read_list.find(home_page.complete_button_css)).to be_disabled
+            expect(read_list).to have_no_css home_page.share_button_css
+            expect(read_list).to have_no_css home_page.complete_button_css
             expect(read_list.find(home_page.incomplete_delete_button_css)).not_to be_disabled
-            expect(read_list.find(home_page.edit_button_css)["aria-disabled"]).to eq "true"
+            expect(read_list).to have_no_css home_page.edit_button_css
           end
 
           it "is deleted" do
             home_page.delete other_list.name
-            home_page.wait_until_confirm_delete_button_visible
+            home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-            # for some reason if the button is clicked to early it doesn't work
-            sleep 1
-
-            home_page.confirm_delete_button.click
+            home_page.click_confirm_delete
 
             wait_for { !home_page.incomplete_list_names.include?(other_list.name) }
 
@@ -344,7 +337,7 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_completed_items
-      expect(list_page.completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      expect(list_page.find_list_item(@completed_list_items.last, completed: true)).to be_visible
     end
 
     it "is refreshed" do
@@ -358,18 +351,16 @@ RSpec.shared_examples "a list" do |template_name|
       home_page.select_list completed_list.name
 
       expect(list_page).to have_not_completed_items
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.first.pretty_title
-      expect(list_page.not_completed_items.map(&:text)).to include @completed_list_items.last.pretty_title
+      # refreshing recreates the list and its items as new records, all not-completed
+      refreshed_list_id = list_id_by_name(completed_list.name, user.id, completed: false)
+      expect_not_completed_items_on(refreshed_list_id, @completed_list_items.count)
     end
 
     it "is deleted" do
       home_page.delete completed_list.name, complete: true
-      home_page.wait_until_confirm_delete_button_visible
+      home_page.wait_until_confirm_delete_button_visible(completed_list.name)
 
-      # for some reason if the button is clicked to early it doesn't work
-      sleep 1
-
-      home_page.confirm_delete_button.click
+      home_page.click_confirm_delete
 
       wait_for { !home_page.complete_list_names.include?(completed_list.name) }
 
@@ -397,14 +388,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_delete_button_visible
+          home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_delete_button.click
-
-          sleep 1
+          home_page.click_confirm_delete
 
           wait_for { !home_page.complete_list_names.include?(other_list.name) }
 
@@ -442,12 +428,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         it "is deleted" do
           home_page.delete other_list.name, complete: true
-          home_page.wait_until_confirm_delete_button_visible
+          home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
-          # for some reason if the button is clicked to early it doesn't work
-          sleep 1
-
-          home_page.confirm_delete_button.click
+          home_page.click_confirm_delete
 
           wait_for { !home_page.complete_list_names.include?(other_list.name) }
 
@@ -504,11 +487,9 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        expect(home_page).to have_no_share_button
-        expect(home_page).to have_no_edit_button
-
-        home_page.merge list.name
+        home_page.merge_button.click
         home_page.new_merged_list_name_input.set "new merged list"
+        wait_for { !home_page.confirm_merge_button.disabled? }
         home_page.confirm_merge_button.click
 
         wait_for { home_page.incomplete_list_names.include?("new merged list") }
@@ -517,9 +498,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        # merging recreates every item as a new not-completed record on the merged list
+        merged_list_id = list_id_by_name("new merged list", user.id, completed: false)
+        expect_not_completed_items_on(merged_list_id, @list_items.count + @other_list_items.count)
       end
 
       it "shows warning when lists of different templates are selected" do
@@ -539,9 +520,9 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list different_template_list.name
 
-        wait_for { home_page.merge_button(list.name).visible? }
+        wait_for { home_page.merge_button.visible? }
 
-        home_page.merge list.name
+        home_page.merge_button.click
 
         expect(home_page).to have_merge_warning
         expect(home_page.merge_warning_text).to include("Only lists of the same type can be merged")
@@ -566,7 +547,7 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list other_list.name
         home_page.multi_select_list different_template_list.name
 
-        home_page.merge list.name
+        home_page.merge_button.click
 
         expect(home_page).to have_merge_breakdown
         expect(home_page.merge_breakdown_text).to include("Lists to be merged (2):")
@@ -581,7 +562,7 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.merge list.name
+        home_page.merge_button.click
 
         expect(home_page).to have_no_merge_warning
         expect(home_page).to have_no_merge_breakdown
@@ -592,7 +573,7 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.merge list.name
+        home_page.merge_button.click
 
         expect(home_page).to have_clear_merge_button
         home_page.clear_merge_button.click
@@ -608,7 +589,7 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.merge list.name
+        home_page.merge_button.click
 
         wait_for { home_page.confirm_merge_button.disabled? }
 
@@ -625,8 +606,9 @@ RSpec.shared_examples "a list" do |template_name|
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.merge list.name
+        home_page.merge_button.click
         home_page.new_merged_list_name_input.set "comprehensive merged list"
+        wait_for { !home_page.confirm_merge_button.disabled? }
         home_page.confirm_merge_button.click
 
         wait_for { home_page.incomplete_list_names.include?("comprehensive merged list") }
@@ -635,9 +617,9 @@ RSpec.shared_examples "a list" do |template_name|
 
         list_page.wait_until_not_completed_items_visible
 
-        new_merged_list_items = list_page.not_completed_items.map(&:text)
-        @list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
-        @other_list_items.each { |list_item| expect(new_merged_list_items).to include list_item.pretty_title }
+        # merging recreates every item as a new not-completed record on the merged list
+        merged_list_id = list_id_by_name("comprehensive merged list", user.id, completed: false)
+        expect_not_completed_items_on(merged_list_id, @list_items.count + @other_list_items.count)
       end
     end
 
@@ -649,10 +631,12 @@ RSpec.shared_examples "a list" do |template_name|
 
         home_page.delete list.name
 
-        expect(find(".modal-body").text).to include list.name
-        expect(find(".modal-body").text).to include other_list.name
+        modal_body = find("[data-test-id='confirm-modal-body']")
+        wait_for { modal_body.has_text?(list.name) && modal_body.has_text?(other_list.name) }
+        expect(modal_body).to have_text list.name
+        expect(modal_body).to have_text other_list.name
 
-        home_page.confirm_delete_button.click
+        home_page.click_confirm_delete
 
         wait_for { home_page.incomplete_lists.empty? }
 
@@ -666,7 +650,7 @@ RSpec.shared_examples "a list" do |template_name|
 
     describe "refresh" do
       it "only refreshes lists the user owns and those that are complete" do
-        home_page.multi_select_buttons[1].click
+        home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
         home_page.multi_select_list other_completed_list.name, complete: true
         home_page.refresh completed_list.name

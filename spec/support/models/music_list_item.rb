@@ -3,8 +3,8 @@
 module Models
   # an item on a music list
   class MusicListItem
-    attr_accessor :title, :artist, :album
-    attr_reader :id, :user_id, :list_id, :completed, :category, :list_item_configuration_id
+    attr_accessor :title, :artist, :album, :category
+    attr_reader :id, :user_id, :list_id, :completed, :list_item_configuration_id
 
     def initialize(user_id:, list_id:, completed: false, category: nil, list_item_configuration_id: nil,
                    create_item: true)
@@ -20,7 +20,8 @@ module Models
     end
 
     def pretty_title
-      "#{title}\nArtist: #{artist}•Album: #{album}"
+      base = "#{title}\n#{artist}·#{album}"
+      category ? "#{base}\n#{category}" : base
     end
 
     private

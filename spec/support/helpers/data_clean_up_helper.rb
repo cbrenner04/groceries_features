@@ -3,13 +3,11 @@
 module Helpers
   # helpers for cleaning data
   class DataCleanUpHelper
-    TABLES = %i[list_items list_item_fields].freeze
-
     def initialize(database)
       @database = database
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/MethodLength
     def remove_test_data
       set_instance_variables
       @user_ids.each do |user_id|
@@ -31,9 +29,10 @@ module Helpers
         list_item_configurations.delete
         @database[:users_lists].where(user_id: user_id).delete
       end
+      # these have to be done after all of the above are done
       # rubocop:disable Style/CombinableLoops
-      @user_ids.each { |id| TABLES.each { |table| @database[table].where(user_id: id).delete } }
       @user_ids.each do |id|
+        %i[list_items list_item_fields].each { |table| @database[table].where(user_id: id).delete }
         @database[:lists].where(owner_id: id).each do |list|
           @database[:categories].where(list_id: list[:id]).delete
         end
@@ -43,7 +42,7 @@ module Helpers
       @lists.delete
       @users.delete
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/MethodLength
 
     private
 
