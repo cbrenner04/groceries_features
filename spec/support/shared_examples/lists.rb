@@ -35,8 +35,8 @@ RSpec.shared_examples "a list" do |template_name|
 
     home_page.quick_add_expand.click
     wait_for { home_page.has_css?("#list_item_configuration_id", visible: :all, wait: 0) }
-    home_page.name.set(list.name)
     home_page.list_template.select(template_name)
+    home_page.name.set(list.name)
     home_page.name.send_keys(:enter)
 
     wait_for { home_page.incomplete_list_names.include? list.name }
