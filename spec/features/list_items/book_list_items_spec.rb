@@ -13,17 +13,17 @@ RSpec.describe "A book list item", type: :feature do
 
   def input_new_item_attributes(new_list_item)
     list_page.author_input.set(new_list_item.author)
-    list_page.title_input.set(new_list_item.title)
+    list_page.quick_add_input.set(new_list_item.title)
     list_page.number_in_series_input.set(new_list_item.number_in_series.to_s)
 
     expect(list_page.author_input.value).to eq new_list_item.author
-    expect(list_page.title_input.value).to eq new_list_item.title
+    expect(list_page.quick_add_input.value).to eq new_list_item.title
     expect(list_page.number_in_series_input.value).to eq new_list_item.number_in_series.to_s # input value is a string
   end
 
   def confirm_form_cleared
     expect(list_page.author_input.value).to eq ""
-    expect(list_page.title_input.value).to eq ""
+    expect(list_page.quick_add_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
     expect(list_page.number_in_series_input.value).to eq ""
     expect(list_page.completed_checkbox).not_to be_checked
@@ -48,7 +48,7 @@ RSpec.describe "A book list item", type: :feature do
       list_page.expand_list_item_form
 
       expect(list_page).to have_author_input
-      expect(list_page).to have_title_input
+      expect(list_page).to have_quick_add_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
@@ -71,7 +71,7 @@ RSpec.describe "A book list item", type: :feature do
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       expect(list_page).to have_no_author_input
-      expect(list_page).to have_no_title_input
+      expect(list_page).to have_no_quick_add_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css

@@ -12,17 +12,17 @@ RSpec.describe "A to do list item", type: :feature do
   let(:list) { Models::List.new(template_name: "to do list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.task_input.set(new_list_item.task)
+    list_page.quick_add_input.set(new_list_item.task)
     list_page.assignee_input.set(new_list_item.assignee_email)
     list_page.due_by_input.set(new_list_item.due_by.strftime("%m/%d/%Y"))
 
-    expect(list_page.task_input.value).to eq new_list_item.task
+    expect(list_page.quick_add_input.value).to eq new_list_item.task
     expect(list_page.assignee_input.value).to eq new_list_item.assignee_email
     expect(list_page.due_by_input.value).to eq new_list_item.due_by.strftime("%Y-%m-%d")
   end
 
   def confirm_form_cleared
-    expect(list_page.task_input.value).to eq ""
+    expect(list_page.quick_add_input.value).to eq ""
     expect(list_page.assignee_input.value).to eq ""
     expect(list_page.due_by_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
@@ -49,7 +49,7 @@ RSpec.describe "A to do list item", type: :feature do
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
-      expect(list_page).to have_task_input
+      expect(list_page).to have_quick_add_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
@@ -72,7 +72,7 @@ RSpec.describe "A to do list item", type: :feature do
       not_completed_item = list_page.find_list_item(@list_items.first)
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
-      expect(list_page).to have_no_task_input
+      expect(list_page).to have_no_quick_add_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css

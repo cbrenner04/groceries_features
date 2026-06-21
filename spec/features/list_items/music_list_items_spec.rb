@@ -12,17 +12,17 @@ RSpec.describe "A music list item", type: :feature do
   let(:list) { Models::List.new(template_name: "music list template", owner_id: user.id) }
 
   def input_new_item_attributes(new_list_item)
-    list_page.title_input.set(new_list_item.title)
+    list_page.quick_add_input.set(new_list_item.title)
     list_page.artist_input.set(new_list_item.artist)
     list_page.album_input.set(new_list_item.album)
 
-    expect(list_page.title_input.value).to eq new_list_item.title
+    expect(list_page.quick_add_input.value).to eq new_list_item.title
     expect(list_page.artist_input.value).to eq new_list_item.artist
     expect(list_page.album_input.value).to eq new_list_item.album
   end
 
   def confirm_form_cleared
-    expect(list_page.title_input.value).to eq ""
+    expect(list_page.quick_add_input.value).to eq ""
     expect(list_page.artist_input.value).to eq ""
     expect(list_page.album_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
@@ -48,7 +48,7 @@ RSpec.describe "A music list item", type: :feature do
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
-      expect(list_page).to have_title_input
+      expect(list_page).to have_quick_add_input
       expect(list_page).to have_artist_input
       expect(list_page).to have_album_input
       expect(list_page).to have_submit_button
@@ -72,7 +72,7 @@ RSpec.describe "A music list item", type: :feature do
       not_completed_item = list_page.find_list_item(@list_items.first)
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
-      expect(list_page).to have_no_title_input
+      expect(list_page).to have_no_quick_add_input
       expect(list_page).to have_no_artist_input
       expect(list_page).to have_no_album_input
       expect(list_page).to have_no_submit_button

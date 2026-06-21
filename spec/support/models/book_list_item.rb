@@ -23,8 +23,8 @@ module Models
 
     def pretty_title
       read_str = read ? "true" : "false"
-      secondary = "#{title}·#{number_in_series}·#{read_str}"
-      base = "#{author}\n#{secondary}"
+      secondary = "#{author}·#{number_in_series}·#{read_str}"
+      base = "#{title}\n#{secondary}"
       category ? "#{base}\n#{category}" : base
     end
 

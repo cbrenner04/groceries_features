@@ -8,14 +8,16 @@ module Pages
     set_url "/templates"
 
     element :header, "h1", text: "Templates"
-    element :submit, "button[type='submit']"
+    # Templates are created via the always-visible bottom input bar; its submit button is
+    # rendered by the bar (data-test-id) rather than a native submit input.
+    element :submit, "[data-test-id='quick-add-submit']"
 
     def manage_templates
       find_by_test_id("nav-templates").click
     end
 
     def expand_template_form
-      find_by_test_id("add-template-button").click
+      find_by_test_id("quick-add-expand").click
     end
 
     def has_templates?
@@ -31,7 +33,7 @@ module Pages
     end
 
     def template_name_input
-      find_by_test_id("template-form-name")
+      find_by_test_id("quick-add-input")
     end
 
     def field_configuration_rows
@@ -45,7 +47,10 @@ module Pages
 
     def delete(template_name)
       template_element = find_by_test_class("template", text: template_name)
-      find_by_test_id_within(template_element, "template-trash").click
+      trash = find_by_test_id_within(template_element, "template-trash")
+      # The fixed bottom "create template" bar overlaps a freshly added template's actions, so a
+      # normal click is intercepted. Center it and click via JS to trigger the button's handler.
+      trash.execute_script("this.scrollIntoView({ block: 'center' }); this.click();")
     end
 
     def confirm_delete_button

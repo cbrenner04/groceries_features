@@ -28,7 +28,10 @@ module Pages
     element :content_input, "#content"
     element :product_input, "#product"
     element :completed_checkbox, "#completed"
-    element :submit_button, "button[type='submit']"
+    # The primary/name field is the always-visible bottom input bar (outside the form DOM),
+    # and the form is submitted via the bar's submit button rather than a native submit input.
+    element :quick_add_input, "[data-test-id='quick-add-input']"
+    element :submit_button, "[data-test-id='quick-add-submit']"
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     element :select_button, "[data-test-id='select-button']"
     element :multi_select_bar, "[data-test-id='multi-select-bar']"
@@ -218,10 +221,6 @@ module Pages
 
     def has_no_multi_select_bar?
       has_no_test_id?("multi-select-bar")
-    end
-
-    def quick_add_input
-      find_by_test_id("quick-add-input")
     end
 
     def wait_until_confirm_delete_button_visible
