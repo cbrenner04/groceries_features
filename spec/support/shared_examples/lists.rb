@@ -147,6 +147,7 @@ RSpec.shared_examples "a list" do |template_name|
     end
 
     it "is deleted" do
+      sleep 2
       home_page.delete list.name
       home_page.wait_until_confirm_delete_button_visible(list.name)
 
@@ -193,6 +194,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "rejects" do
+          sleep 2
           home_page.reject other_list.name
           home_page.wait_until_confirm_reject_button_visible(other_list.name)
 
@@ -220,7 +222,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "can only be shared or deleted" do
-            sleep 1
+            sleep 2
             write_list = home_page.find_incomplete_list(other_list.name)
 
             expect(write_list).to have_css home_page.share_button_css
@@ -230,6 +232,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "is deleted" do
+          sleep 2
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -282,6 +285,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "is deleted" do
+            sleep 2
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -357,6 +361,7 @@ RSpec.shared_examples "a list" do |template_name|
     end
 
     it "is deleted" do
+      sleep 2
       home_page.delete completed_list.name, complete: true
       home_page.wait_until_confirm_delete_button_visible(completed_list.name)
 
@@ -387,6 +392,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "is deleted" do
+          sleep 2
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -427,6 +433,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "is deleted" do
+          sleep 2
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
