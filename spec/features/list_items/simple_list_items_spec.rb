@@ -13,15 +13,15 @@ RSpec.describe "A simple list item", type: :feature do
 
   def input_new_item_attributes(new_list_item)
     wait_for do
-      list_page.content_input.set(new_list_item.content)
-      list_page.content_input.value == new_list_item.content
+      list_page.quick_add_input.set(new_list_item.content)
+      list_page.quick_add_input.value == new_list_item.content
     end
 
-    expect(list_page.content_input.value).to eq new_list_item.content
+    expect(list_page.quick_add_input.value).to eq new_list_item.content
   end
 
   def confirm_form_cleared
-    expect(list_page.content_input.value).to eq ""
+    expect(list_page.quick_add_input.value).to eq ""
     expect(list_page.category_input.value).to eq ""
     expect(list_page.completed_checkbox).not_to be_checked
   end
@@ -46,7 +46,7 @@ RSpec.describe "A simple list item", type: :feature do
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
       list_page.expand_list_item_form
-      expect(list_page).to have_content_input
+      expect(list_page).to have_quick_add_input
       expect(list_page).to have_submit_button
       expect(list_page).to have_multi_select_buttons
       expect(not_completed_item).to have_css list_page.complete_button_css
@@ -69,7 +69,7 @@ RSpec.describe "A simple list item", type: :feature do
       not_completed_item = list_page.find_list_item(@list_items.first)
       completed_item = list_page.find_list_item(@list_items.last, completed: true)
 
-      expect(list_page).to have_no_content_input
+      expect(list_page).to have_no_quick_add_input
       expect(list_page).to have_no_submit_button
       expect(list_page).to have_no_multi_select_buttons
       expect(not_completed_item).to have_no_css list_page.complete_button_css

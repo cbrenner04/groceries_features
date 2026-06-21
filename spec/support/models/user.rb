@@ -7,12 +7,12 @@ module Models
   class User
     TEMPLATE_DEFINITIONS = {
       "grocery list template" => [
-        { label: "quantity", data_type: "free_text", position: 1, primary: true },
-        { label: "product", data_type: "free_text", position: 2, primary: false }
+        { label: "product", data_type: "free_text", position: 1, primary: true },
+        { label: "quantity", data_type: "free_text", position: 2, primary: false }
       ],
       "book list template" => [
-        { label: "author", data_type: "free_text", position: 1, primary: true },
-        { label: "title", data_type: "free_text", position: 2, primary: false },
+        { label: "title", data_type: "free_text", position: 1, primary: true },
+        { label: "author", data_type: "free_text", position: 2, primary: false },
         { label: "number in series", data_type: "number", position: 3, primary: false },
         { label: "read", data_type: "boolean", position: 4, primary: false }
       ],
