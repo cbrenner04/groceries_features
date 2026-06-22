@@ -1,0 +1,8 @@
+{
+  "name": "groceries_features",
+  "version": "1.0.0",
+  "description": "Feature specs for groceries",
+  "scripts": {
+    "ready": "bash run_tests.sh"
+  }
+}
