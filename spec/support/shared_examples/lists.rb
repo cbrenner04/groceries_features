@@ -232,7 +232,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "is deleted" do
-          sleep 2
+            sleep 2
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 

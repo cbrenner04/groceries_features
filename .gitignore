@@ -12,3 +12,5 @@ spec/tmp/*
 config/env.yml
 
 token.txt
+
+.worktree
