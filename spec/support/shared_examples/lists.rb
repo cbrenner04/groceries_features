@@ -79,9 +79,7 @@ RSpec.shared_examples "a list" do |template_name|
     it "is completed" do
       home_page.complete list.name
 
-      sleep 1 # it was complaining about stale element references in the wait_for block
-
-      wait_for { !home_page.incomplete_list_names.include?(list.name) }
+      wait_for { home_page.complete_list_names.include?(list.name) }
 
       expect(home_page).to have_completed_lists
       expect(home_page.complete_list_names).to include list.name
@@ -147,7 +145,7 @@ RSpec.shared_examples "a list" do |template_name|
     end
 
     it "is deleted" do
-      sleep 2
+      wait_for { home_page.find_incomplete_list(list.name, visible: true, wait: 3) }
       home_page.delete list.name
       home_page.wait_until_confirm_delete_button_visible(list.name)
 
@@ -194,7 +192,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "rejects" do
-          sleep 2
+          wait_for { home_page.find_pending_list(other_list.name, visible: true, wait: 3) }
           home_page.reject other_list.name
           home_page.wait_until_confirm_reject_button_visible(other_list.name)
 
@@ -222,7 +220,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "can only be shared or deleted" do
-            sleep 2
+            wait_for { home_page.find_incomplete_list(other_list.name, visible: true, wait: 3) }
             write_list = home_page.find_incomplete_list(other_list.name)
 
             expect(write_list).to have_css home_page.share_button_css
@@ -232,7 +230,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "is deleted" do
-            sleep 2
+            wait_for { home_page.find_incomplete_list(other_list.name, visible: true, wait: 3) }
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -285,7 +283,7 @@ RSpec.shared_examples "a list" do |template_name|
           end
 
           it "is deleted" do
-            sleep 2
+            wait_for { home_page.find_incomplete_list(other_list.name, visible: true, wait: 3) }
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -361,7 +359,7 @@ RSpec.shared_examples "a list" do |template_name|
     end
 
     it "is deleted" do
-      sleep 2
+      wait_for { home_page.find_complete_list(completed_list.name, visible: true, wait: 3) }
       home_page.delete completed_list.name, complete: true
       home_page.wait_until_confirm_delete_button_visible(completed_list.name)
 
@@ -392,7 +390,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "is deleted" do
-          sleep 2
+          wait_for { home_page.find_complete_list(other_list.name, visible: true, wait: 3) }
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -433,7 +431,7 @@ RSpec.shared_examples "a list" do |template_name|
         end
 
         it "is deleted" do
-          sleep 2
+          wait_for { home_page.find_complete_list(other_list.name, visible: true, wait: 3) }
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 

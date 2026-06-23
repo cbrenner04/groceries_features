@@ -182,16 +182,16 @@ module Pages
       list_card&.click
     end
 
-    def find_pending_list(list_name)
-      find_by_test_class("pending-list", text: list_name)
+    def find_pending_list(list_name, **)
+      find_by_test_class("pending-list", text: list_name, **)
     end
 
-    def find_incomplete_list(list_name)
-      find_by_test_class("incomplete-list", text: list_name)
+    def find_incomplete_list(list_name, **)
+      find_by_test_class("incomplete-list", text: list_name, **)
     end
 
-    def find_complete_list(list_name)
-      find_by_test_class("completed-list", text: list_name)
+    def find_complete_list(list_name, **)
+      find_by_test_class("completed-list", text: list_name, **)
     end
 
     def multi_select_list(list_name, complete: false)
