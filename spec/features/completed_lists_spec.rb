@@ -53,8 +53,13 @@ RSpec.describe "Completed lists page", type: :feature do
     completed_lists_page.delete list.name
     completed_lists_page.wait_until_confirm_delete_button_visible
 
-    # for some reason if the button is clicked to early it doesn't work
-    sleep 1
+    wait_for do
+      has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
+        find("[data-test-id='confirm-modal-body']", wait: 0).text.include?(list.name) &&
+        has_css?("[data-test-id='confirm-delete']", wait: 0)
+    rescue Capybara::ElementNotFound
+      false
+    end
 
     completed_lists_page.confirm_delete_button.click
 
@@ -69,8 +74,13 @@ RSpec.describe "Completed lists page", type: :feature do
       completed_lists_page.delete other_list.name
       completed_lists_page.wait_until_confirm_delete_button_visible
 
-      # for some reason if the button is clicked to early it doesn't work
-      sleep 1
+      wait_for do
+        has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
+          find("[data-test-id='confirm-modal-body']", wait: 0).text.include?(other_list.name) &&
+          has_css?("[data-test-id='confirm-delete']", wait: 0)
+      rescue Capybara::ElementNotFound
+        false
+      end
 
       completed_lists_page.confirm_delete_button.click
 
