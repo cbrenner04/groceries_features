@@ -196,16 +196,7 @@ module Pages
 
     def multi_select_list(list_name, complete: false)
       list_element = multi_select_list_element(list_name, complete: complete)
-
-      if complete
-        # Completed list cards do not render a selection checkbox during multiselect
-        # (client #729: showMultiSelectControls = isMultiSelectActive && !completed).
-        # Click the list-name span to trigger the card's onSelect handler.
-        find_by_test_id_within(list_element, "list-name").click
-      else
-        # Incomplete list cards show a checkbox during multiselect; target it directly.
-        list_element.find("input[type='checkbox']").click
-      end
+      list_element.find("[data-test-id^='list-select-']").click
     end
 
     def multi_select_list_element(list_name, complete: false)
@@ -280,8 +271,16 @@ module Pages
       find_by_test_id("multi-select-merge")
     end
 
+    def complete_selected_button
+      find("[data-test-id='multi-select-complete']")
+    end
+
+    def refresh_selected_button
+      find("[data-test-id='multi-select-refresh']")
+    end
+
     def multi_select_delete_button
-      find_by_test_id("multi-select-delete")
+      find("[data-test-id='multi-select-delete']")
     end
 
     def incomplete_delete_button_css

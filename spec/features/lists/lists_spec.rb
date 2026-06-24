@@ -474,17 +474,12 @@ RSpec.describe "A list", type: :feature do
     end
 
     describe "complete" do
-      # NOTE: The lists multiselect toolbar (client #729) does NOT include a bulk "complete"
-      # action — only edit/merge/delete are present. The inline complete button is hidden for
-      # incomplete lists during multiselect. This example cannot be driven through the bar until
-      # the client adds a bulk-complete action to the lists multiselect toolbar. See report for
-      # companion PR #729.
       it "completes multiple lists but only those the user has access to complete and that are incomplete" do
         home_page.multi_select_buttons.first.click
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.complete list.name
+        home_page.complete_selected_button.click
 
         wait_for { !home_page.incomplete_list_names.include?(list.name) }
         wait_for { home_page.complete_list_names.include?(other_completed_list.name) }
@@ -667,19 +662,12 @@ RSpec.describe "A list", type: :feature do
     end
 
     describe "refresh" do
-      # NOTE: The lists multiselect toolbar (client #729) does NOT include a bulk "refresh"
-      # action. Additionally, completed list cards do not render a selection checkbox during
-      # multiselect (showMultiSelectControls is false for completed lists), so selection via
-      # multi_select_list(complete: true) clicks the list-name span. The inline refresh button
-      # remains visible on completed cards (inline buttons are only hidden for incomplete lists)
-      # but there is no bulk-refresh path in the bar. This example cannot be driven correctly
-      # until the client adds a bulk-refresh action or a selection checkbox for completed lists.
-      # See report for companion PR #729.
       it "only refreshes lists the user owns and those that are complete" do
         home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
         home_page.multi_select_list other_completed_list.name, complete: true
-        home_page.refresh completed_list.name
+
+        home_page.refresh_selected_button.click
 
         wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
         wait_for { home_page.incomplete_list_names.include?(completed_list.name) }
