@@ -239,6 +239,15 @@ module Pages
       submit_button.click
     end
 
+    def wait_for_delete_modal
+      wait_for do
+        has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
+          has_css?("[data-test-id='confirm-delete']", wait: 0)
+      rescue Capybara::ElementNotFound
+        false
+      end
+    end
+
     private
 
     def list_item_selector(item, completed:)

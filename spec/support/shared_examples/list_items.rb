@@ -136,13 +136,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         list_page.delete @list_items.first
         list_page.wait_until_confirm_delete_button_visible
 
-        wait_for do
-          has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
-            find("[data-test-id='confirm-modal-body']", wait: 0).text.include?(item_name) &&
-            has_css?("[data-test-id='confirm-delete']", wait: 0)
-        rescue Capybara::ElementNotFound
-          false
-        end
+        list_page.wait_for_delete_modal
 
         list_page.confirm_delete_button.click
 
@@ -272,13 +266,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             list_page.delete @list_items.first
             list_page.wait_until_confirm_delete_button_visible
 
-            wait_for do
-              has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
-                find("[data-test-id='confirm-modal-body']", wait: 0).text.include?(item_name) &&
-                has_css?("[data-test-id='confirm-delete']", wait: 0)
-            rescue Capybara::ElementNotFound
-              false
-            end
+            list_page.wait_for_delete_modal
 
             list_page.confirm_delete_button.click
 
@@ -302,13 +290,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         list_page.delete @list_items.last, completed: true
         list_page.wait_until_confirm_delete_button_visible
 
-        wait_for do
-          has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
-            find("[data-test-id='confirm-modal-body']", wait: 0).text.include?(item_name) &&
-            has_css?("[data-test-id='confirm-delete']", wait: 0)
-        rescue Capybara::ElementNotFound
-          false
-        end
+        list_page.wait_for_delete_modal
 
         list_page.confirm_delete_button.click
 
