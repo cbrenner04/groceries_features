@@ -394,6 +394,10 @@ module Pages
       has_no_test_id?("confirm-merge")
     end
 
+    def has_no_merge_button?
+      has_no_css?("[data-test-id='multi-select-merge']")
+    end
+
     def clear_merge_button
       find_by_test_id("clear-merge")
     end
