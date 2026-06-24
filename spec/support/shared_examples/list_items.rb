@@ -136,8 +136,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         list_page.delete @list_items.first
         list_page.wait_until_confirm_delete_button_visible
 
-        # for some reason if the button is clicked to early it doesn't work
-        sleep 1
+        list_page.wait_for_delete_modal
 
         list_page.confirm_delete_button.click
 
@@ -237,11 +236,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           before do
             @another_list_item = item_class.new(user_id: user.id, list_id: list.id, category: "foo",
                                                 list_item_configuration_id: list.list_item_configuration.id)
-            # need to wait for the item to be added
-            # TODO: do something better
-            sleep 1
             # due to adding data above we need to reload page and filter again
             list_page.load(id: list.id)
+            wait_for { list_page.not_completed_items.count == @initial_list_item_count + 1 }
             list_page.wait_until_completed_items_visible
             list_page.filter_option("foo").click
           end
@@ -269,9 +266,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
             list_page.delete @list_items.first
             list_page.wait_until_confirm_delete_button_visible
 
-            # for some reason if the button is clicked to early it doesn't work
-            # TODO: do something better
-            sleep 1
+            list_page.wait_for_delete_modal
 
             list_page.confirm_delete_button.click
 
@@ -295,8 +290,7 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
         list_page.delete @list_items.last, completed: true
         list_page.wait_until_confirm_delete_button_visible
 
-        # for some reason if the button is clicked too early it doesn't work
-        sleep 1
+        list_page.wait_for_delete_modal
 
         list_page.confirm_delete_button.click
 
@@ -335,8 +329,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.delete(@list_items.first, completed: false)
           list_page.wait_until_confirm_delete_button_visible
 
-          # for some reason if the button is clicked too early it doesn't work
-          sleep 1
+          wait_for do
+            has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
+              has_css?("[data-test-id='confirm-delete']", wait: 0)
+          rescue Capybara::ElementNotFound
+            false
+          end
 
           list_page.confirm_delete_button.click
 
@@ -354,8 +352,12 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.delete(completed_items.first, completed: true)
           list_page.wait_until_confirm_delete_button_visible
 
-          # for some reason if the button is clicked too early it doesn't work
-          sleep 1
+          wait_for do
+            has_css?("[data-test-id='confirm-modal-body']", wait: 0) &&
+              has_css?("[data-test-id='confirm-delete']", wait: 0)
+          rescue Capybara::ElementNotFound
+            false
+          end
 
           list_page.confirm_delete_button.click
 

@@ -83,9 +83,7 @@ RSpec.describe "A list", type: :feature do
     it "is completed" do
       home_page.complete list.name
 
-      sleep 1 # it was complaining about stale element references in the wait_for block
-
-      wait_for { !home_page.incomplete_list_names.include?(list.name) }
+      wait_for { home_page.has_completed_lists? && home_page.complete_list_names.include?(list.name) }
 
       expect(home_page).to have_completed_lists
       expect(home_page.complete_list_names).to include list.name
@@ -151,7 +149,7 @@ RSpec.describe "A list", type: :feature do
     end
 
     it "is deleted" do
-      sleep 2
+      home_page.find_incomplete_list(list.name)
       home_page.delete list.name
       home_page.wait_until_confirm_delete_button_visible(list.name)
 
@@ -198,7 +196,7 @@ RSpec.describe "A list", type: :feature do
         end
 
         it "rejects" do
-          sleep 2
+          home_page.find_pending_list(other_list.name)
           home_page.reject other_list.name
           home_page.wait_until_confirm_reject_button_visible(other_list.name)
 
@@ -226,7 +224,6 @@ RSpec.describe "A list", type: :feature do
           end
 
           it "can only be shared or deleted" do
-            sleep 2
             write_list = home_page.find_incomplete_list(other_list.name)
 
             expect(write_list).to have_css home_page.share_button_css
@@ -236,7 +233,7 @@ RSpec.describe "A list", type: :feature do
           end
 
           it "is deleted" do
-            sleep 2
+            home_page.find_incomplete_list(other_list.name)
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -289,7 +286,7 @@ RSpec.describe "A list", type: :feature do
           end
 
           it "is deleted" do
-            sleep 2
+            home_page.find_incomplete_list(other_list.name)
             home_page.delete other_list.name
             home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -365,7 +362,7 @@ RSpec.describe "A list", type: :feature do
     end
 
     it "is deleted" do
-      sleep 2
+      home_page.find_complete_list(completed_list.name)
       home_page.delete completed_list.name, complete: true
       home_page.wait_until_confirm_delete_button_visible(completed_list.name)
 
@@ -396,7 +393,7 @@ RSpec.describe "A list", type: :feature do
         end
 
         it "is deleted" do
-          sleep 2
+          home_page.find_complete_list(other_list.name)
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
@@ -437,7 +434,7 @@ RSpec.describe "A list", type: :feature do
         end
 
         it "is deleted" do
-          sleep 2
+          home_page.find_complete_list(other_list.name)
           home_page.delete other_list.name, complete: true
           home_page.wait_until_confirm_delete_button_visible(other_list.name)
 
