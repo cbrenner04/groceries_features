@@ -316,7 +316,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.multi_select_item(item, completed: item.send("completed"))
         end
 
-        list_page.complete(@list_items.first)
+        # Inline complete/delete/refresh buttons are hidden during multiselect (client #729).
+        # Use the MultiSelectBar bulk action instead.
+        list_page.complete_selected_button.click
 
         wait_for { list_page.not_completed_items.none? }
 
@@ -332,7 +334,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
 
             list_page.multi_select_item(item, completed: false)
           end
-          list_page.delete(@list_items.first, completed: false)
+
+          # Inline buttons are hidden during multiselect (client #729); use the bulk action bar.
+          list_page.delete_selected_button.click
           list_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked too early it doesn't work
@@ -351,7 +355,9 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
           list_page.multi_select_buttons.last.click
           completed_items = @list_items.filter { |item| item.send("completed") }
           completed_items.each { |item| list_page.multi_select_item(item, completed: true) }
-          list_page.delete(completed_items.first, completed: true)
+
+          # Inline buttons are hidden during multiselect (client #729); use the bulk action bar.
+          list_page.delete_selected_button.click
           list_page.wait_until_confirm_delete_button_visible
 
           # for some reason if the button is clicked too early it doesn't work

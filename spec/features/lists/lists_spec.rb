@@ -474,6 +474,11 @@ RSpec.describe "A list", type: :feature do
     end
 
     describe "complete" do
+      # NOTE: The lists multiselect toolbar (client #729) does NOT include a bulk "complete"
+      # action — only edit/merge/delete are present. The inline complete button is hidden for
+      # incomplete lists during multiselect. This example cannot be driven through the bar until
+      # the client adds a bulk-complete action to the lists multiselect toolbar. See report for
+      # companion PR #729.
       it "completes multiple lists but only those the user has access to complete and that are incomplete" do
         home_page.multi_select_buttons.first.click
         home_page.multi_select_list list.name
@@ -640,7 +645,9 @@ RSpec.describe "A list", type: :feature do
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.delete list.name
+        # Inline trash buttons are hidden during multiselect for incomplete lists (client #729).
+        # Use the lists multiselect toolbar bulk delete action instead.
+        home_page.multi_select_delete_button.click
 
         modal_body = find("[data-test-id='confirm-modal-body']")
         wait_for { modal_body.has_text?(list.name) && modal_body.has_text?(other_list.name) }
@@ -660,6 +667,14 @@ RSpec.describe "A list", type: :feature do
     end
 
     describe "refresh" do
+      # NOTE: The lists multiselect toolbar (client #729) does NOT include a bulk "refresh"
+      # action. Additionally, completed list cards do not render a selection checkbox during
+      # multiselect (showMultiSelectControls is false for completed lists), so selection via
+      # multi_select_list(complete: true) clicks the list-name span. The inline refresh button
+      # remains visible on completed cards (inline buttons are only hidden for incomplete lists)
+      # but there is no bulk-refresh path in the bar. This example cannot be driven correctly
+      # until the client adds a bulk-refresh action or a selection checkbox for completed lists.
+      # See report for companion PR #729.
       it "only refreshes lists the user owns and those that are complete" do
         home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
