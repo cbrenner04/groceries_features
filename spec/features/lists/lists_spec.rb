@@ -479,7 +479,7 @@ RSpec.describe "A list", type: :feature do
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.complete list.name
+        home_page.complete_selected_button.click
 
         wait_for { !home_page.incomplete_list_names.include?(list.name) }
         wait_for { home_page.complete_list_names.include?(other_completed_list.name) }
@@ -514,7 +514,7 @@ RSpec.describe "A list", type: :feature do
         expect_not_completed_items_on(merged_list_id, @list_items.count + @other_list_items.count)
       end
 
-      it "shows warning when lists of different templates are selected" do
+      it "hides merge button when only different-template lists are selected (no mergeable pair)" do
         # Create a list of different template for testing
         different_template_list = Models::List.new(template_name: different_template_name, owner_id: user.id)
         create_associated_list_objects(user, different_template_list)
@@ -531,13 +531,7 @@ RSpec.describe "A list", type: :feature do
         home_page.multi_select_list list.name
         home_page.multi_select_list different_template_list.name
 
-        wait_for { home_page.merge_button.visible? }
-
-        home_page.merge_button.click
-
-        expect(home_page).to have_merge_warning
-        expect(home_page.merge_warning_text).to include("Only lists of the same type can be merged")
-        expect(home_page.merge_warning_text).to include("Some lists will be excluded")
+        expect(home_page).to have_no_merge_button
       end
 
       it "shows detailed breakdown when lists of different templates are selected" do
@@ -640,7 +634,9 @@ RSpec.describe "A list", type: :feature do
         home_page.multi_select_list list.name
         home_page.multi_select_list other_list.name
 
-        home_page.delete list.name
+        # Inline trash buttons are hidden during multiselect for incomplete lists (client #729).
+        # Use the lists multiselect toolbar bulk delete action instead.
+        home_page.multi_select_delete_button.click
 
         modal_body = find("[data-test-id='confirm-modal-body']")
         wait_for { modal_body.has_text?(list.name) && modal_body.has_text?(other_list.name) }
@@ -664,7 +660,8 @@ RSpec.describe "A list", type: :feature do
         home_page.multi_select_buttons.first.click
         home_page.multi_select_list completed_list.name, complete: true
         home_page.multi_select_list other_completed_list.name, complete: true
-        home_page.refresh completed_list.name
+
+        home_page.refresh_selected_button.click
 
         wait_for { home_page.complete_list_names.include?("#{completed_list.name}*") }
         wait_for { home_page.incomplete_list_names.include?(completed_list.name) }

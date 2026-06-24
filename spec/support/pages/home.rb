@@ -196,8 +196,7 @@ module Pages
 
     def multi_select_list(list_name, complete: false)
       list_element = multi_select_list_element(list_name, complete: complete)
-
-      list_element.find("input").click
+      list_element.find("[data-test-id^='list-select-']").click
     end
 
     def multi_select_list_element(list_name, complete: false)
@@ -270,6 +269,18 @@ module Pages
 
     def merge_button
       find_by_test_id("multi-select-merge")
+    end
+
+    def complete_selected_button
+      find("[data-test-id='multi-select-complete']")
+    end
+
+    def refresh_selected_button
+      find("[data-test-id='multi-select-refresh']")
+    end
+
+    def multi_select_delete_button
+      find("[data-test-id='multi-select-delete']")
     end
 
     def incomplete_delete_button_css
@@ -381,6 +392,10 @@ module Pages
 
     def has_no_confirm_merge?
       has_no_test_id?("confirm-merge")
+    end
+
+    def has_no_merge_button?
+      has_no_css?("[data-test-id='multi-select-merge']")
     end
 
     def clear_merge_button

@@ -177,8 +177,10 @@ module Pages
     end
 
     def multi_select_item(item, completed: false)
-      item_element = find_list_item(item, completed:)
-      item_element.find("input").click
+      status_prefix = completed ? "completed" : "not-completed"
+      item_id = item.respond_to?(:id) ? item.id : item
+      # Checkbox test-id pattern from ListItemRow.tsx: "{status}-item-select-{id}"
+      find(:css, "[data-test-id='#{status_prefix}-item-select-#{item_id}']").click
     end
 
     def toggle_multi_select

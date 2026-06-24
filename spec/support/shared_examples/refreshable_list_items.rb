@@ -37,7 +37,9 @@ RSpec.shared_examples "a refreshable list item" do
 
         list_page.multi_select_buttons.last.click
         list_page.multi_select_item(item, completed: true)
-        list_page.refresh(item)
+
+        # Inline refresh button is hidden during multiselect (client #729); use the bulk action bar.
+        list_page.refresh_selected_button.click
 
         wait_for { list_page.completed_items.none? }
 
