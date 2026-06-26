@@ -14,8 +14,6 @@ module Pages
     element :new_merged_list_name_input, "#mergeName"
     element :header, "[data-test-id='page-title']"
 
-    elements :multi_select_buttons, :button, "Select"
-
     # has_*? methods for elements that use data-test-* selectors
     def has_log_out?
       has_test_id?("log-out-link")
@@ -146,6 +144,13 @@ module Pages
       all_by_test_class("pending-list").map do |list|
         find_by_test_id_within(list, "list-name").text
       end
+    end
+
+    def multi_select_buttons
+      buttons = all_by_test_id("select-button", wait: 0)
+      return buttons if buttons.any?
+
+      all(:button, text: /\ASelect( Lists)?\z/)
     end
 
     # Immediate versions for post-wait_for assertions (no Capybara waiting)
