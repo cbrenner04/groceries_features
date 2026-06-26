@@ -471,6 +471,8 @@ RSpec.describe "A list", type: :feature do
       @other_completed_list_items = create_associated_list_objects(user, other_completed_list)
       DB[:users_lists].where(user_id: user.id, list_id: other_list.id).update(permissions: "read")
       page.refresh
+      wait_for { home_page.incomplete_list_names.include?(list.name) }
+      wait_for { home_page.incomplete_list_names.include?(other_list.name) }
     end
 
     describe "complete" do
