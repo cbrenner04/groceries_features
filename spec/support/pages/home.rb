@@ -315,12 +315,17 @@ module Pages
       find_by_test_id("filter-#{status}")
     end
 
-    def quick_add_expand
-      find_by_test_id("quick-add-expand")
+    # Lists are now created via a floating "+" button that opens a modal form.
+    def open_create_list_form
+      find_by_test_id("lists-create-fab")
     end
 
     def name
-      find_by_test_id("quick-add-input")
+      find_by_test_id("create-list-name-input")
+    end
+
+    def submit_create_list
+      find_by_test_id("create-list-submit")
     end
 
     def wait_until_settings_nav_visible

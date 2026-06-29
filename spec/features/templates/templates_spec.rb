@@ -143,7 +143,7 @@ RSpec.describe "Templates", type: :feature do
 
       # Navigate to lists page
       home_page.load
-      home_page.quick_add_expand.click
+      home_page.open_create_list_form.click
 
       template_options = home_page.list_template.all("option").map(&:text)
       expect(template_options).to include("brand new template")

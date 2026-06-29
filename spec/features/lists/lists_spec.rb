@@ -37,11 +37,11 @@ RSpec.describe "A list", type: :feature do
   it "is created" do
     list = Models::List.new(template_name: template_name, create_list: false, owner_id: user.id)
 
-    home_page.quick_add_expand.click
+    home_page.open_create_list_form.click
     wait_for { home_page.has_css?("#list_item_configuration_id", visible: :all, wait: 0) }
     home_page.list_template.select(template_name)
     home_page.name.set(list.name)
-    home_page.name.send_keys(:enter)
+    home_page.submit_create_list.click
 
     wait_for { home_page.incomplete_list_names.include? list.name }
 
