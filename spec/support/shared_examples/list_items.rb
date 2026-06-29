@@ -80,10 +80,10 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       # Input item attributes
       send("input_new_item_attributes", new_list_item)
       list_page.category_input.set(new_list_item.category)
-      # The category field is now a combobox (client #740); typing an existing category opens a
-      # suggestions dropdown that overlays the fields below it. Dismiss it (Escape preserves the
-      # typed value) so it does not intercept the completed checkbox click.
-      list_page.category_input.send_keys(:escape)
+      # The category field is a combobox (client #740); typing opens a suggestions dropdown that
+      # overlays the fields below it. Blur the field with Tab to close the dropdown so it does not
+      # intercept the completed checkbox click. (Escape would close the whole add-item modal.)
+      list_page.category_input.send_keys(:tab)
 
       # Check the completed checkbox
       list_page.completed_checkbox.click
