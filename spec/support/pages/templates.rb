@@ -8,16 +8,18 @@ module Pages
     set_url "/templates"
 
     element :header, "h1", text: "Templates"
-    # Templates are created via the always-visible bottom input bar; its submit button is
-    # rendered by the bar (data-test-id) rather than a native submit input.
-    element :submit, "[data-test-id='quick-add-submit']"
+    # Templates are created via a modal opened by the floating "+" button; the submit lives in
+    # the modal footer.
+    element :submit, "[data-test-id='create-template-submit']"
 
     def manage_templates
       find_by_test_id("nav-templates").click
     end
 
+    # Opens the create-template modal via the floating "+" button and waits for it to render.
     def expand_template_form
-      find_by_test_id("quick-add-expand").click
+      find_by_test_id("templates-create-fab").click
+      wait_for { has_test_id?("create-template-modal") }
     end
 
     def has_templates?
@@ -33,7 +35,7 @@ module Pages
     end
 
     def template_name_input
-      find_by_test_id("quick-add-input")
+      find_by_test_id("create-template-name-input")
     end
 
     def field_configuration_rows
@@ -48,8 +50,8 @@ module Pages
     def delete(template_name)
       template_element = find_by_test_class("template", text: template_name)
       trash = find_by_test_id_within(template_element, "template-trash")
-      # The fixed bottom "create template" bar overlaps a freshly added template's actions, so a
-      # normal click is intercepted. Center it and click via JS to trigger the button's handler.
+      # The floating "+" create button can overlap a freshly added template's actions, so a normal
+      # click may be intercepted. Center it and click via JS to trigger the button's handler.
       trash.execute_script("this.scrollIntoView({ block: 'center' }); this.click();")
     end
 

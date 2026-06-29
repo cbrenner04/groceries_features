@@ -80,10 +80,10 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       # Input item attributes
       send("input_new_item_attributes", new_list_item)
       list_page.category_input.set(new_list_item.category)
-      # The category field is now a combobox (client #740); typing an existing category opens a
-      # suggestions dropdown that overlays the fields below it. Dismiss it (Escape preserves the
-      # typed value) so it does not intercept the completed checkbox click.
-      list_page.category_input.send_keys(:escape)
+      # The category field is a combobox (client #740); typing opens a suggestions dropdown that
+      # overlays the fields below it. Blur the field with Tab to close the dropdown so it does not
+      # intercept the completed checkbox click. (Escape would close the whole add-item modal.)
+      list_page.category_input.send_keys(:tab)
 
       # Check the completed checkbox
       list_page.completed_checkbox.click
@@ -96,9 +96,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       expect(list_page.completed_items.count).to eq initial_completed_items_count + 1
       expect(list_page.not_completed_items.count).to eq @initial_list_item_count
 
-      # Verify form is cleared including the checkbox
+      # Submitting closes the modal (its cleared state); the checkbox no longer exists to assert on.
       send("confirm_form_cleared")
-      expect(list_page.completed_checkbox).not_to be_checked
     end
 
     describe "that is not completed" do
