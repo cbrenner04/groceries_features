@@ -96,9 +96,8 @@ RSpec.shared_examples "a list item" do |edit_attribute, template_name, item_clas
       expect(list_page.completed_items.count).to eq initial_completed_items_count + 1
       expect(list_page.not_completed_items.count).to eq @initial_list_item_count
 
-      # Verify form is cleared including the checkbox
+      # Submitting closes the modal (its cleared state); the checkbox no longer exists to assert on.
       send("confirm_form_cleared")
-      expect(list_page.completed_checkbox).not_to be_checked
     end
 
     describe "that is not completed" do

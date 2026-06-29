@@ -22,11 +22,8 @@ RSpec.describe "A book list item", type: :feature do
   end
 
   def confirm_form_cleared
-    expect(list_page.author_input.value).to eq ""
-    expect(list_page.quick_add_input.value).to eq ""
-    expect(list_page.category_input.value).to eq ""
-    expect(list_page.number_in_series_input.value).to eq ""
-    expect(list_page.completed_checkbox).not_to be_checked
+    # Submitting the add-item modal closes it, which is the form's "cleared" state.
+    expect(list_page).to have_no_add_item_modal
   end
 
   before { @list_items = create_associated_list_objects(user, list) }

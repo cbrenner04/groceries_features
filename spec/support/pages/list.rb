@@ -28,10 +28,11 @@ module Pages
     element :content_input, "#content"
     element :product_input, "#product"
     element :completed_checkbox, "#completed"
-    # The primary/name field is the always-visible bottom input bar (outside the form DOM),
-    # and the form is submitted via the bar's submit button rather than a native submit input.
-    element :quick_add_input, "[data-test-id='quick-add-input']"
-    element :submit_button, "[data-test-id='quick-add-submit']"
+    # The add-item form now lives in a modal opened by the floating "+" button. The primary/name
+    # field renders as a normal form field (testID below) and the form is submitted via the
+    # modal's footer button.
+    element :quick_add_input, "[data-test-id='add-list-item-name-input']"
+    element :submit_button, "[data-test-id='add-list-item-submit']"
     element :close_alert, ".Toastify__close-button.Toastify__close-button--colored"
     element :select_button, "[data-test-id='select-button']"
     element :multi_select_bar, "[data-test-id='multi-select-bar']"
@@ -172,8 +173,18 @@ module Pages
       item_element.find(:css, REFRESH_BUTTON).click
     end
 
+    # Opens the add-item modal via the floating "+" button and waits for it to render.
     def expand_list_item_form
-      find_by_test_id("quick-add-expand").click
+      find_by_test_id("list-add-fab").click
+      wait_for { has_test_id?("add-list-item-modal") }
+    end
+
+    def has_add_item_modal?
+      has_test_id?("add-list-item-modal")
+    end
+
+    def has_no_add_item_modal?
+      has_no_test_id?("add-list-item-modal")
     end
 
     def multi_select_item(item, completed: false)
