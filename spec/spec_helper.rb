@@ -31,7 +31,7 @@ RSpec.configure do |config|
   config.include Helpers::AuthenticationHelper
   config.include Helpers::DataHelper
   config.include Helpers::WaitHelper
-  # rubocop:disable Lint/ConstantDefinitionInBlock
+  # rubocop:disable-next Lint/ConstantDefinitionInBlock
   config.before(:suite) do
     DB = Sequel.connect(ENV.fetch("DATABASE_URL", nil))
     TEST_RUN = Time.now.to_i
@@ -40,7 +40,6 @@ RSpec.configure do |config|
       RESULTS_HELPER.sign_in
     end
   end
-  # rubocop:enable Lint/ConstantDefinitionInBlock
   config.default_retry_count = 1
   config.after(type: :feature) do
     # TODO: CSP is throwing on something but doesn't effect the tests
